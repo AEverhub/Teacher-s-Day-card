@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>教師節解鎖卡片 | Teachers' Day Card</title>
     <style>
         * {
@@ -16,21 +16,21 @@
         body {
             background-color: #050508;
             color: #fff;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
+            width: 100vw;
+            height: 100vh;
+            height: -webkit-fill-available;
+            overflow: hidden;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
-            position: relative;
-            padding: 15px;
         }
 
         html {
             height: -webkit-fill-available;
         }
 
-        /* 畫布：代碼瀑布與電流效果 */
+        /* 畫布：代碼瀑布、數學圖形與電流效果 */
         #effectsCanvas {
             position: fixed;
             top: 0;
@@ -46,7 +46,7 @@
             position: relative;
             z-index: 10;
             text-align: center;
-            width: 100%;
+            width: 85%;
             max-width: 320px;
             transition: opacity 0.6s ease, transform 0.6s ease;
         }
@@ -109,34 +109,47 @@
             opacity: 0.95;
         }
 
-        /* --- 第二階段：主卡片區 --- */
+        /* --- 第二階段：滿版卡片區 --- */
         .card-container {
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: -webkit-fill-available;
             z-index: 20;
-            width: 100%;
-            max-width: 420px;
+            padding: 20px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             opacity: 0;
-            transform: translateY(40px) scale(0.92);
+            transform: scale(0.95);
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             pointer-events: none;
         }
 
         .card-container.visible {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: scale(1);
             pointer-events: auto;
         }
 
         .glass-card {
-            background: rgba(15, 15, 25, 0.88);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            width: 100%;
+            height: 100%;
+            max-width: 600px; /* 電腦端優化極限寬度 */
+            background: rgba(12, 12, 22, 0.82);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             border: 1px solid rgba(0, 243, 255, 0.35);
-            border-radius: 24px;
-            padding: 28px 20px 22px 20px;
+            border-radius: 20px;
+            padding: 20px 20px 18px 20px;
             box-shadow: 0 0 35px rgba(0, 243, 255, 0.25), inset 0 0 15px rgba(255, 255, 255, 0.05);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         /* 電路掃描光線 */
@@ -153,24 +166,38 @@
             100% { transform: translateX(100%); }
         }
 
+        /* 頂部控制列（避免按鈕與心型重疊） */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 30;
+        }
+
+        .header-title-tag {
+            font-size: 0.75rem;
+            color: #00f3ff;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
         /* 語系切換按鈕 */
         .lang-switch {
-            position: absolute;
-            top: 15px;
-            right: 15px;
             display: flex;
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(0, 243, 255, 0.3);
             border-radius: 20px;
             padding: 2px;
-            z-index: 30;
         }
 
         .lang-btn {
             background: none;
             border: none;
             color: #888;
-            padding: 4px 10px;
+            padding: 4px 12px;
             font-size: 0.75rem;
             font-weight: bold;
             border-radius: 15px;
@@ -184,22 +211,40 @@
             box-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
         }
 
+        /* 內容核心區域 */
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+            margin: 10px 0;
+            padding-right: 4px;
+        }
+
+        /* 自訂內建滾動條 */
+        .card-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        .card-content::-webkit-scrollbar-thumb {
+            background: rgba(0, 243, 255, 0.3);
+            border-radius: 4px;
+        }
+
         .card-title {
-            font-size: 1.3rem;
+            font-size: 1.35rem;
             color: #00f3ff;
             text-align: center;
-            margin-top: 15px;
+            margin-top: 10px;
             margin-bottom: 18px;
             text-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
             letter-spacing: 1px;
         }
 
         .card-body {
-            font-size: 0.92rem;
-            line-height: 1.8;
+            font-size: 0.98rem;
+            line-height: 1.85;
             color: #e0e0e0;
-            margin-bottom: 20px;
-            min-height: 200px;
             word-break: break-word;
         }
 
@@ -208,15 +253,17 @@
             justify-content: space-between;
             align-items: flex-end;
             border-top: 1px solid rgba(255, 255, 255, 0.12);
-            padding-top: 15px;
+            padding-top: 12px;
+            margin-top: 5px;
         }
 
         .signature {
             color: #ff007f;
             font-weight: bold;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             text-shadow: 0 0 8px rgba(255, 0, 127, 0.5);
             text-align: right;
+            line-height: 1.4;
         }
 
         .date-tag {
@@ -227,26 +274,27 @@
         /* 脈衝發光心形 */
         .core-heart {
             display: block;
-            margin: 5px auto 15px auto;
-            width: 42px;
-            height: 42px;
+            margin: 5px auto 10px auto;
+            width: 38px;
+            height: 38px;
             background: #ff007f;
             transform: rotate(-45deg);
             position: relative;
             animation: heartBeat 1.2s infinite ease-in-out;
             box-shadow: 0 0 15px #ff007f;
+            flex-shrink: 0;
         }
 
         .core-heart::before, .core-heart::after {
             content: "";
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             background: #ff007f;
             border-radius: 50%;
             position: absolute;
         }
-        .core-heart::before { top: -21px; left: 0; }
-        .core-heart::after { left: 21px; top: 0; }
+        .core-heart::before { top: -19px; left: 0; }
+        .core-heart::after { left: 19px; top: 0; }
 
         @keyframes heartBeat {
             0%, 100% { transform: rotate(-45deg) scale(0.9); box-shadow: 0 0 15px #ff007f; }
@@ -280,20 +328,26 @@
         <div class="btn-subtext">[ 點擊解鎖電流與專屬訊息 ]</div>
     </div>
 
-    <!-- 第二階段：卡片主體 -->
+    <!-- 第二階段：滿版卡片主體 -->
     <div class="card-container" id="cardContainer">
         <div class="glass-card">
-            <!-- 語系切換按鈕 -->
-            <div class="lang-switch">
-                <button class="lang-btn active" id="btn-zh" onclick="switchLanguage('zh')">中</button>
-                <button class="lang-btn" id="btn-en" onclick="switchLanguage('en')">EN</button>
+            <!-- 頂部列：狀態與語系切換 -->
+            <div class="card-header">
+                <div class="header-title-tag">SYS.CARD // VER 2.0</div>
+                <div class="lang-switch">
+                    <button class="lang-btn active" id="btn-zh" onclick="switchLanguage('zh')">中</button>
+                    <button class="lang-btn" id="btn-en" onclick="switchLanguage('en')">EN</button>
+                </div>
             </div>
 
-            <div class="core-heart"></div>
-            <h1 class="card-title" id="cardTitle">&lt; 桃李芬芳．尊師重道 /&gt;</h1>
-            
-            <div class="card-body" id="typewriter"></div>
+            <!-- 可滾動內容區 -->
+            <div class="card-content">
+                <div class="core-heart"></div>
+                <h1 class="card-title" id="cardTitle">&lt; 桃李芬芳．尊師重道 /&gt;</h1>
+                <div class="card-body" id="typewriter"></div>
+            </div>
 
+            <!-- 頁尾署名區 -->
             <div class="card-footer">
                 <div class="date-tag">09.28 / Teachers' Day</div>
                 <div class="signature" id="signatureText">電子科二年乙班<br>學生 張永旭 敬上 💻</div>
@@ -318,16 +372,80 @@
         let columns = Math.floor(canvas.width / fontSize);
         let drops = Array(columns).fill(0);
         
-        // 閃電電流效果
+        // 閃電電流與數學幾何變數
         let bolts = [];
         let isIntensityMode = false;
+        let timeStep = 0;
+
+        // --- 數學幾何動畫繪製函數 ---
+        function drawMathGraphics() {
+            timeStep += 0.03;
+
+            ctx.save();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = isIntensityMode ? 'rgba(0, 243, 255, 0.4)' : 'rgba(0, 243, 255, 0.15)';
+            ctx.shadowBlur = isIntensityMode ? 10 : 0;
+            ctx.shadowColor = '#00f3ff';
+
+            // 頂部正弦波
+            ctx.beginPath();
+            for (let x = 0; x < canvas.width; x += 5) {
+                let y = Math.sin(x * 0.01 + timeStep) * 20 + Math.cos(x * 0.02 - timeStep) * 10 + 60;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // 底部傅立葉疊加方波近似
+            ctx.strokeStyle = isIntensityMode ? 'rgba(255, 0, 127, 0.4)' : 'rgba(255, 0, 127, 0.15)';
+            ctx.shadowColor = '#ff007f';
+            ctx.beginPath();
+            for (let x = 0; x < canvas.width; x += 5) {
+                let y = (Math.sin(x * 0.015 + timeStep) +
+                         (1/3) * Math.sin(3 * (x * 0.015 + timeStep)) +
+                         (1/5) * Math.sin(5 * (x * 0.015 + timeStep))) * 25 + (canvas.height - 70);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // 背景極座標玫瑰線（Polar Rose）
+            let centerX = canvas.width * 0.85;
+            let centerY = canvas.height * 0.25;
+            if (canvas.width < 500) {
+                centerX = canvas.width * 0.8;
+                centerY = 120;
+            }
+
+            ctx.strokeStyle = isIntensityMode ? 'rgba(0, 243, 255, 0.3)' : 'rgba(0, 243, 255, 0.12)';
+            ctx.beginPath();
+            let k = 4;
+            for (let a = 0; a < Math.PI * 2; a += 0.02) {
+                let r = 40 * Math.cos(k * a + timeStep * 0.5);
+                let px = centerX + r * Math.cos(a);
+                let py = centerY + r * Math.sin(a);
+                if (a === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            // 即時動態數據 HUD 顯示
+            ctx.fillStyle = isIntensityMode ? '#00f3ff' : 'rgba(0, 243, 255, 0.4)';
+            ctx.font = '10px monospace';
+            ctx.fillText(`f(t) = A·sin(ωt + φ)`, 15, 30);
+            ctx.fillText(`F(ω) = ∫ f(t)e^(-iωt) dt`, 15, 45);
+            ctx.fillText(`PHASE: ${(timeStep % (Math.PI * 2)).toFixed(2)} rad`, 15, 60);
+
+            ctx.restore();
+        }
 
         function drawEffects() {
-            ctx.fillStyle = 'rgba(5, 5, 8, 0.18)';
+            ctx.fillStyle = 'rgba(5, 5, 8, 0.2)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.font = fontSize + 'px monospace';
+            drawMathGraphics();
 
+            ctx.font = fontSize + 'px monospace';
             for (let i = 0; i < drops.length; i++) {
                 const text = chars.charAt(Math.floor(Math.random() * chars.length));
                 const x = i * fontSize;
