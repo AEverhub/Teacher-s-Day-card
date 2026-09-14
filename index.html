@@ -185,21 +185,21 @@
         }
 
         .card-title {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: #00f3ff;
             text-align: center;
             margin-top: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             text-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
             letter-spacing: 1px;
         }
 
         .card-body {
-            font-size: 0.98rem;
-            line-height: 1.75;
+            font-size: 0.92rem;
+            line-height: 1.8;
             color: #e0e0e0;
-            margin-bottom: 25px;
-            min-height: 150px;
+            margin-bottom: 20px;
+            min-height: 200px;
             word-break: break-word;
         }
 
@@ -214,21 +214,22 @@
         .signature {
             color: #ff007f;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.88rem;
             text-shadow: 0 0 8px rgba(255, 0, 127, 0.5);
+            text-align: right;
         }
 
         .date-tag {
             color: #8a8a8a;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
         }
 
         /* 脈衝發光心形 */
         .core-heart {
             display: block;
             margin: 5px auto 15px auto;
-            width: 45px;
-            height: 45px;
+            width: 42px;
+            height: 42px;
             background: #ff007f;
             transform: rotate(-45deg);
             position: relative;
@@ -238,14 +239,14 @@
 
         .core-heart::before, .core-heart::after {
             content: "";
-            width: 45px;
-            height: 45px;
+            width: 42px;
+            height: 42px;
             background: #ff007f;
             border-radius: 50%;
             position: absolute;
         }
-        .core-heart::before { top: -22.5px; left: 0; }
-        .core-heart::after { left: 22.5px; top: 0; }
+        .core-heart::before { top: -21px; left: 0; }
+        .core-heart::after { left: 21px; top: 0; }
 
         @keyframes heartBeat {
             0%, 100% { transform: rotate(-45deg) scale(0.9); box-shadow: 0 0 15px #ff007f; }
@@ -289,13 +290,13 @@
             </div>
 
             <div class="core-heart"></div>
-            <h1 class="card-title" id="cardTitle">&lt; Happy Teachers' Day /&gt;</h1>
+            <h1 class="card-title" id="cardTitle">&lt; 桃李芬芳．尊師重道 /&gt;</h1>
             
             <div class="card-body" id="typewriter"></div>
 
             <div class="card-footer">
                 <div class="date-tag">09.28 / Teachers' Day</div>
-                <div class="signature" id="signatureText">學生 張永旭 敬上 💻</div>
+                <div class="signature" id="signatureText">電子科二年乙班<br>學生 張永旭 敬上 💻</div>
             </div>
         </div>
     </div>
@@ -406,21 +407,21 @@
         // --- 中英文語系資料 ---
         const messages = {
             zh: {
-                title: "&lt; 教師節快樂 /&gt;",
-                text: "親愛的老師：\n\n感謝您就像強大的核心邏輯與演算法，帶領我們在知識與技術的領域中除錯、升級與成長。\n\n祝您教師節快樂！程式運算永遠零 Bug，每天都有滿滿的成就感與好心情！✨",
-                signature: "學生 張永旭 敬上 💻"
+                title: "&lt; 桃李芬芳．尊師重道 /&gt;",
+                text: "親愛的老師：\n\n「程門立雪」感念師恩，「春風化雨」潤物無聲。每當學習遇到瓶頸，總有您「諄諄教誨」，令人「醍醐灌頂」。\n\n感謝您如穩定的電源與核心邏輯，帶領我們電子科二年乙班在電路、程式與人生的雜訊中除錯，走向清晰與成長。\n\n祝您教師節快樂！桃李滿天下，事事順心、喜樂安康！✨",
+                signature: "電子科二年乙班<br>學生 張永旭 敬上 💻"
             },
             en: {
                 title: "&lt; Happy Teachers' Day /&gt;",
-                text: "Dear Teacher,\n\nThank you for guiding us like a powerful core algorithm—helping us debug, upgrade, and grow through our learning journey.\n\nWishing you a Happy Teachers' Day! May your code run bug-free and your days be full of joy! ✨",
-                signature: "Sincerely, Yong-Xu Zhang 💻"
+                text: "Dear Teacher,\n\nYour wisdom lights our path like a steady voltage source, guiding Class 2-B through complex logic and learning challenges with patience and clarity.\n\nThank you for your tireless dedication to Electronics class and for inspiring us to keep upgrading our skills and character.\n\nWishing you a joyful Teachers' Day, great health, and happiness every day! ✨",
+                signature: "Class 2-B, Department of Electronics<br>Student Yong-Xu Zhang 💻"
             }
         };
 
         let currentLang = 'zh';
         let typewriterTimeout;
 
-        function typeWriter(text, elementId, speed = 40) {
+        function typeWriter(text, elementId, speed = 35) {
             clearTimeout(typewriterTimeout);
             let i = 0;
             const elem = document.getElementById(elementId);
@@ -446,9 +447,9 @@
             document.getElementById('btn-en').classList.toggle('active', lang === 'en');
 
             document.getElementById('cardTitle').innerHTML = messages[lang].title;
-            document.getElementById('signatureText').innerText = messages[lang].signature;
+            document.getElementById('signatureText').innerHTML = messages[lang].signature;
 
-            typeWriter(messages[lang].text, 'typewriter', 35);
+            typeWriter(messages[lang].text, 'typewriter', 30);
         }
 
         // 啟動體驗
@@ -473,7 +474,7 @@
             setTimeout(() => {
                 document.body.classList.remove('shake');
                 cardContainer.classList.add('visible');
-                typeWriter(messages[currentLang].text, 'typewriter', 40);
+                typeWriter(messages[currentLang].text, 'typewriter', 35);
             }, 750);
         }
     </script>
