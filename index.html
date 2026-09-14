@@ -29,14 +29,35 @@
     .is-open .door-right { transform:translateX(100%); }
     .intro { position:absolute; z-index:2; left:50%; top:50%; width:min(86vw,340px); transform:translate(-50%,-50%); text-align:center; transition:opacity .35s ease; }
     .intro.is-hidden { opacity:0; pointer-events:none; }
+    .end-panel { position:absolute; z-index:3; left:50%; top:50%; width:min(90vw,360px); transform:translate(-50%,-50%); display:flex; flex-direction:column; gap:11px; opacity:0; pointer-events:none; transition:opacity .35s ease; }
+    .end-panel.visible { opacity:1; pointer-events:auto; }
+    .end-title { color:var(--gold); text-align:center; font-size:.78rem; letter-spacing:2px; line-height:1.7; }
+    .end-btn { padding:14px 16px; color:var(--green); background:#062015ed; border:1px solid var(--green); border-radius:10px; cursor:pointer; box-shadow:0 0 15px #00ffaa33; font-size:.85rem; font-weight:700; }
+    .end-btn.gold { color:var(--gold); border-color:var(--gold); }
+    .end-btn.muted { color:#b4c0bd; border-color:#81918b; }
     .intro-kicker { margin-bottom:18px; color:var(--gold); font-size:.75rem; letter-spacing:3px; }
     .start-btn,.action-btn { cursor:pointer; color:var(--green); background:#062015e8; border:2px solid var(--green); border-radius:14px; box-shadow:0 0 25px #00ffaa55; text-shadow:0 0 10px var(--green); }
     .start-btn { width:100%; padding:19px 24px; font-size:1.2rem; font-weight:700; letter-spacing:2px; }
     .audio-warning { margin-top:16px; color:#ff6673; font-size:.82rem; animation:pulse 1.6s infinite; }
+    .ui-modal { position:fixed; inset:0; z-index:130; display:grid; place-items:center; padding:20px; background:#0009; opacity:0; pointer-events:none; transition:opacity .25s; }
+    .ui-modal.visible { opacity:1; pointer-events:auto; }
+    .modal-card { width:min(92vw,390px); padding:22px; color:#dfffe9; background:linear-gradient(145deg,#0b2116,#06100b); border:1px solid var(--green); border-radius:14px; box-shadow:0 0 30px #00ffaa44; }
+    .modal-card h2 { margin-bottom:8px; color:var(--green); font-size:1rem; }
+    .modal-card p { margin-bottom:15px; color:#b7c9bd; font-size:.78rem; line-height:1.6; }
+    .modal-card input[type=text] { width:100%; padding:12px; margin-bottom:13px; color:#dfffe9; background:#020805; border:1px solid #4a8062; border-radius:7px; outline:none; }
+    .modal-card input[type=text]:focus { border-color:var(--green); box-shadow:0 0 10px #00ffaa44; }
+    .check-row { display:flex; gap:8px; align-items:center; margin-bottom:17px; color:#c8d7cc; font-size:.78rem; cursor:pointer; }
+    .modal-actions { display:flex; gap:8px; justify-content:flex-end; }
+    .modal-actions button { padding:9px 13px; color:#b7c9bd; background:#07140d; border:1px solid #50665a; border-radius:7px; cursor:pointer; }
+    .modal-actions .confirm { color:var(--ink); background:var(--green); border-color:var(--green); font-weight:700; }
+    body.is-blank > *:not(#effectsCanvas) { display:none !important; }
+    body.is-blank { background:#000; }
     @keyframes pulse { 50% { opacity:.45; } }
 
     .stage { width:100%; height:100svh; display:grid; place-items:center; padding:18px; }
-    .pcb-board { position:relative; width:min(92vw,680px); height:min(88svh,820px); min-height:510px; padding:16px; overflow:hidden; display:flex; flex-direction:column; background-color:var(--pcb); background-image:radial-gradient(#0e3b20 15%,transparent 16%),radial-gradient(#0e3b20 15%,transparent 16%); background-size:16px 16px; background-position:0 0,8px 8px; border:4px solid #104e28; border-radius:18px; box-shadow:0 0 50px #000e; transition:transform 1s cubic-bezier(.25,1,.5,1); }
+    .pcb-board { position:relative; width:min(92vw,680px); height:min(88svh,820px); min-height:510px; padding:16px; overflow:hidden; display:flex; flex-direction:column; background-color:var(--pcb); background-image:radial-gradient(#0e3b20 15%,transparent 16%),radial-gradient(#0e3b20 15%,transparent 16%),linear-gradient(115deg,transparent 0 48%,#ffffff08 49%,transparent 51%); background-size:16px 16px,16px 16px,100% 100%; background-position:0 0,8px 8px,0 0; border:4px solid #104e28; border-radius:18px; box-shadow:inset 0 0 0 2px #183e27,inset 0 0 28px #000c,0 0 50px #000e; transition:transform 1s cubic-bezier(.25,1,.5,1); }
+    .pcb-board::before { content:"JX-EDU 2026  •  REV 1.0  •  ROHS"; position:absolute; right:18px; top:76px; color:#c9d5a944; font:600 .48rem Arial,sans-serif; letter-spacing:1.5px; transform:rotate(90deg); transform-origin:right top; }
+    .pcb-board::after { content:"+  GND  +  VCC  +  DATA  +"; position:absolute; left:24px; bottom:18px; color:#c9d5a944; font:600 .46rem Arial,sans-serif; letter-spacing:2px; }
     .pcb-board.zoom-out { transform:scale(.74); }
     .pcb-board.pan-down { transform:scale(.86) translateY(-34px); }
     .pcb-board.zoom-lcd { transform:scale(1.03); }
@@ -49,11 +70,20 @@
     .lang-switch { display:flex; padding:2px; background:#0008; border:1px solid var(--green); }
     .lang-btn { padding:2px 6px; color:#628b70; background:none; border:0; cursor:pointer; font-weight:700; font-size:.7rem; }
     .lang-btn.active { color:var(--pcb); background:var(--green); border-radius:4px; }
-    .dense-grid { position:relative; z-index:2; width:100%; height:clamp(190px,34vh,320px); padding:10px; display:grid; grid-template-columns:repeat(10,1fr); gap:6px; overflow:hidden; background:#03120ab3; border:1px solid #14522b; border-radius:10px; }
-    .smd { height:14px; background:#1e2621; border-left:2px solid #8a9ba8; border-right:2px solid #8a9ba8; border-radius:1px; box-shadow:0 2px 4px #0008; }
-    .ic { grid-column:span 2; height:22px; display:grid; place-items:center; color:#d4af37; background:#111; border:1px solid #333; border-radius:3px; font-size:.45rem; }
+    .dense-grid { position:relative; z-index:2; width:100%; height:clamp(190px,34vh,320px); padding:16px; display:grid; grid-template-columns:repeat(12,1fr); gap:9px; overflow:hidden; background:linear-gradient(90deg,#03120acc,#092416b8),repeating-linear-gradient(90deg,transparent 0 37px,#d4af3710 38px 39px); border:1px solid #41734b; border-radius:10px; box-shadow:inset 0 0 18px #000b,inset 0 0 0 1px #b2d37b18; }
+    .dense-grid::before,.dense-grid::after { content:""; position:absolute; z-index:-1; border:1px solid #d4af3738; border-radius:50%; }
+    .dense-grid::before { width:180px;height:180px;right:-35px;top:-75px; }.dense-grid::after { width:120px;height:120px;left:-45px;bottom:-60px; }
+    .smd { position:relative; height:13px; background:linear-gradient(180deg,#d7e0e2,#59666a 42%,#171c1e 45%,#69777b); border-left:2px solid #b9c8ca; border-right:2px solid #b9c8ca; border-radius:2px; box-shadow:0 2px 5px #000c,0 0 1px #fff; }
+    .smd::after { content:""; position:absolute; left:3px; right:3px; top:4px; height:2px; background:#d6b44caa; }
+    .capacitor { height:19px; border-radius:50%; background:radial-gradient(circle at 35% 25%,#e9eef0 0 7%,#8f9a9d 9% 25%,#202426 60%); border:1px solid #c1c8c9; box-shadow:0 2px 5px #000c; }
+    .resistor { height:10px; margin-top:4px; background:linear-gradient(90deg,#c9b183 0 18%,#6d3523 18% 26%,#d4a22a 26% 35%,#4c281f 35% 44%,#c9b183 44%); border:1px solid #e1c897; box-shadow:0 2px 4px #000c; }
+    .ic { position:relative; grid-column:span 3; height:34px; display:grid; place-items:center; color:#d4af37; background:linear-gradient(110deg,#25282a,#080909 45%,#313536); border:1px solid #737b7d; border-radius:3px; font-size:.45rem; letter-spacing:.5px; box-shadow:0 3px 6px #000d,inset 0 1px #ffffff33; }
+    .ic::before,.ic::after { content:""; position:absolute; left:-4px; right:-4px; height:2px; background:repeating-linear-gradient(90deg,#bbc4c4 0 4px,transparent 4px 8px); }
+    .ic::before { top:4px; }.ic::after { bottom:4px; }
+    .pad { width:9px; height:9px; border-radius:50%; background:#d4af37; border:2px solid #f5df8b; box-shadow:0 0 4px #d4af37aa; }
     .traces { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:3; }
-    .trace { fill:none; stroke:#d4af373f; stroke-width:3; transition:stroke .4s,filter .4s; }
+    .trace { fill:none; stroke:#bf8c2f99; stroke-width:5; stroke-linecap:round;stroke-linejoin:round; transition:stroke .4s,filter .4s; }
+    .trace::after { stroke:#f0c957; }
     .trace.active { stroke:var(--green); filter:drop-shadow(0 0 6px var(--green)); }
     .particle { fill:var(--green); opacity:0; transition:opacity .3s; }
     .particle.active { opacity:1; }
@@ -113,6 +143,12 @@
       <button class="start-btn" id="startBtn" type="button">點擊開啟卡片</button>
       <p class="audio-warning">建議開啟聲音，體驗完整效果</p>
     </div>
+    <div class="end-panel" id="endPanel" aria-label="閱讀完成選單">
+      <div class="end-title">MESSAGE COMPLETE<br>感念訊息傳送完成</div>
+      <button class="end-btn gold" id="endDownloadBtn" type="button">1．下載專屬教師節卡片</button>
+      <button class="end-btn" id="restartBtn" type="button">2．重新開始閱讀</button>
+      <button class="end-btn muted" id="finishBtn" type="button">3．結束</button>
+    </div>
   </div>
 
   <main class="stage">
@@ -128,10 +164,13 @@
           </div>
         </div>
       </header>
-      <div class="dense-grid" id="denseGrid" aria-hidden="true"></div>
+      <div class="dense-grid" id="denseGrid" aria-label="PCB 元件區"></div>
       <svg class="traces" viewBox="0 0 680 820" preserveAspectRatio="none" aria-hidden="true">
-        <path class="trace" id="trace1" d="M50 120V320H180V420"/><path class="trace" id="trace2" d="M300 100V360H220V440"/>
-        <circle class="particle" id="particle1" cx="180" cy="420" r="5"/><circle class="particle" id="particle2" cx="220" cy="440" r="5"/>
+        <path class="trace" id="trace1" d="M42 115V300H150V408H208"/><path class="trace" id="trace2" d="M280 88V270H385V438H465"/>
+        <path class="trace" id="trace3" d="M610 105V245H530V345H580"/><path class="trace" id="trace4" d="M86 270H35V510H145"/>
+        <path class="trace" id="trace5" d="M460 210V175H575"/>
+        <circle class="pad" cx="42" cy="115" r="5"/><circle class="pad" cx="208" cy="408" r="5"/><circle class="pad" cx="465" cy="438" r="5"/><circle class="pad" cx="580" cy="345" r="5"/>
+        <circle class="particle" id="particle1" cx="208" cy="408" r="5"/><circle class="particle" id="particle2" cx="465" cy="438" r="5"/>
       </svg>
       <section class="lcd-frame" id="lcdFrame" aria-live="polite">
         <div class="lcd-display" id="lcdDisplay">
@@ -147,6 +186,16 @@
     <button class="action-btn gold" id="downloadBtn" type="button">下載 PDF</button>
   </nav>
 
+  <div class="ui-modal" id="nameModal" role="dialog" aria-modal="true" aria-labelledby="nameModalTitle">
+    <form class="modal-card" id="nameForm">
+      <h2 id="nameModalTitle">下載專屬教師節卡片</h2>
+      <p>請輸入老師姓名，系統會自動使用尊稱「敬愛的○○老師」。若不方便透露姓名，也可以選擇匿名下載。</p>
+      <input id="teacherNameInput" type="text" maxlength="30" placeholder="例如：王老師或王" autocomplete="off">
+      <label class="check-row"><input id="anonymousCheck" type="checkbox"> 不願透露姓名，使用「敬愛的老師」</label>
+      <div class="modal-actions"><button id="cancelNameBtn" type="button">取消</button><button class="confirm" type="submit">立即下載</button></div>
+    </form>
+  </div>
+
   <div id="pdfTemplateWrapper" aria-hidden="true">
     <article id="pdfTemplate">
       <div class="pdf-frame">
@@ -157,7 +206,7 @@
           <svg class="flower br" viewBox="0 0 100 100"><path d="M10 90Q10 10 90 10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="25" cy="25" r="12" fill="#f4a6b2"/><circle cx="20" cy="40" r="8" fill="#e8c5ce"/><circle cx="40" cy="20" r="8" fill="#e8c5ce"/></svg>
         </div>
         <header class="pdf-header"><h1>教師節感念卡</h1><h3>Teacher's Day Appreciation Card</h3></header>
-        <div class="pdf-salutation" id="pdfTeacherName">親愛的老師：</div>
+        <div class="pdf-salutation" id="pdfTeacherName">敬愛的老師：</div>
         <div class="pdf-content-zh">祝您教師節快樂！在這特別的日子裡，想向您表達最誠摯的感謝。謝謝您不只教會我們課本上的知識，也教會我們如何思考、如何面對困難，以及如何成為更好的人。每一次耐心的講解、每一句溫暖的鼓勵，都像一盞燈，讓我們在迷惘時重新找到方向。</div>
         <div class="pdf-section-title">一封來自學生的感謝訊號</div>
         <div class="pdf-highlight"><span>耐心引導</span><span>溫暖陪伴</span><span>勇敢成長</span></div>
@@ -178,12 +227,19 @@
     let audioCtx = null, muted = false, currentLang = 'zh', unlocked = false, typingTimer = 0, sequenceTimers = [];
 
     const messages = {
-      zh: { title: "> TEACHER'S DAY CARD <", text: '親愛的老師：\n\n祝您教師節快樂！\n\n謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。每一次耐心的講解、每一句溫暖的鼓勵，都像一盞燈，讓我們在迷惘時重新找到方向。\n\n感謝關鍵字：耐心引導・溫暖陪伴・勇敢成長\n\n因為有您的用心，我們開始相信自己的可能；因為有您的提醒，我們學會負責與堅持；因為有您的身教，我們懂得尊重、感恩與分享。這些珍貴的影響，會一直陪伴我們走向未來。\n\n願您保有教學的熱情，也擁有被理解、被珍惜的每一天。祝您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！', signature:'學生 張永旭 敬上 💻' },
+      zh: { title: "> TEACHER'S DAY CARD <", text: '敬愛的老師：\n\n祝您教師節快樂！\n\n謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。每一次耐心的講解、每一句溫暖的鼓勵，都像一盞燈，讓我們在迷惘時重新找到方向。\n\n感謝關鍵字：耐心引導・溫暖陪伴・勇敢成長\n\n因為有您的用心，我們開始相信自己的可能；因為有您的提醒，我們學會負責與堅持；因為有您的身教，我們懂得尊重、感恩與分享。這些珍貴的影響，會一直陪伴我們走向未來。\n\n願您保有教學的熱情，也擁有被理解、被珍惜的每一天。祝您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！', signature:'學生 張永旭 敬上 💻' },
       en: { title: "> TEACHER'S DAY CARD <", text: "Dear Teacher,\n\nHappy Teachers' Day!\n\nThank you for teaching us more than lessons from a textbook. Your patience, encouragement, and guidance have helped us think bravely, face challenges, and become better people.\n\nThree words of gratitude: Patience • Care • Courage\n\nBecause of you, we believe in our possibilities, learn to take responsibility, and understand the value of respect, gratitude, and sharing. Your influence will stay with us as we continue to grow.\n\nMay every day bring you appreciation, good health, peace, and many reasons to smile!", signature:'Student Yong-Xu Zhang 💻' }
     };
 
     // 生成元件陣列
-    for (let i=0; i<90; i++) { const el=document.createElement('div'); if(i%7===0){el.className='ic';el.textContent='IC-'+(100+i);}else{el.className='smd';} $('denseGrid').appendChild(el); }
+    for (let i=0; i<72; i++) {
+      const el=document.createElement('div');
+      if(i%13===0){el.className='ic';el.textContent='U'+(i/13+1).toFixed(0)+'  MCU';}
+      else if(i%9===0){el.className='capacitor';}
+      else if(i%5===0){el.className='resistor';}
+      else {el.className='smd';}
+      $('denseGrid').appendChild(el);
+    }
 
     function initAudio(){
       if(audioCtx) return;
@@ -202,14 +258,16 @@
       osc.connect(gain).connect(audioCtx.destination); osc.start(now); osc.stop(now+duration+.02);
     }
     function clearSequence(){ sequenceTimers.forEach(clearTimeout); sequenceTimers=[]; }
-    function openDoors(){ doorOverlay.classList.add('is-open'); intro.classList.add('is-hidden'); $('floatingActions').classList.add('visible'); }
-    function closeDoors(){ doorOverlay.classList.remove('is-open'); intro.classList.remove('is-hidden'); $('floatingActions').classList.remove('visible'); }
+    function openDoors(){ doorOverlay.classList.add('is-open'); intro.classList.add('is-hidden'); $('endPanel').classList.remove('visible'); $('floatingActions').classList.add('visible'); }
+    function closeDoors(){ doorOverlay.classList.remove('is-open'); intro.classList.add('is-hidden'); $('floatingActions').classList.remove('visible'); }
     function setStatus(text){ $('sysStatus').textContent=text; }
 
     function startSequence(){
+      document.body.classList.remove('is-blank'); $('endPanel').classList.remove('visible'); unlocked=false; currentLang='zh'; $('btnZh').classList.add('active');$('btnEn').classList.remove('active'); typewriter.replaceChildren(); $('cardTitle').textContent='READY';
+      lcdFrame.classList.remove('rise','power'); lcdDisplay.classList.remove('powered'); board.classList.remove('zoom-out','pan-down','zoom-lcd'); ['trace1','trace2','trace3','trace4','trace5','particle1','particle2'].forEach(id=>$(id).classList.remove('active'));
       initAudio(); sound('door'); openDoors(); clearSequence();
       sequenceTimers.push(setTimeout(()=>{ board.classList.add('zoom-out'); setStatus('SYS: ENERGIZING'); },550));
-      sequenceTimers.push(setTimeout(()=>{ sound('power'); $('trace1').classList.add('active');$('trace2').classList.add('active');$('particle1').classList.add('active');$('particle2').classList.add('active'); board.classList.remove('zoom-out');board.classList.add('pan-down'); },1350));
+      sequenceTimers.push(setTimeout(()=>{ sound('power'); ['trace1','trace2','trace3','trace4','trace5'].forEach(id=>$(id).classList.add('active')); $('particle1').classList.add('active');$('particle2').classList.add('active'); board.classList.remove('zoom-out');board.classList.add('pan-down'); },1350));
       sequenceTimers.push(setTimeout(()=>lcdFrame.classList.add('rise'),2050));
       sequenceTimers.push(setTimeout(()=>{ lcdFrame.classList.add('power');lcdDisplay.classList.add('powered');typewriter.innerHTML='<button class="unlock-btn" id="unlockBtn" type="button">[ ⚡ 點擊啟動解鎖 ]</button>'; $('unlockBtn').addEventListener('click',unlock); },2750));
       sequenceTimers.push(setTimeout(()=>{ board.classList.remove('pan-down');board.classList.add('zoom-lcd');setStatus('SYS: READY'); },3350));
@@ -218,7 +276,7 @@
       clearTimeout(typingTimer); const item=messages[lang]; $('cardTitle').textContent=item.title; typewriter.replaceChildren();
       const lines=(item.text+'\n\n'+item.signature).split('\n'); let li=0, ci=0; const wrap=document.createDocumentFragment();
       function type(){
-        if(li>=lines.length){ typewriter.appendChild(wrap); return; }
+        if(li>=lines.length){ return; }
         const line=lines[li];
         if(ci<line.length){ let target=wrap.lastChild; if(!target||target.nodeType!==Node.TEXT_NODE) {target=document.createTextNode('');wrap.appendChild(target);} target.textContent+=line[ci++]; typingTimer=setTimeout(type,speed); }
         else { wrap.appendChild(document.createElement('br')); li++;ci=0;typingTimer=setTimeout(type,speed); }
@@ -228,22 +286,28 @@
     }
     function unlock(){ if(unlocked)return; unlocked=true; sound('click'); setTimeout(()=>{renderMessage(); speakSequence();},180); }
     function speakSequence(){
-      if(!synth||muted)return; synth.cancel();
+      if(!synth||muted){ setTimeout(finishReading,6500); return; } synth.cancel();
       const zh=new SpeechSynthesisUtterance('親愛的老師，祝您教師節快樂！謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。感謝您的耐心引導、溫暖陪伴，讓我們更勇敢地成長。願您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！學生張永旭敬上。'); zh.lang='zh-TW';zh.rate=.95;
       const en=new SpeechSynthesisUtterance("Dear Teacher, Happy Teachers' Day! Thank you for teaching us more than lessons from a textbook. Your patience, care, and guidance help us face challenges and grow with courage. May every day bring you appreciation, good health, peace, and many reasons to smile! Student Yong-Xu Zhang."); en.lang='en-US';en.rate=.95;
-      zh.onend=()=>{if(!muted){switchLanguage('en');synth.speak(en);}}; en.onend=()=>setTimeout(openDoors,1800); synth.speak(zh);
+      zh.onend=()=>{if(!muted){switchLanguage('en');synth.speak(en);}}; en.onend=()=>setTimeout(finishReading,1800); synth.speak(zh);
+    }
+    function finishReading(){
+      if(synth)synth.cancel(); clearTimeout(typingTimer); clearSequence(); closeDoors(); setStatus('SYS: COMPLETE'); $('endPanel').classList.add('visible');
     }
     function switchLanguage(lang){ if(!messages[lang])return; currentLang=lang; $('btnZh').classList.toggle('active',lang==='zh');$('btnEn').classList.toggle('active',lang==='en'); if(unlocked)renderMessage(lang); else $('cardTitle').textContent=messages[lang].title; }
     function toggleAudio(){ muted=!muted; $('audioToggle').textContent=muted?'🔇 靜音':'🔊 語音'; $('audioToggle').setAttribute('aria-pressed',String(muted)); $('audioToggle').style.color=muted?'#888':'var(--green)'; if(muted&&synth)synth.cancel(); }
-    async function downloadPDF(){
+    function showNameModal(){ $('nameModal').classList.add('visible'); $('teacherNameInput').focus(); }
+    function hideNameModal(){ $('nameModal').classList.remove('visible'); }
+    async function downloadPDF(nameOverride=null){
       if(!window.html2pdf){ alert('PDF 元件尚未載入，請確認網路後再試一次。'); return; }
-      const name=prompt('請問老師如何稱呼呢？（例如：王老師）','老師'); if(!name||!name.trim())return;
-      $('pdfTeacherName').textContent='親愛的 '+name.trim()+'：'; const wrapper=$('pdfTemplateWrapper'); wrapper.style.opacity='1';
+      if(nameOverride===null){ showNameModal(); return; }
+      const cleanName=(nameOverride||'').trim().replace(/老師$/,''); const honorific=cleanName ? cleanName+'老師' : '老師';
+      $('pdfTeacherName').textContent='敬愛的 '+honorific+'：'; const wrapper=$('pdfTemplateWrapper'); wrapper.style.opacity='1';
       try { await html2pdf().set({margin:0,filename:'教師節感念卡_張永旭敬上.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#fffcf7'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from($('pdfTemplate')).save(); }
       finally { wrapper.style.opacity='0'; }
     }
 
-    $('startBtn').addEventListener('click',startSequence); $('reopenBtn').addEventListener('click',()=>{sound('door');openDoors();}); $('downloadBtn').addEventListener('click',downloadPDF); $('downloadTop').addEventListener('click',downloadPDF); $('audioToggle').addEventListener('click',toggleAudio); $('btnZh').addEventListener('click',()=>{if(synth)synth.cancel();switchLanguage('zh');}); $('btnEn').addEventListener('click',()=>{if(synth)synth.cancel();switchLanguage('en');});
+    $('startBtn').addEventListener('click',startSequence); $('reopenBtn').addEventListener('click',()=>{sound('door');openDoors();}); $('downloadBtn').addEventListener('click',showNameModal); $('downloadTop').addEventListener('click',showNameModal); $('endDownloadBtn').addEventListener('click',showNameModal); $('restartBtn').addEventListener('click',startSequence); $('finishBtn').addEventListener('click',()=>{if(synth)synth.cancel();clearSequence();localStorage.clear();sessionStorage.clear();document.body.classList.add('is-blank');}); $('cancelNameBtn').addEventListener('click',hideNameModal); $('anonymousCheck').addEventListener('change',e=>{ $('teacherNameInput').disabled=e.target.checked; if(e.target.checked)$('teacherNameInput').value=''; }); $('nameForm').addEventListener('submit',e=>{e.preventDefault(); const anonymous=$('anonymousCheck').checked; const name=anonymous?'':$('teacherNameInput').value; if(!anonymous&&!name.trim()){ $('teacherNameInput').focus(); return; } hideNameModal(); downloadPDF(name); }); $('audioToggle').addEventListener('click',toggleAudio); $('btnZh').addEventListener('click',()=>{if(synth)synth.cancel();switchLanguage('zh');}); $('btnEn').addEventListener('click',()=>{if(synth)synth.cancel();switchLanguage('en');});
 
     const canvas=$('effectsCanvas'), ctx=canvas.getContext('2d');
     function resizeCanvas(){const dpr=Math.min(devicePixelRatio||1,2);canvas.width=innerWidth*dpr;canvas.height=innerHeight*dpr;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(dpr,0,0,dpr,0,0);}
