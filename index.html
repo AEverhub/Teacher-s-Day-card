@@ -2,25 +2,32 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>【機密專案】教師節解鎖卡片</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>教師節解鎖卡片 | Teachers' Day Card</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Consolas', 'Courier New', 'PingFang TC', 'Microsoft JhengHei', monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Consolas', 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', monospace;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: #050508;
             color: #fff;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
             position: relative;
+            padding: 15px;
+        }
+
+        html {
+            height: -webkit-fill-available;
         }
 
         /* 畫布：代碼瀑布與電流效果 */
@@ -34,53 +41,57 @@
             pointer-events: none;
         }
 
-        /* --- 階段一：入場按鈕區 --- */
+        /* --- 第一階段：入場按鈕區 --- */
         .intro-container {
             position: relative;
             z-index: 10;
             text-align: center;
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            width: 100%;
+            max-width: 320px;
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
         .intro-container.hidden {
             opacity: 0;
-            transform: scale(0.8);
+            transform: scale(0.85);
             pointer-events: none;
         }
 
         .start-btn {
-            position: relative;
-            padding: 20px 50px;
-            font-size: 1.5rem;
+            width: 100%;
+            padding: 18px 25px;
+            font-size: 1.25rem;
             font-weight: bold;
             color: #00f3ff;
-            background: rgba(0, 243, 255, 0.05);
+            background: rgba(0, 243, 255, 0.08);
             border: 2px solid #00f3ff;
-            border-radius: 50px;
+            border-radius: 40px;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(0, 243, 255, 0.2);
             text-shadow: 0 0 10px #00f3ff;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             outline: none;
-            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .start-btn:hover {
+        .start-btn:active {
             background: #00f3ff;
             color: #000;
-            box-shadow: 0 0 40px #00f3ff, inset 0 0 20px #ffffff;
-            text-shadow: none;
-            transform: scale(1.05);
+            box-shadow: 0 0 35px #00f3ff;
+            transform: scale(0.96);
         }
 
         .btn-subtext {
             margin-top: 15px;
-            color: #8a8a8a;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
+            color: #a0a0a0;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
         }
 
-        /* --- 全螢幕閃光脈衝 --- */
+        /* 全螢幕閃光脈衝 */
         .flash-overlay {
             position: fixed;
             top: 0;
@@ -95,18 +106,18 @@
         }
 
         .flash-active {
-            opacity: 0.9;
+            opacity: 0.95;
         }
 
-        /* --- 階段三：主卡片區 --- */
+        /* --- 第二階段：主卡片區 --- */
         .card-container {
             position: relative;
             z-index: 20;
-            width: 90%;
-            max-width: 600px;
+            width: 100%;
+            max-width: 420px;
             opacity: 0;
-            transform: translateY(50px) scale(0.9);
-            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(40px) scale(0.92);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             pointer-events: none;
         }
 
@@ -117,23 +128,24 @@
         }
 
         .glass-card {
-            background: rgba(18, 18, 28, 0.85);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 0 50px rgba(0, 243, 255, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.05);
+            background: rgba(15, 15, 25, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 243, 255, 0.35);
+            border-radius: 24px;
+            padding: 28px 20px 22px 20px;
+            box-shadow: 0 0 35px rgba(0, 243, 255, 0.25), inset 0 0 15px rgba(255, 255, 255, 0.05);
             position: relative;
             overflow: hidden;
         }
 
-        /* 電路板外框光線 */
+        /* 電路掃描光線 */
         .glass-card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; height: 3px;
             background: linear-gradient(90deg, transparent, #00f3ff, #ff007f, transparent);
-            animation: circuitScan 3s linear infinite;
+            animation: circuitScan 2.5s linear infinite;
         }
 
         @keyframes circuitScan {
@@ -141,84 +153,115 @@
             100% { transform: translateX(100%); }
         }
 
+        /* 語系切換按鈕 */
+        .lang-switch {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 20px;
+            padding: 2px;
+            z-index: 30;
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            color: #888;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: #00f3ff;
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
+        }
+
         .card-title {
-            font-size: 2rem;
+            font-size: 1.4rem;
             color: #00f3ff;
             text-align: center;
-            margin-bottom: 25px;
-            text-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
-            letter-spacing: 2px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
+            letter-spacing: 1px;
         }
 
         .card-body {
-            font-size: 1.1rem;
-            line-height: 1.8;
+            font-size: 0.98rem;
+            line-height: 1.75;
             color: #e0e0e0;
-            margin-bottom: 30px;
-            min-height: 120px;
-            white-space: pre-line;
+            margin-bottom: 25px;
+            min-height: 150px;
+            word-break: break-word;
         }
 
         .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            padding-top: 15px;
         }
 
         .signature {
             color: #ff007f;
             font-weight: bold;
-            font-size: 1.1rem;
-            text-shadow: 0 0 8px rgba(ff, 0, 127, 0.5);
+            font-size: 1rem;
+            text-shadow: 0 0 8px rgba(255, 0, 127, 0.5);
         }
 
         .date-tag {
             color: #8a8a8a;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
-        /* 動態心形電流圖標 */
+        /* 脈衝發光心形 */
         .core-heart {
             display: block;
-            margin: 0 auto 20px auto;
-            width: 60px;
-            height: 60px;
+            margin: 5px auto 15px auto;
+            width: 45px;
+            height: 45px;
             background: #ff007f;
             transform: rotate(-45deg);
             position: relative;
             animation: heartBeat 1.2s infinite ease-in-out;
-            box-shadow: 0 0 20px #ff007f;
+            box-shadow: 0 0 15px #ff007f;
         }
 
         .core-heart::before, .core-heart::after {
             content: "";
-            width: 60px;
-            height: 60px;
+            width: 45px;
+            height: 45px;
             background: #ff007f;
             border-radius: 50%;
             position: absolute;
         }
-        .core-heart::before { top: -30px; left: 0; }
-        .core-heart::after { left: 30px; top: 0; }
+        .core-heart::before { top: -22.5px; left: 0; }
+        .core-heart::after { left: 22.5px; top: 0; }
 
         @keyframes heartBeat {
-            0%, 100% { transform: rotate(-45deg) scale(0.9); box-shadow: 0 0 20px #ff007f; }
-            50% { transform: rotate(-45deg) scale(1.1); box-shadow: 0 0 40px #ff007f, 0 0 60px #00f3ff; }
+            0%, 100% { transform: rotate(-45deg) scale(0.9); box-shadow: 0 0 15px #ff007f; }
+            50% { transform: rotate(-45deg) scale(1.1); box-shadow: 0 0 30px #ff007f, 0 0 45px #00f3ff; }
         }
 
-        /* 畫面震撼抖動動畫 */
+        /* 畫面震撼抖動 */
         .shake {
-            animation: shakeAnim 0.5s ease-in-out;
+            animation: shakeAnim 0.4s ease-in-out;
         }
 
         @keyframes shakeAnim {
             0% { transform: translate(0, 0); }
-            20% { transform: translate(-10px, 10px); }
-            40% { transform: translate(10px, -10px); }
-            60% { transform: translate(-5px, 5px); }
-            80% { transform: translate(5px, -5px); }
+            25% { transform: translate(-8px, 8px); }
+            50% { transform: translate(8px, -8px); }
+            75% { transform: translate(-4px, 4px); }
             100% { transform: translate(0, 0); }
         }
     </style>
@@ -228,25 +271,31 @@
     <canvas id="effectsCanvas"></canvas>
     <div class="flash-overlay" id="flash"></div>
 
-    <!-- 第一階段：入口按鈕 -->
+    <!-- 第一階段：入場按鈕 -->
     <div class="intro-container" id="intro">
         <button class="start-btn" onclick="startExperience()">
-            ⚡ 啟動教師節核心程式
+            <span>⚡ 啟動教師節卡片</span>
         </button>
-        <div class="btn-subtext">[ 提示：請點擊按鈕以解鎖專屬訊息 ]</div>
+        <div class="btn-subtext">[ 點擊解鎖電流與專屬訊息 ]</div>
     </div>
 
-    <!-- 第三階段：卡片主體 -->
+    <!-- 第二階段：卡片主體 -->
     <div class="card-container" id="cardContainer">
         <div class="glass-card">
+            <!-- 語系切換按鈕 -->
+            <div class="lang-switch">
+                <button class="lang-btn active" id="btn-zh" onclick="switchLanguage('zh')">中</button>
+                <button class="lang-btn" id="btn-en" onclick="switchLanguage('en')">EN</button>
+            </div>
+
             <div class="core-heart"></div>
-            <h1 class="card-title">&lt; Happy Teachers' Day /&gt;</h1>
+            <h1 class="card-title" id="cardTitle">&lt; Happy Teachers' Day /&gt;</h1>
             
             <div class="card-body" id="typewriter"></div>
 
             <div class="card-footer">
-                <div class="date-tag">System.Date: 09-28</div>
-                <div class="signature">-- 學生 敬上 💻</div>
+                <div class="date-tag">09.28 / Teachers' Day</div>
+                <div class="signature" id="signatureText">學生 張永旭 敬上 💻</div>
             </div>
         </div>
     </div>
@@ -262,23 +311,20 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // 代碼瀑布流參數
-        const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ<>{}[]=/+*#@!&';
-        const fontSize = 14;
+        // Matrix 雨滴效果
+        const chars = '01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ<>{}[]=/+*#@!';
+        const fontSize = 12;
         let columns = Math.floor(canvas.width / fontSize);
         let drops = Array(columns).fill(0);
         
-        // 電流閃電數組
+        // 閃電電流效果
         let bolts = [];
         let isIntensityMode = false;
 
         function drawEffects() {
-            // 背景漸暗（製造尾影）
-            ctx.fillStyle = 'rgba(5, 5, 8, 0.15)';
+            ctx.fillStyle = 'rgba(5, 5, 8, 0.18)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 1. 繪製矩陣代碼流
-            ctx.fillStyle = isIntensityMode ? '#00f3ff' : '#005577';
             ctx.font = fontSize + 'px monospace';
 
             for (let i = 0; i < drops.length; i++) {
@@ -286,8 +332,7 @@
                 const x = i * fontSize;
                 const y = drops[i] * fontSize;
 
-                // 隨機亮色字頭
-                if (Math.random() > 0.85) {
+                if (Math.random() > 0.88) {
                     ctx.fillStyle = '#ffffff';
                 } else {
                     ctx.fillStyle = isIntensityMode ? '#00f3ff' : '#003344';
@@ -301,7 +346,6 @@
                 drops[i]++;
             }
 
-            // 2. 繪製高壓電流閃電
             if (isIntensityMode) {
                 for (let i = bolts.length - 1; i >= 0; i--) {
                     bolts[i].draw();
@@ -309,7 +353,7 @@
                     if (bolts[i].life <= 0) bolts.splice(i, 1);
                 }
 
-                if (Math.random() < 0.6) {
+                if (Math.random() < 0.7) {
                     bolts.push(new Lightning());
                 }
             }
@@ -317,13 +361,12 @@
             requestAnimationFrame(drawEffects);
         }
 
-        // 電流 Lightning 物件
         class Lightning {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = 0;
                 this.path = [{x: this.x, y: this.y}];
-                this.life = 10;
+                this.life = 8;
                 this.color = Math.random() > 0.5 ? '#00f3ff' : '#ff007f';
                 this.generatePath();
             }
@@ -332,8 +375,8 @@
                 let curX = this.x;
                 let curY = this.y;
                 while (curY < canvas.height) {
-                    curX += (Math.random() - 0.5) * 60;
-                    curY += Math.random() * 40 + 10;
+                    curX += (Math.random() - 0.5) * 50;
+                    curY += Math.random() * 30 + 10;
                     this.path.push({x: curX, y: curY});
                 }
             }
@@ -341,8 +384,8 @@
             draw() {
                 ctx.beginPath();
                 ctx.strokeStyle = this.color;
-                ctx.lineWidth = Math.random() * 3 + 1;
-                ctx.shadowBlur = 15;
+                ctx.lineWidth = Math.random() * 2.5 + 1;
+                ctx.shadowBlur = 12;
                 ctx.shadowColor = this.color;
 
                 for (let i = 0; i < this.path.length - 1; i++) {
@@ -360,53 +403,78 @@
 
         drawEffects();
 
-        // --- 打字機效果文字 ---
-        const cardMessage = "親愛的老師：\n\n感謝您就像強大的核心邏輯與演算法，引導我們在知識的網絡中突破盲點、除錯升級。\n\n祝您教師節快樂，程式永遠無 bug，每日運算滿滿幸福！✨";
+        // --- 中英文語系資料 ---
+        const messages = {
+            zh: {
+                title: "&lt; 教師節快樂 /&gt;",
+                text: "親愛的老師：\n\n感謝您就像強大的核心邏輯與演算法，帶領我們在知識與技術的領域中除錯、升級與成長。\n\n祝您教師節快樂！程式運算永遠零 Bug，每天都有滿滿的成就感與好心情！✨",
+                signature: "學生 張永旭 敬上 💻"
+            },
+            en: {
+                title: "&lt; Happy Teachers' Day /&gt;",
+                text: "Dear Teacher,\n\nThank you for guiding us like a powerful core algorithm—helping us debug, upgrade, and grow through our learning journey.\n\nWishing you a Happy Teachers' Day! May your code run bug-free and your days be full of joy! ✨",
+                signature: "Sincerely, Yong-Xu Zhang 💻"
+            }
+        };
 
-        function typeWriter(text, elementId, speed = 50) {
+        let currentLang = 'zh';
+        let typewriterTimeout;
+
+        function typeWriter(text, elementId, speed = 40) {
+            clearTimeout(typewriterTimeout);
             let i = 0;
             const elem = document.getElementById(elementId);
             elem.innerHTML = '';
+
             function type() {
                 if (i < text.length) {
-                    elem.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+                    const char = text.charAt(i);
+                    elem.innerHTML += char === '\n' ? '<br>' : char;
                     i++;
-                    setTimeout(type, speed);
+                    typewriterTimeout = setTimeout(type, speed);
                 }
             }
             type();
         }
 
-        // --- 點擊啟動動畫主邏輯 ---
+        // 切換中英文
+        function switchLanguage(lang) {
+            if (currentLang === lang) return;
+            currentLang = lang;
+
+            document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+            document.getElementById('cardTitle').innerHTML = messages[lang].title;
+            document.getElementById('signatureText').innerText = messages[lang].signature;
+
+            typeWriter(messages[lang].text, 'typewriter', 35);
+        }
+
+        // 啟動體驗
         function startExperience() {
             const intro = document.getElementById('intro');
             const flash = document.getElementById('flash');
             const cardContainer = document.getElementById('cardContainer');
 
-            // 1. 隱藏入口按鈕
             intro.classList.add('hidden');
 
-            // 2. 觸發超強電流與代碼爆發模式
             isIntensityMode = true;
             document.body.classList.add('shake');
 
-            // 3. 全螢幕閃光脈衝
             setTimeout(() => {
                 flash.classList.add('flash-active');
-            }, 300);
+            }, 250);
 
             setTimeout(() => {
                 flash.classList.remove('flash-active');
-            }, 500);
+            }, 450);
 
-            // 4. 動畫匯聚，顯現主卡片
             setTimeout(() => {
                 document.body.classList.remove('shake');
                 cardContainer.classList.add('visible');
-                
-                // 啟動打字機效果
-                typeWriter(cardMessage, 'typewriter', 60);
-            }, 800);
+                typeWriter(messages[currentLang].text, 'typewriter', 40);
+            }, 750);
         }
     </script>
 </body>
