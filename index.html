@@ -14,7 +14,7 @@
         }
 
         body {
-            background-color: #050508;
+            background-color: #030305;
             color: #fff;
             width: 100vw;
             height: 100vh;
@@ -30,7 +30,6 @@
             height: -webkit-fill-available;
         }
 
-        /* 畫布：代碼瀑布、數學圖形與電流效果 */
         #effectsCanvas {
             position: fixed;
             top: 0;
@@ -47,7 +46,7 @@
             z-index: 10;
             text-align: center;
             width: 85%;
-            max-width: 320px;
+            max-width: 340px;
             transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
@@ -88,7 +87,7 @@
             margin-top: 15px;
             color: #a0a0a0;
             font-size: 0.8rem;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
 
         /* 全螢幕閃光脈衝 */
@@ -109,7 +108,7 @@
             opacity: 0.95;
         }
 
-        /* --- 第二階段：滿版卡片區 --- */
+        /* --- 第二階段：滿版科技儀表板卡片 --- */
         .card-container {
             position: fixed;
             top: 0;
@@ -118,7 +117,7 @@
             height: 100vh;
             height: -webkit-fill-available;
             z-index: 20;
-            padding: 20px 16px;
+            padding: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -137,20 +136,34 @@
         .glass-card {
             width: 100%;
             height: 100%;
-            max-width: 600px; /* 電腦端優化極限寬度 */
-            background: rgba(12, 12, 22, 0.82);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(0, 243, 255, 0.35);
+            max-width: 650px;
+            background: rgba(10, 10, 20, 0.86);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 243, 255, 0.4);
             border-radius: 20px;
-            padding: 20px 20px 18px 20px;
-            box-shadow: 0 0 35px rgba(0, 243, 255, 0.25), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.25), inset 0 0 20px rgba(0, 243, 255, 0.05);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
+
+        /* 四角科技裝飾邊框 */
+        .corner-tag {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-color: #00f3ff;
+            border-style: solid;
+            pointer-events: none;
+        }
+        .corner-tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+        .corner-tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+        .corner-bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; }
+        .corner-br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
 
         /* 電路掃描光線 */
         .glass-card::before {
@@ -166,28 +179,45 @@
             100% { transform: translateX(100%); }
         }
 
-        /* 頂部控制列（避免按鈕與心型重疊） */
+        /* 頂部 HUD 控制列 */
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            margin-bottom: 10px;
-            position: relative;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.15);
             z-index: 30;
         }
 
-        .header-title-tag {
-            font-size: 0.75rem;
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
             color: #00f3ff;
             letter-spacing: 1px;
-            opacity: 0.8;
+        }
+
+        .blink-dot {
+            width: 7px;
+            height: 7px;
+            background-color: #00f3ff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00f3ff;
+            animation: blink 1.2s infinite ease-in-out;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
         /* 語系切換按鈕 */
         .lang-switch {
             display: flex;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(0, 243, 255, 0.3);
             border-radius: 20px;
             padding: 2px;
@@ -197,7 +227,7 @@
             background: none;
             border: none;
             color: #888;
-            padding: 4px 12px;
+            padding: 3px 12px;
             font-size: 0.75rem;
             font-weight: bold;
             border-radius: 15px;
@@ -218,25 +248,24 @@
             flex-direction: column;
             justify-content: flex-start;
             overflow-y: auto;
-            margin: 10px 0;
+            margin: 8px 0;
             padding-right: 4px;
         }
 
-        /* 自訂內建滾動條 */
         .card-content::-webkit-scrollbar {
-            width: 4px;
+            width: 3px;
         }
         .card-content::-webkit-scrollbar-thumb {
-            background: rgba(0, 243, 255, 0.3);
-            border-radius: 4px;
+            background: rgba(0, 243, 255, 0.4);
+            border-radius: 3px;
         }
 
         .card-title {
             font-size: 1.35rem;
             color: #00f3ff;
             text-align: center;
-            margin-top: 10px;
-            margin-bottom: 18px;
+            margin-top: 8px;
+            margin-bottom: 16px;
             text-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
             letter-spacing: 1px;
         }
@@ -253,8 +282,8 @@
             justify-content: space-between;
             align-items: flex-end;
             border-top: 1px solid rgba(255, 255, 255, 0.12);
-            padding-top: 12px;
-            margin-top: 5px;
+            padding-top: 10px;
+            margin-top: 4px;
         }
 
         .signature {
@@ -274,9 +303,9 @@
         /* 脈衝發光心形 */
         .core-heart {
             display: block;
-            margin: 5px auto 10px auto;
-            width: 38px;
-            height: 38px;
+            margin: 4px auto 10px auto;
+            width: 36px;
+            height: 36px;
             background: #ff007f;
             transform: rotate(-45deg);
             position: relative;
@@ -287,21 +316,20 @@
 
         .core-heart::before, .core-heart::after {
             content: "";
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             background: #ff007f;
             border-radius: 50%;
             position: absolute;
         }
-        .core-heart::before { top: -19px; left: 0; }
-        .core-heart::after { left: 19px; top: 0; }
+        .core-heart::before { top: -18px; left: 0; }
+        .core-heart::after { left: 18px; top: 0; }
 
         @keyframes heartBeat {
             0%, 100% { transform: rotate(-45deg) scale(0.9); box-shadow: 0 0 15px #ff007f; }
             50% { transform: rotate(-45deg) scale(1.1); box-shadow: 0 0 30px #ff007f, 0 0 45px #00f3ff; }
         }
 
-        /* 畫面震撼抖動 */
         .shake {
             animation: shakeAnim 0.4s ease-in-out;
         }
@@ -328,26 +356,34 @@
         <div class="btn-subtext">[ 點擊解鎖電流與專屬訊息 ]</div>
     </div>
 
-    <!-- 第二階段：滿版卡片主體 -->
+    <!-- 第二階段：滿版科技卡片 -->
     <div class="card-container" id="cardContainer">
         <div class="glass-card">
-            <!-- 頂部列：狀態與語系切換 -->
+            <div class="corner-tag corner-tl"></div>
+            <div class="corner-tag corner-tr"></div>
+            <div class="corner-tag corner-bl"></div>
+            <div class="corner-tag corner-br"></div>
+
+            <!-- 頂部列 -->
             <div class="card-header">
-                <div class="header-title-tag">SYS.CARD // VER 2.0</div>
+                <div class="status-indicator">
+                    <div class="blink-dot"></div>
+                    <span>SYS.ONLINE // DSP-CORE: ACTIVE</span>
+                </div>
                 <div class="lang-switch">
                     <button class="lang-btn active" id="btn-zh" onclick="switchLanguage('zh')">中</button>
                     <button class="lang-btn" id="btn-en" onclick="switchLanguage('en')">EN</button>
                 </div>
             </div>
 
-            <!-- 可滾動內容區 -->
+            <!-- 滾動內容區 -->
             <div class="card-content">
                 <div class="core-heart"></div>
-                <h1 class="card-title" id="cardTitle">&lt;老師祝您教師節快樂！ /&gt;</h1>
+                <h1 class="card-title" id="cardTitle">&lt; 老師祝您教師節快樂 /&gt;</h1>
                 <div class="card-body" id="typewriter"></div>
             </div>
 
-            <!-- 頁尾署名區 -->
+            <!-- 頁尾 -->
             <div class="card-footer">
                 <div class="date-tag">09.28 / Teachers' Day</div>
                 <div class="signature" id="signatureText">電子科二年乙班<br>學生 張永旭 敬上 💻</div>
@@ -366,81 +402,113 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Matrix 雨滴效果
         const chars = '01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ<>{}[]=/+*#@!';
         const fontSize = 12;
         let columns = Math.floor(canvas.width / fontSize);
         let drops = Array(columns).fill(0);
         
-        // 閃電電流與數學幾何變數
         let bolts = [];
         let isIntensityMode = false;
         let timeStep = 0;
 
-        // --- 數學幾何動畫繪製函數 ---
-        function drawMathGraphics() {
-            timeStep += 0.03;
+        // 3D 立方體頂點與邊
+        const cubeVertices = [
+            [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+            [-1, -1, 1],  [1, -1, 1],  [1, 1, 1],  [-1, 1, 1]
+        ];
+        const cubeEdges = [
+            [0,1],[1,2],[2,3],[3,0],
+            [4,5],[5,6],[6,7],[7,4],
+            [0,4],[1,5],[2,6],[3,7]
+        ];
 
+        // 高階專業數學與工程圖形渲染
+        function drawMathGraphics() {
+            timeStep += 0.025;
             ctx.save();
+
+            // 1. 背景科技十字網格對齊線
+            ctx.strokeStyle = 'rgba(0, 243, 255, 0.04)';
+            ctx.lineWidth = 1;
+            const gridSize = 40;
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            // 2. 傅立葉級數 (Fourier Series) 疊加方波
             ctx.lineWidth = 1.5;
-            ctx.strokeStyle = isIntensityMode ? 'rgba(0, 243, 255, 0.4)' : 'rgba(0, 243, 255, 0.15)';
-            ctx.shadowBlur = isIntensityMode ? 10 : 0;
+            ctx.strokeStyle = isIntensityMode ? 'rgba(0, 243, 255, 0.5)' : 'rgba(0, 243, 255, 0.18)';
+            ctx.shadowBlur = isIntensityMode ? 8 : 0;
             ctx.shadowColor = '#00f3ff';
 
-            // 頂部正弦波
             ctx.beginPath();
-            for (let x = 0; x < canvas.width; x += 5) {
-                let y = Math.sin(x * 0.01 + timeStep) * 20 + Math.cos(x * 0.02 - timeStep) * 10 + 60;
-                if (x === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+            for (let x = 0; x < canvas.width; x += 4) {
+                let y = 0;
+                for (let n = 1; n <= 9; n += 2) {
+                    y += (1 / n) * Math.sin(n * (x * 0.012 + timeStep));
+                }
+                let posY = y * 25 + 70;
+                if (x === 0) ctx.moveTo(x, posY);
+                else ctx.lineTo(x, posY);
             }
             ctx.stroke();
 
-            // 底部傅立葉疊加方波近似
-            ctx.strokeStyle = isIntensityMode ? 'rgba(255, 0, 127, 0.4)' : 'rgba(255, 0, 127, 0.15)';
+            // 3. 右上角 3D 旋轉 Wireframe 立方體
+            let cubeCenterX = canvas.width - 65;
+            let cubeCenterY = 85;
+            let scale = 22;
+            let rotX = timeStep * 0.8;
+            let rotY = timeStep * 0.5;
+
+            ctx.strokeStyle = isIntensityMode ? 'rgba(255, 0, 127, 0.6)' : 'rgba(255, 0, 127, 0.25)';
             ctx.shadowColor = '#ff007f';
+
+            let projected = cubeVertices.map(v => {
+                let y1 = v[1] * Math.cos(rotX) - v[2] * Math.sin(rotX);
+                let z1 = v[1] * Math.sin(rotX) + v[2] * Math.cos(rotX);
+                let x2 = v[0] * Math.cos(rotY) + z1 * Math.sin(rotY);
+                let z2 = -v[0] * Math.sin(rotY) + z1 * Math.cos(rotY);
+                return {
+                    x: cubeCenterX + x2 * scale,
+                    y: cubeCenterY + y1 * scale
+                };
+            });
+
+            cubeEdges.forEach(edge => {
+                ctx.beginPath();
+                ctx.moveTo(projected[edge[0]].x, projected[edge[0]].y);
+                ctx.lineTo(projected[edge[1]].x, projected[edge[1]].y);
+                ctx.stroke();
+            });
+
+            // 4. 左下角 Lissajous 李薩茹圖形
+            let lissajousX = 65;
+            let lissajousY = canvas.height - 85;
+            ctx.strokeStyle = isIntensityMode ? 'rgba(0, 243, 255, 0.4)' : 'rgba(0, 243, 255, 0.15)';
             ctx.beginPath();
-            for (let x = 0; x < canvas.width; x += 5) {
-                let y = (Math.sin(x * 0.015 + timeStep) +
-                         (1/3) * Math.sin(3 * (x * 0.015 + timeStep)) +
-                         (1/5) * Math.sin(5 * (x * 0.015 + timeStep))) * 25 + (canvas.height - 70);
-                if (x === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+            for (let t = 0; t < Math.PI * 2; t += 0.05) {
+                let lx = lissajousX + 30 * Math.sin(3 * t + timeStep);
+                let ly = lissajousY + 30 * Math.sin(2 * t);
+                if (t === 0) ctx.moveTo(lx, ly);
+                else ctx.lineTo(lx, ly);
             }
             ctx.stroke();
 
-            // 背景極座標玫瑰線（Polar Rose）
-            let centerX = canvas.width * 0.85;
-            let centerY = canvas.height * 0.25;
-            if (canvas.width < 500) {
-                centerX = canvas.width * 0.8;
-                centerY = 120;
-            }
-
-            ctx.strokeStyle = isIntensityMode ? 'rgba(0, 243, 255, 0.3)' : 'rgba(0, 243, 255, 0.12)';
-            ctx.beginPath();
-            let k = 4;
-            for (let a = 0; a < Math.PI * 2; a += 0.02) {
-                let r = 40 * Math.cos(k * a + timeStep * 0.5);
-                let px = centerX + r * Math.cos(a);
-                let py = centerY + r * Math.sin(a);
-                if (a === 0) ctx.moveTo(px, py);
-                else ctx.lineTo(px, py);
-            }
-            ctx.stroke();
-
-            // 即時動態數據 HUD 顯示
-            ctx.fillStyle = isIntensityMode ? '#00f3ff' : 'rgba(0, 243, 255, 0.4)';
+            // 5. 即時高階 HUD 專業數據
+            ctx.fillStyle = isIntensityMode ? '#00f3ff' : 'rgba(0, 243, 255, 0.45)';
             ctx.font = '10px monospace';
-            ctx.fillText(`f(t) = A·sin(ωt + φ)`, 15, 30);
-            ctx.fillText(`F(ω) = ∫ f(t)e^(-iωt) dt`, 15, 45);
-            ctx.fillText(`PHASE: ${(timeStep % (Math.PI * 2)).toFixed(2)} rad`, 15, 60);
+            ctx.fillText(`f(t) = ∑ (1/n)·sin(nωt)  [n=1,3..9]`, 15, 25);
+            ctx.fillText(`DSP FREQ: 48.0 kHz | SAMPLING: OK`, 15, 40);
+            ctx.fillText(`V_RMS: 3.30V | PHASE: ${(timeStep % (Math.PI * 2)).toFixed(2)} rad`, 15, 55);
 
             ctx.restore();
         }
 
         function drawEffects() {
-            ctx.fillStyle = 'rgba(5, 5, 8, 0.2)';
+            ctx.fillStyle = 'rgba(3, 3, 5, 0.22)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             drawMathGraphics();
@@ -522,15 +590,14 @@
 
         drawEffects();
 
-        // --- 中英文語系資料 ---
         const messages = {
             zh: {
-                title: "&lt; 桃李芬芳．尊師重道 /&gt;",
+                title: "&lt; 老師祝您教師節快樂 /&gt;",
                 text: "親愛的老師：\n\n「程門立雪」感念師恩，「春風化雨」潤物無聲。每當學習遇到瓶頸，總有您「諄諄教誨」，令人「醍醐灌頂」。\n\n感謝您如穩定的電源與核心邏輯，帶領我們電子科二年乙班在電路、程式與人生的雜訊中除錯，走向清晰與成長。\n\n祝您教師節快樂！桃李滿天下，事事順心、喜樂安康！✨",
                 signature: "電子科二年乙班<br>學生 張永旭 敬上 💻"
             },
             en: {
-                title: "&lt; Happy Teachers' Day /&gt;",
+                title: "&lt; Teacher, Happy Teachers' Day! /&gt;",
                 text: "Dear Teacher,\n\nYour wisdom lights our path like a steady voltage source, guiding Class 2-B through complex logic and learning challenges with patience and clarity.\n\nThank you for your tireless dedication to Electronics class and for inspiring us to keep upgrading our skills and character.\n\nWishing you a joyful Teachers' Day, great health, and happiness every day! ✨",
                 signature: "Class 2-B, Department of Electronics<br>Student Yong-Xu Zhang 💻"
             }
@@ -556,7 +623,6 @@
             type();
         }
 
-        // 切換中英文
         function switchLanguage(lang) {
             if (currentLang === lang) return;
             currentLang = lang;
@@ -570,24 +636,17 @@
             typeWriter(messages[lang].text, 'typewriter', 30);
         }
 
-        // 啟動體驗
         function startExperience() {
             const intro = document.getElementById('intro');
             const flash = document.getElementById('flash');
             const cardContainer = document.getElementById('cardContainer');
 
             intro.classList.add('hidden');
-
             isIntensityMode = true;
             document.body.classList.add('shake');
 
-            setTimeout(() => {
-                flash.classList.add('flash-active');
-            }, 250);
-
-            setTimeout(() => {
-                flash.classList.remove('flash-active');
-            }, 450);
+            setTimeout(() => { flash.classList.add('flash-active'); }, 250);
+            setTimeout(() => { flash.classList.remove('flash-active'); }, 450);
 
             setTimeout(() => {
                 document.body.classList.remove('shake');
