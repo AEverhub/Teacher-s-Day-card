@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>教師節解鎖卡片 | Teachers' Day Card</title>
@@ -219,7 +218,6 @@
             gap: 8px;
         }
 
-        /* 音樂與語系切換按鈕 */
         .audio-btn, .lang-btn {
             background: none;
             border: none;
@@ -381,13 +379,13 @@
             <div class="card-header">
                 <div class="status-indicator">
                     <div class="blink-dot"></div>
-                    <span>SYS.ONLINE // AUDIO: ACTIVE</span>
+                    <span>SYS.ONLINE // SPEECH: ACTIVE</span>
                 </div>
                 <div class="controls-group">
-                    <button class="audio-btn" id="audioToggleBtn" onclick="toggleAudio()">🔊 音樂</button>
+                    <button class="audio-btn" id="audioToggleBtn" onclick="toggleAudio()">🔊 語音</button>
                     <div class="lang-switch">
-                        <button class="lang-btn active" id="btn-zh" onclick="switchLanguage('zh')">中</button>
-                        <button class="lang-btn" id="btn-en" onclick="switchLanguage('en')">EN</button>
+                        <button class="lang-btn active" id="btn-zh" onclick="manualSwitchLanguage('zh')">中</button>
+                        <button class="lang-btn" id="btn-en" onclick="manualSwitchLanguage('en')">EN</button>
                     </div>
                 </div>
             </div>
@@ -408,10 +406,9 @@
     </div>
 
     <script>
-        // --- Web Audio API 音樂與音效合成引擎 ---
+        // --- Web Audio API 解鎖爆破音效 ---
         let audioCtx = null;
         let isMuted = false;
-        let bgmInterval = null;
 
         function initAudio() {
             if (!audioCtx) {
@@ -420,13 +417,11 @@
             }
         }
 
-        // 播放解鎖音效 (SFX)
         function playUnlockSound() {
             if (!audioCtx || isMuted) return;
 
             const now = audioCtx.currentTime;
             
-            // 高頻掃頻聲
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sawtooth';
@@ -441,7 +436,6 @@
             osc.start(now);
             osc.stop(now + 0.3);
 
-            // 低音轟鳴爆裂感
             const bassOsc = audioCtx.createOscillator();
             const bassGain = audioCtx.createGain();
             bassOsc.type = 'triangle';
@@ -457,45 +451,56 @@
             bassOsc.stop(now + 0.4);
         }
 
-        // 即時合成電子科技感 BGM (Synthwave Arpeggio Loop)
-        function startBGM() {
-            if (!audioCtx) return;
+        // --- Web Speech API 語音朗讀引擎 ---
+        const synth = window.speechSynthesis;
 
-            const notes = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63]; // C3, D3, E3, G3, A3, C4
-            let step = 0;
+        function speakSequence() {
+            if (!('speechSynthesis' in window)) return;
+            synth.cancel(); // 清空舊的播放佇列
 
-            bgmInterval = setInterval(() => {
-                if (isMuted || !audioCtx) return;
+            if (isMuted) return;
 
-                const now = audioCtx.currentTime;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
+            // 1. 中文朗讀內容
+            const zhText = "老師祝您教師節快樂！親愛的老師：程門立雪感念師恩，春風化雨潤物無聲。每當學習遇到瓶頸，總有您諄諄教誨，令人醍醐灌頂。感謝您如穩定的電源與核心邏輯，帶領我們電子科二年乙班在電路、程式與人生的雜訊中除錯，走向清晰與成長。祝您教師節快樂！桃李滿天下，事事順心、喜樂安康！學生張永旭敬上。";
+            const zhUtterance = new SpeechSynthesisUtterance(zhText);
+            zhUtterance.lang = 'zh-TW';
+            zhUtterance.rate = 0.95;
 
-                // 偶爾切換諧波音色
-                osc.type = step % 4 === 0 ? 'square' : 'sine';
-                
-                // 動態選擇音符
-                const freq = notes[step % notes.length];
-                osc.frequency.setValueAtTime(freq, now);
+            // 2. 英文朗讀內容
+            const enText = "Dear Teacher, Happy Teachers' Day! Your wisdom lights our path like a steady voltage source, guiding Class 2-B through complex logic and learning challenges with patience and clarity. Thank you for your tireless dedication to Electronics class and for inspiring us to keep upgrading our skills and character. Wishing you a joyful Teachers' Day, great health, and happiness every day! Student Yong-Xu Zhang.";
+            const enUtterance = new SpeechSynthesisUtterance(enText);
+            enUtterance.lang = 'en-US';
+            enUtterance.rate = 0.95;
 
-                gain.gain.setValueAtTime(0.05, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            // 當中文朗讀完成時，自動切換介面為英文並開啟英文朗讀
+            zhUtterance.onend = function () {
+                if (isMuted) return;
+                switchLanguage('en');
+                synth.speak(enUtterance);
+            };
 
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                osc.start(now);
-                osc.stop(now + 0.25);
-
-                step++;
-            }, 200);
+            // 播放中文
+            synth.speak(zhUtterance);
         }
 
         function toggleAudio() {
             isMuted = !isMuted;
             const btn = document.getElementById('audioToggleBtn');
-            btn.innerHTML = isMuted ? '🔇 靜音' : '🔊 音樂';
+            btn.innerHTML = isMuted ? '🔇 靜音' : '🔊 語音';
             btn.style.color = isMuted ? '#888' : '#00f3ff';
+
+            if (isMuted) {
+                synth.cancel();
+            } else {
+                if (currentLang === 'zh') {
+                    speakSequence();
+                } else {
+                    const enText = "Dear Teacher, Happy Teachers' Day! Your wisdom lights our path like a steady voltage source, guiding Class 2-B through complex logic and learning challenges with patience and clarity. Thank you for your tireless dedication to Electronics class and for inspiring us to keep upgrading our skills and character. Wishing you a joyful Teachers' Day, great health, and happiness every day!";
+                    const enUtterance = new SpeechSynthesisUtterance(enText);
+                    enUtterance.lang = 'en-US';
+                    synth.speak(enUtterance);
+                }
+            }
         }
 
         // --- Canvas 電流與幾何圖形渲染引擎 ---
@@ -736,11 +741,14 @@
             typeWriter(messages[lang].text, 'typewriter', 30);
         }
 
+        function manualSwitchLanguage(lang) {
+            synth.cancel(); // 手動點擊語系切換按鈕時停止朗讀
+            switchLanguage(lang);
+        }
+
         function startExperience() {
-            // 啟動 音訊 Context（符合瀏覽器安全政策要求）
             initAudio();
             playUnlockSound();
-            startBGM();
 
             const intro = document.getElementById('intro');
             const flash = document.getElementById('flash');
@@ -757,6 +765,9 @@
                 document.body.classList.remove('shake');
                 cardContainer.classList.add('visible');
                 typeWriter(messages[currentLang].text, 'typewriter', 35);
+                
+                // 啟動自動語音朗讀序列（中文字幕讀完後自動切英文）
+                speakSequence();
             }, 750);
         }
     </script>
