@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>教師節卡片</title>
+    <title>數位版教師節卡片</title>
     <style>
         * {
             box-sizing: border-box;
@@ -24,37 +24,55 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            perspective: 1000px;
+            perspective: 1200px;
         }
 
-        html {
-            height: -webkit-fill-available;
-        }
+        html { height: -webkit-fill-available; }
 
-        /* 背景公式 Canvas */
         #effectsCanvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-            pointer-events: none;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1; pointer-events: none;
         }
 
-        /* --- 第一階段：神秘感入場區 --- */
-        .intro-container {
+        /* --- 第一階段：神秘金屬大門與開頭按鈕 --- */
+        .door-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 100;
+            display: flex;
+            pointer-events: auto;
+        }
+
+        .door {
+            width: 50vw; height: 100vh;
+            background: linear-gradient(135deg, #151a1e 0%, #0d1114 100%);
+            border: 2px solid #2a353d;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
             position: relative;
-            z-index: 10;
+        }
+
+        .door-left { border-right: 3px solid #00ffaa; }
+        .door-right { border-left: 3px solid #00ffaa; }
+
+        .door-overlay.open .door-left { transform: translateX(-100%); }
+        .door-overlay.open .door-right { transform: translateX(100%); }
+
+        .intro-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 101;
             text-align: center;
-            width: 85%;
-            max-width: 320px;
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            width: 85%; max-width: 320px;
+            transition: opacity 0.5s ease;
         }
 
         .intro-container.hidden {
             opacity: 0;
-            transform: scale(0.9);
             pointer-events: none;
         }
 
@@ -68,18 +86,10 @@
             border: 2px solid #00ffaa;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 0 25px rgba(0, 255, 170, 0.35), inset 0 0 15px rgba(0, 255, 170, 0.15);
+            box-shadow: 0 0 25px rgba(0, 255, 170, 0.35);
             text-shadow: 0 0 10px #00ffaa;
-            transition: all 0.2s ease;
             outline: none;
             letter-spacing: 2px;
-        }
-
-        .start-btn:active {
-            background: #00ffaa;
-            color: #051a0e;
-            box-shadow: 0 0 35px #00ffaa;
-            transform: scale(0.96);
         }
 
         .audio-warning {
@@ -97,418 +107,246 @@
             50% { opacity: 0.4; }
         }
 
-        /* --- 第二階段：3D PCB 電路板與 LCD 模組 --- */
-        .card-container {
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* --- 第二階段：精密電路板與運鏡容器 --- */
+        .viewport-stage {
+            position: relative;
             width: 100vw;
             height: 100vh;
-            height: -webkit-fill-available;
-            z-index: 20;
-            padding: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
-            opacity: 0;
-            transform: rotateX(15deg) translateY(30px) scale(0.85);
-            transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-            pointer-events: none;
-            transform-style: preserve-3d;
+            z-index: 10;
         }
 
-        .card-container.visible {
-            opacity: 1;
-            transform: rotateX(10deg) translateY(0) scale(1);
-            pointer-events: auto;
-        }
-
-        /* LCD 放大置中效果 */
-        .card-container.zoom-lcd {
-            transform: rotateX(0deg) translateY(0) scale(1.12);
-        }
-
-        /* 3D 深綠色精密主電路板 (Main PCB) */
         .pcb-board {
-            width: 100%;
-            height: 100%;
+            width: 92vw;
             max-width: 680px;
-            background: #072213;
+            height: 88vh;
+            max-height: 820px;
+            background: #051a0e;
             background-image: 
-                radial-gradient(#103b22 15%, transparent 16%),
-                radial-gradient(#103b22 15%, transparent 16%);
-            background-size: 18px 18px;
-            background-position: 0 0, 9px 9px;
-            border: 4px solid #144e2b;
+                radial-gradient(#0e3b20 15%, transparent 16%),
+                radial-gradient(#0e3b20 15%, transparent 16%);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px;
+            border: 4px solid #104e28;
             border-radius: 18px;
-            padding: 20px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), inset 0 0 20px rgba(0, 255, 170, 0.15);
+            padding: 16px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            transform-style: preserve-3d;
+            transform-origin: center center;
+            transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 頂部更大塊的母板區塊 (Main Logic Board Zone) */
-        .top-circuit-zone {
+        /* 鏡頭縮放狀態 */
+        .pcb-board.step-zoom-out { transform: scale(0.72); }
+        .pcb-board.step-pan-down { transform: scale(0.85) translateY(-60px); }
+        .pcb-board.step-zoom-lcd { transform: scale(1.08) translateY(20px); }
+
+        /* 頂部密集超精密元件陣列 (數百個 SMD 與 IC 矩陣) */
+        .dense-components-grid {
             width: 100%;
-            height: 100px;
-            background: rgba(5, 26, 14, 0.8);
-            border: 2px dashed #1b5e35;
+            height: 380px;
+            background: rgba(3, 18, 10, 0.7);
+            border: 1px solid #14522b;
             border-radius: 10px;
-            position: relative;
-            padding: 8px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 22;
-        }
-
-        /* 元件：SMD 電阻與電容 (Resistors & Capacitors) */
-        .smd-component {
-            width: 32px;
-            height: 16px;
-            background: #333;
-            border-left: 6px solid #aaa;
-            border-right: 6px solid #aaa;
-            border-radius: 2px;
-            position: relative;
-            font-size: 0.55rem;
-            color: #d4af37;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.6);
-        }
-
-        .smd-capacitor {
-            width: 18px;
-            height: 24px;
-            background: #b87333;
-            border-top: 3px solid #ddd;
-            border-bottom: 3px solid #111;
-            border-radius: 3px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.6);
-        }
-
-        /* 元件：TTL / CMOS IC 晶片 (含邏輯閘符號) */
-        .ic-chip {
-            width: 110px;
-            height: 55px;
-            background: #151515;
-            border: 1px solid #444;
-            border-radius: 4px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.8);
-        }
-
-        .ic-chip::before {
-            content: '';
-            position: absolute;
-            left: -3px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 6px;
-            height: 12px;
-            background: #000;
-            border-radius: 0 6px 6px 0;
-        }
-
-        .ic-label {
-            position: absolute;
-            top: 2px;
-            font-size: 0.55rem;
-            color: #888;
-            letter-spacing: 0.5px;
-        }
-
-        /* 邏輯閘 SVG 符號 */
-        .gate-symbol {
-            width: 45px;
-            height: 25px;
-            stroke: #d4af37;
-            stroke-width: 1.8;
-            fill: none;
-            transition: stroke 0.3s ease, filter 0.3s ease;
-        }
-
-        .ic-chip.active .gate-symbol {
-            stroke: #00ffaa;
-            filter: drop-shadow(0 0 4px #00ffaa);
-        }
-
-        /* 精密銅線走線 (Copper Traces) */
-        .pcb-trace {
-            position: absolute;
-            background: rgba(212, 175, 55, 0.25);
-            pointer-events: none;
-            transition: all 0.4s ease;
-            z-index: 21;
-        }
-
-        .trace-power-to-res { top: 30px; left: 15px; width: 45px; height: 3px; }
-        .trace-res-to-ic { top: 30px; left: 100px; width: 80px; height: 3px; }
-        .trace-ic-to-lcd { top: 110px; left: 50%; width: 3px; height: 35px; transform: translateX(-50%); }
-
-        /* 電流通過與亮燈動畫 */
-        .pcb-trace.active {
-            background: #00ffaa;
-            box-shadow: 0 0 10px #00ffaa, 0 0 18px #00ffaa;
-        }
-
-        /* LCD 針腳接頭 (Pin Header 1~16) */
-        .lcd-pin-header {
-            display: flex;
-            justify-content: center;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
             gap: 6px;
-            margin: 6px 0;
-            z-index: 25;
-        }
-
-        .pin-dot {
-            width: 8px;
-            height: 8px;
-            background: #8d7322;
-            border-radius: 50%;
-            border: 1px solid #000;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .pin-dot.powered {
-            background: #00ffaa;
-            box-shadow: 0 0 8px #00ffaa;
-        }
-
-        /* 左下角微動開關 (Tactile Switch) */
-        .tactile-switch-wrap {
-            position: absolute;
-            bottom: 18px;
-            left: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 40;
-            cursor: pointer;
-        }
-
-        .tactile-btn {
-            width: 36px;
-            height: 36px;
-            background: #222;
-            border: 2px solid #555;
-            border-radius: 50%;
             position: relative;
-            box-shadow: 0 4px 0 #111, 0 0 10px rgba(0,0,0,0.5);
-            transition: all 0.1s ease;
+            z-index: 12;
+            overflow: hidden;
+        }
+
+        .smd-node {
+            background: #1e2621;
+            border-left: 2px solid #8a9ba8;
+            border-right: 2px solid #8a9ba8;
+            border-radius: 1px;
+            height: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .ic-micro {
+            grid-column: span 2;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 3px;
+            height: 22px;
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        .tactile-btn::after {
-            content: '';
-            width: 18px;
-            height: 18px;
-            background: #ff3344;
-            border-radius: 50%;
-            box-shadow: inset 0 0 4px rgba(0,0,0,0.6);
-        }
-
-        .tactile-switch-wrap:active .tactile-btn, .tactile-btn.pressed {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #111;
-        }
-
-        .switch-hint {
-            font-size: 0.72rem;
-            color: #00ffaa;
-            font-weight: bold;
-            letter-spacing: 1px;
-            animation: pulseHint 1s infinite alternate;
-        }
-
-        @keyframes pulseHint {
-            0% { opacity: 0.4; }
-            100% { opacity: 1; text-shadow: 0 0 8px #00ffaa; }
-        }
-
-        /* 頂部控制列 */
-        .pcb-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 6px;
-            z-index: 30;
-        }
-
-        .sys-status {
-            font-size: 0.68rem;
+            font-size: 0.45rem;
             color: #d4af37;
-            font-weight: bold;
-            letter-spacing: 1px;
         }
 
-        .controls-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* 貫穿全板的動態電流導線 */
+        .circuit-traces-svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 15;
         }
 
-        .audio-btn, .lang-btn {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00ffaa;
-            color: #00ffaa;
-            padding: 4px 10px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
+        .trace-line {
+            stroke: rgba(212, 175, 55, 0.25);
+            stroke-width: 3;
+            fill: none;
+            transition: stroke 0.4s ease, filter 0.4s ease;
         }
 
-        .lang-switch {
-            display: flex;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00ffaa;
-            border-radius: 6px;
-            padding: 2px;
+        .trace-line.active {
+            stroke: #00ffaa;
+            filter: drop-shadow(0 0 6px #00ffaa);
         }
 
-        .lang-btn {
-            border: none;
-            background: none;
-            color: #447755;
+        /* 導線上的動態光點 */
+        .pulse-particle {
+            fill: #00ffaa;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
+        .pulse-particle.active { opacity: 1; }
 
-        .lang-btn.active {
-            background: #00ffaa;
-            color: #051a0e;
-        }
-
-        /* LCD 模組螢幕面板 (LCD1602 Green Backlight) */
+        /* LCD 螢幕區塊 (初始隱藏在下方) */
         .lcd-screen-frame {
-            flex: 1;
-            background: #0d1a0e;
+            position: absolute;
+            bottom: -350px;
+            left: 5%;
+            width: 90%;
+            height: 280px;
+            background: #0a140b;
             border: 3px solid #000;
-            border-radius: 8px;
-            padding: 12px;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 255, 170, 0.25);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9);
             display: flex;
             flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            margin: 4px 0;
-            transition: all 0.5s ease;
-            transform-style: preserve-3d;
+            z-index: 30;
+            transition: bottom 1s cubic-bezier(0.175, 0.885, 0.32, 1.27), box-shadow 0.5s ease;
+        }
+
+        .lcd-screen-frame.rise-up {
+            bottom: 60px;
+        }
+
+        .lcd-screen-frame.power-on {
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 255, 170, 0.3);
         }
 
         .lcd-display {
-            width: 100%;
-            height: 100%;
-            background: #6b8e11;
-            color: #0a1c00;
+            width: 100%; height: 100%;
+            background: #1c2605; /* 關閉時為深色 */
+            color: #2b3b08;
             border-radius: 4px;
             padding: 12px;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
             overflow-y: auto;
             position: relative;
             font-family: 'Consolas', 'Courier New', monospace;
+            transition: background 0.6s ease, color 0.6s ease;
         }
 
-        .lcd-display::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.12) 50%);
-            background-size: 100% 4px;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .lcd-display::-webkit-scrollbar {
-            width: 4px;
-        }
-        .lcd-display::-webkit-scrollbar-thumb {
-            background: #41570a;
-            border-radius: 2px;
+        .lcd-display.powered {
+            background: #6b8e11; /* 通電亮燈 */
+            color: #0a1c00;
         }
 
         .lcd-header-text {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: bold;
             text-align: center;
-            border-bottom: 2px dashed #41570a;
+            border-bottom: 2px dashed rgba(10, 28, 0, 0.4);
             padding-bottom: 6px;
             margin-bottom: 8px;
-            letter-spacing: 1px;
         }
 
         .lcd-body-text {
-            font-size: 0.92rem;
-            line-height: 1.7;
+            font-size: 0.9rem;
+            line-height: 1.65;
             font-weight: bold;
             word-break: break-word;
             flex: 1;
         }
 
+        /* 微動開關與頁尾控制 */
+        .tactile-switch-wrap {
+            position: absolute;
+            bottom: 14px; left: 20px;
+            display: flex; align-items: center; gap: 8px;
+            z-index: 40; cursor: pointer;
+        }
+
+        .tactile-btn {
+            width: 32px; height: 32px;
+            background: #222; border: 2px solid #555;
+            border-radius: 50%; position: relative;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 3px 0 #111;
+        }
+        .tactile-btn::after {
+            content: ''; width: 16px; height: 16px;
+            background: #ff3344; border-radius: 50%;
+        }
+
+        .switch-hint {
+            font-size: 0.72rem; color: #00ffaa; font-weight: bold;
+            animation: pulseHint 1s infinite alternate;
+        }
+        @keyframes pulseHint { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .pcb-header {
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 30; margin-bottom: 6px;
+        }
+        .sys-status { font-size: 0.68rem; color: #d4af37; font-weight: bold; }
+
+        .audio-btn, .lang-btn {
+            background: rgba(0,0,0,0.5); border: 1px solid #00ffaa;
+            color: #00ffaa; padding: 3px 8px; font-size: 0.72rem;
+            font-weight: bold; border-radius: 6px; cursor: pointer;
+        }
+        .lang-switch { display: flex; background: rgba(0,0,0,0.5); border: 1px solid #00ffaa; border-radius: 6px; padding: 2px; }
+        .lang-btn { border: none; background: none; color: #447755; }
+        .lang-btn.active { background: #00ffaa; color: #051a0e; }
+
         .pcb-footer {
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-end;
-            padding-top: 4px;
-            z-index: 30;
-            min-height: 24px;
+            position: absolute; bottom: 14px; right: 20px; z-index: 30;
         }
-
         .signature {
-            color: #d4af37;
-            font-weight: bold;
-            font-size: 0.85rem;
-            text-align: right;
-            line-height: 1.3;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            color: #d4af37; font-weight: bold; font-size: 0.82rem; text-align: right;
+            opacity: 0; transform: translateY(8px); transition: opacity 0.8s, transform 0.8s;
         }
-
-        .signature.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .signature.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
     <canvas id="effectsCanvas"></canvas>
 
-    <!-- 第一階段：神秘感入場 -->
-    <div class="intro-container" id="intro">
-        <button class="start-btn" onclick="startEnergizeSequence()">點擊此處</button>
-        <div class="audio-warning">請開啟聲音</div>
+    <!-- 開頭金屬雙門與點擊按鈕 -->
+    <div class="door-overlay" id="doorOverlay">
+        <div class="door door-left"></div>
+        <div class="door door-right"></div>
+        <div class="intro-container" id="intro">
+            <button class="start-btn" onclick="startSequence()">點擊此處</button>
+            <div class="audio-warning">請開啟聲音</div>
+        </div>
     </div>
 
-    <!-- 第二階段：3D PCB 電路板與 LCD 顯示螢幕 -->
-    <div class="card-container" id="cardContainer">
-        <div class="pcb-board">
-            <!-- 導線 -->
-            <div class="pcb-trace trace-power-to-res" id="tr1"></div>
-            <div class="pcb-trace trace-res-to-ic" id="tr2"></div>
-            <div class="pcb-trace trace-ic-to-lcd" id="trLcd"></div>
-
-            <!-- PCB 頂部列 -->
+    <!-- 電路板與運鏡主區域 -->
+    <div class="viewport-stage">
+        <div class="pcb-board" id="pcbBoard">
+            
             <div class="pcb-header">
-                <div class="sys-status" id="sysStatus">SYS: POWERING...</div>
-                <div class="controls-group">
+                <div class="sys-status" id="sysStatus">SYS: OFFLINE</div>
+                <div style="display: flex; gap: 8px;">
                     <button class="audio-btn" id="audioToggleBtn" onclick="toggleAudio()">🔊 語音</button>
                     <div class="lang-switch">
                         <button class="lang-btn active" id="btn-zh" onclick="manualSwitchLanguage('zh')">中</button>
@@ -517,50 +355,34 @@
                 </div>
             </div>
 
-            <!-- 母電路板區域 (TTL/CMOS IC + 貼片元件) -->
-            <div class="top-circuit-zone">
-                <div class="smd-component">10kΩ</div>
-                <div class="smd-capacitor"></div>
-                
-                <!-- TTL 邏輯 IC 晶片 (內含 NAND/OR 閘極符號) -->
-                <div class="ic-chip" id="icChip">
-                    <span class="ic-label">74HC00 TTL</span>
-                    <svg class="gate-symbol" viewBox="0 0 50 30">
-                        <!-- NAND 邏輯閘符號 -->
-                        <path d="M 5 5 L 20 5 C 32 5, 32 25, 20 25 L 5 25 Z" />
-                        <circle cx="36" cy="15" r="3" />
-                        <line x1="0" y1="10" x2="5" y2="10" />
-                        <line x1="0" y1="20" x2="5" y2="20" />
-                        <line x1="39" y1="15" x2="48" y2="15" />
-                    </svg>
-                </div>
-
-                <div class="smd-component">0.1µF</div>
+            <!-- 超精密密集元件陣列 Zone -->
+            <div class="dense-components-grid" id="denseGrid">
+                <!-- 由 JS 動態生成數百個元件 -->
             </div>
 
-            <!-- LCD 16 Pin 針腳接頭 -->
-            <div class="lcd-pin-header" id="pinHeader">
-                <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-                <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-                <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-                <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-            </div>
+            <!-- 貫穿線路 SVG -->
+            <svg class="circuit-traces-svg">
+                <path d="M 50 120 L 50 380 L 180 380 L 180 480" class="trace-line" id="trace1" />
+                <path d="M 300 100 L 300 420 L 220 420 L 220 500" class="trace-line" id="trace2" />
+                <circle cx="180" cy="480" r="5" class="pulse-particle" id="p1" />
+                <circle cx="220" cy="500" r="5" class="pulse-particle" id="p2" />
+            </svg>
 
-            <!-- LCD 模組螢幕 -->
+            <!-- 底部 LCD 螢幕 (預設隱藏) -->
             <div class="lcd-screen-frame" id="lcdFrame">
-                <div class="lcd-display">
-                    <div class="lcd-header-text" id="cardTitle">SYSTEM INITIALIZING...</div>
+                <div class="lcd-display" id="lcdDisplay">
+                    <div class="lcd-header-text" id="cardTitle">READY</div>
                     <div class="lcd-body-text" id="typewriter"></div>
                 </div>
             </div>
 
             <!-- 左下角微動開關 -->
-            <div class="tactile-switch-wrap" id="switchWrap" onclick="triggerCardUnlock()">
+            <div class="tactile-switch-wrap" onclick="triggerUnlock()">
                 <div class="tactile-btn" id="tactileBtn"></div>
                 <div class="switch-hint" id="switchHint">← 按下開關解鎖卡片</div>
             </div>
 
-            <!-- 頁尾 (學生簽名檔：文本播完後顯示) -->
+            <!-- 簽名檔 (播完文本後顯示) -->
             <div class="pcb-footer">
                 <div class="signature" id="signatureText">學生 張永旭 敬上 💻</div>
             </div>
@@ -568,10 +390,23 @@
     </div>
 
     <script>
-        // --- Web Audio API 聲效合成器 ---
-        let audioCtx = null;
-        let isMuted = false;
+        // 自動動態生成數百個超精密貼片元件
+        const denseGrid = document.getElementById('denseGrid');
+        for (let i = 0; i < 90; i++) {
+            if (i % 7 === 0) {
+                const ic = document.createElement('div');
+                ic.className = 'ic-micro';
+                ic.innerText = 'IC-' + (100 + i);
+                denseGrid.appendChild(ic);
+            } else {
+                const smd = document.createElement('div');
+                smd.className = 'smd-node';
+                denseGrid.appendChild(smd);
+            }
+        }
 
+        // Web Audio 音效
+        let audioCtx = null, isMuted = false;
         function initAudio() {
             if (!audioCtx) {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -579,173 +414,59 @@
             }
         }
 
-        function playRelayAndCurrentSound() {
+        function playSound(type) {
             if (!audioCtx || isMuted) return;
             const now = audioCtx.currentTime;
-
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(120, now);
-            osc.frequency.exponentialRampToValueAtTime(880, now + 0.4);
 
-            gain.gain.setValueAtTime(0.25, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(now);
-            osc.stop(now + 0.4);
-        }
-
-        function playButtonClickSound() {
-            if (!audioCtx || isMuted) return;
-            const now = audioCtx.currentTime;
-
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(600, now);
-            osc.frequency.exponentialRampToValueAtTime(150, now + 0.08);
-
-            gain.gain.setValueAtTime(0.3, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(now);
-            osc.stop(now + 0.08);
-        }
-
-        // --- Web Speech API 語音朗讀引擎 ---
-        const synth = window.speechSynthesis;
-
-        function speakSequence() {
-            if (!('speechSynthesis' in window)) return;
-            synth.cancel();
-
-            if (isMuted) return;
-
-            const zhText = "老師祝您教師節快樂！親愛的老師：感謝您像點亮心智的催化劑與恆定的能量源，以無私的耐性為我們化解學習中的疑難。不論是嚴謹的邏輯思維、深刻的知識傳承，或是溫暖的春風化雨，您都引導我們找到專屬的方向與共鳴。祝您教師節快樂！桃李滿天下，事事順心、喜樂安康！學生張永旭敬上。";
-            const zhUtterance = new SpeechSynthesisUtterance(zhText);
-            zhUtterance.lang = 'zh-TW';
-            zhUtterance.rate = 0.95;
-
-            const enText = "Dear Teacher, Happy Teachers' Day! Thank you for being a constant source of wisdom and inspiration. Like a vital catalyst and steady guidance, you bring clarity to complex knowledge and help us discover our potential. We truly appreciate your patience, dedication, and warmth. Wishing you a wonderful Teachers' Day, excellent health, and continued happiness every day! Student Yong-Xu Zhang.";
-            const enUtterance = new SpeechSynthesisUtterance(enText);
-            enUtterance.lang = 'en-US';
-            enUtterance.rate = 0.95;
-
-            zhUtterance.onend = function () {
-                if (isMuted) return;
-                switchLanguage('en');
-                synth.speak(enUtterance);
-            };
-
-            synth.speak(zhUtterance);
-        }
-
-        function toggleAudio() {
-            isMuted = !isMuted;
-            const btn = document.getElementById('audioToggleBtn');
-            btn.innerHTML = isMuted ? '🔇 靜音' : '🔊 語音';
-            btn.style.color = isMuted ? '#888' : '#00ffaa';
-
-            if (isMuted) {
-                synth.cancel();
-            } else {
-                if (isUnlocked) {
-                    if (currentLang === 'zh') {
-                        speakSequence();
-                    } else {
-                        const enText = "Dear Teacher, Happy Teachers' Day! Thank you for being a constant source of wisdom and inspiration. Wishing you happiness every day!";
-                        const enUtterance = new SpeechSynthesisUtterance(enText);
-                        enUtterance.lang = 'en-US';
-                        synth.speak(enUtterance);
-                    }
-                }
-            }
-        }
-
-        // --- Canvas 專用背景 ---
-        const canvas = document.getElementById('effectsCanvas');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        let timeStep = 0;
-
-        function drawMathAndElectronicsGraphics() {
-            timeStep += 0.02;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.save();
-
-            ctx.strokeStyle = 'rgba(0, 255, 170, 0.04)';
-            ctx.lineWidth = 1;
-            const gridSize = 45;
-            for (let x = 0; x < canvas.width; x += gridSize) {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-            }
-            for (let y = 0; y < canvas.height; y += gridSize) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            if (type === 'door') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(80, now);
+                osc.frequency.exponentialRampToValueAtTime(30, now + 0.8);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+            } else if (type === 'power') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.5);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            } else if (type === 'click') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(500, now);
+                osc.frequency.exponentialRampToValueAtTime(120, now + 0.08);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
             }
 
-            ctx.lineWidth = 1.6;
-            let waveYCenter = 85;
-
-            ctx.strokeStyle = 'rgba(0, 255, 170, 0.3)';
-            ctx.beginPath();
-            for (let x = 0; x < canvas.width; x += 4) {
-                let vY = Math.sin(x * 0.012 + timeStep * 2) * 25 + waveYCenter;
-                if (x === 0) ctx.moveTo(x, vY);
-                else ctx.lineTo(x, vY);
-            }
-            ctx.stroke();
-
-            ctx.fillStyle = 'rgba(0, 255, 170, 0.45)';
-            ctx.font = '11px monospace';
-            ctx.fillText(`f(x) = A·sin(ωt + φ)`, 15, 25);
-            ctx.fillText(`E = m·c²  |  V = I·R`, 15, 40);
-            ctx.fillText(`KVL: ∑V = 0  |  KCL: ∑I = 0`, 15, 55);
-
-            ctx.restore();
-            requestAnimationFrame(drawMathAndElectronicsGraphics);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(now); osc.stop(now + 0.8);
         }
 
-        drawMathAndElectronicsGraphics();
-
-        // --- 卡片內容設定 ---
+        // 卡片簡化溫馨文本（平易近人、無繁複專有名詞）
         const messages = {
             zh: {
-                title: "> LCD1602: TEACHER'S DAY <",
-                text: "親愛的老師：\n\n「程門立雪」感念師恩，「春風化雨」潤物無聲。\n\n感謝您像點亮心智的「催化劑」與恆定的「能量源」，以無比的耐性為我們化解學習與成長中的疑難。\n\n不論是嚴謹的邏輯思維、深刻的知識傳承，或是溫暖的關懷引導，您都帶領我們找到了專屬的方向與共鳴。\n\n祝您教師節快樂！桃李滿天下，事事順心、喜樂安康！✨",
+                title: "> TEACHER'S DAY CARD <",
+                text: "親愛的老師：\n\n祝您教師節快樂！\n\n感謝您一直以來耐心的教導與照顧，給予我們滿滿的指引與鼓勵。\n\n不論是在課堂上傳授知識，還是在生活中解答我們的迷惘，您的付出都讓我們受益良多。\n\n祝您工作順心、身體健康，每天都有好心情！✨",
                 signature: "學生 張永旭 敬上 💻"
             },
             en: {
-                title: "> LCD1602: TEACHER'S DAY <",
-                text: "Dear Teacher,\n\nThank you for being a constant source of wisdom, guidance, and inspiration.\n\nLike a vital catalyst and steady illumination, you bring clarity to complex ideas and help us discover our true potential.\n\nWe deeply appreciate your unwavering dedication, patience, and warmth.\n\nWishing you a joyful Teachers' Day, great health, and happiness every day! ✨",
+                title: "> TEACHER'S DAY CARD <",
+                text: "Dear Teacher,\n\nHappy Teachers' Day!\n\nThank you so much for your guidance, patience, and encouragement.\n\nYour dedication helps us grow every day and inspires us to do our best.\n\nWishing you good health, happiness, and a wonderful day! ✨",
                 signature: "Student Yong-Xu Zhang 💻"
             }
         };
 
-        let currentLang = 'zh';
-        let typewriterTimeout;
-        let isUnlocked = false;
+        let currentLang = 'zh', typewriterTimeout, isUnlocked = false;
 
-        // 打字機功能 (文本完結後才顯示學生姓名)
         function typeWriter(text, elementId, speed = 30) {
             clearTimeout(typewriterTimeout);
             let i = 0;
             const elem = document.getElementById(elementId);
             const sigElem = document.getElementById('signatureText');
-            
             elem.innerHTML = '';
-            sigElem.classList.remove('visible'); // 隱藏簽名
+            sigElem.classList.remove('visible');
 
             function type() {
                 if (i < text.length) {
@@ -754,7 +475,6 @@
                     i++;
                     typewriterTimeout = setTimeout(type, speed);
                 } else {
-                    // 文本顯示結束後，讓簽名浮現出來
                     sigElem.innerHTML = messages[currentLang].signature;
                     sigElem.classList.add('visible');
                 }
@@ -762,15 +482,31 @@
             type();
         }
 
+        const synth = window.speechSynthesis;
+        function speakSequence() {
+            if (!('speechSynthesis' in window) || isMuted) return;
+            synth.cancel();
+
+            const zhUtterance = new SpeechSynthesisUtterance("老師祝您教師節快樂！感謝您一直以來耐心的教導與照顧，祝您工作順心、身體健康！學生張永旭敬上。");
+            zhUtterance.lang = 'zh-TW'; zhUtterance.rate = 0.95;
+
+            const enUtterance = new SpeechSynthesisUtterance("Dear Teacher, Happy Teachers' Day! Thank you for your guidance and encouragement. Wishing you health and happiness every day! Student Yong-Xu Zhang.");
+            enUtterance.lang = 'en-US'; enUtterance.rate = 0.95;
+
+            zhUtterance.onend = function () {
+                if (isMuted) return;
+                switchLanguage('en');
+                synth.speak(enUtterance);
+            };
+            synth.speak(zhUtterance);
+        }
+
         function switchLanguage(lang) {
             if (currentLang === lang) return;
             currentLang = lang;
-
             document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
             document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-
             document.getElementById('cardTitle').innerHTML = messages[lang].title;
-
             typeWriter(messages[lang].text, 'typewriter', 25);
         }
 
@@ -779,58 +515,98 @@
             switchLanguage(lang);
         }
 
-        // --- TTL/CMOS 精密通電過場動畫 ---
-        function startEnergizeSequence() {
-            initAudio();
-            playRelayAndCurrentSound();
-
-            document.getElementById('intro').classList.add('hidden');
-            const container = document.getElementById('cardContainer');
-            container.classList.add('visible');
-
-            // 1. 母電路板通電 -> 經由貼片電阻/電容
-            setTimeout(() => { document.getElementById('tr1').classList.add('active'); }, 300);
-            
-            // 2. 電流進入 TTL/CMOS IC 並點亮內部邏輯閘
-            setTimeout(() => { 
-                document.getElementById('tr2').classList.add('active');
-                document.getElementById('icChip').classList.add('active');
-            }, 650);
-
-            // 3. 邏輯 IC 輸出電流前往 LCD 電路接腳
-            setTimeout(() => { document.getElementById('trLcd').classList.add('active'); }, 1000);
-
-            // 4. LCD 16 Pin 針腳依序通電
-            setTimeout(() => {
-                const pins = document.querySelectorAll('.pin-dot');
-                pins.forEach((pin, idx) => {
-                    setTimeout(() => { pin.classList.add('powered'); }, idx * 35);
-                });
-            }, 1300);
-
-            // 5. 緩慢放大 LCD 螢幕至正中央
-            setTimeout(() => {
-                container.classList.add('zoom-lcd');
-                document.getElementById('sysStatus').innerHTML = 'SYS: READY';
-                document.getElementById('cardTitle').innerHTML = '> LCD1602 BUSY <';
-                document.getElementById('typewriter').innerHTML = '<span style="color:#0f2c00; font-weight:bold;">> 請按下左下角微動開關以解鎖卡片...</span>';
-            }, 1900);
+        function toggleAudio() {
+            isMuted = !isMuted;
+            const btn = document.getElementById('audioToggleBtn');
+            btn.innerHTML = isMuted ? '🔇 靜音' : '🔊 語音';
+            btn.style.color = isMuted ? '#888' : '#00ffaa';
+            if (isMuted) synth.cancel();
         }
 
-        // --- 點擊微動開關解鎖卡片 ---
-        function triggerCardUnlock() {
+        // 背景幾何繪圖 Canvas
+        const canvas = document.getElementById('effectsCanvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let t = 0;
+        function drawBackground() {
+            t += 0.02;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.strokeStyle = 'rgba(0, 255, 170, 0.03)';
+            ctx.lineWidth = 1;
+            for(let x=0; x<canvas.width; x+=40) {
+                ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke();
+            }
+            for(let y=0; y<canvas.height; y+=40) {
+                ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke();
+            }
+            requestAnimationFrame(drawBackground);
+        }
+        drawBackground();
+
+        // 核心動畫流程：開門 ➔ 鏡頭拉遠看精密元件 ➔ 電流向下流動 ➔ LCD 浮出亮燈 ➔ 放大置中
+        function startSequence() {
+            initAudio();
+            playSound('door');
+
+            document.getElementById('intro').classList.add('hidden');
+            document.getElementById('doorOverlay').classList.add('open');
+
+            const pcb = document.getElementById('pcbBoard');
+
+            // 1. 門打開，鏡頭拉遠顯示龐大精密元件
+            setTimeout(() => {
+                pcb.classList.add('step-zoom-out');
+                document.getElementById('sysStatus').innerHTML = 'SYS: ENERGIZING';
+            }, 600);
+
+            // 2. 電流通過線路向下流動
+            setTimeout(() => {
+                playSound('power');
+                document.getElementById('trace1').classList.add('active');
+                document.getElementById('trace2').classList.add('active');
+                document.getElementById('p1').classList.add('active');
+                document.getElementById('p2').classList.add('active');
+                pcb.classList.remove('step-zoom-out');
+                pcb.classList.add('step-pan-down');
+            }, 1400);
+
+            // 3. 電流流入 LCD，LCD 從底部向上浮出
+            setTimeout(() => {
+                document.getElementById('lcdFrame').classList.add('rise-up');
+            }, 2100);
+
+            // 4. LCD 通電點亮背光
+            setTimeout(() => {
+                document.getElementById('lcdFrame').classList.add('power-on');
+                document.getElementById('lcdDisplay').classList.add('powered');
+                document.getElementById('typewriter').innerHTML = '> 請按下左下角微動開關以解鎖卡片...';
+            }, 2800);
+
+            // 5. 最終將 LCD 畫面放大置中
+            setTimeout(() => {
+                pcb.classList.remove('step-pan-down');
+                pcb.classList.add('step-zoom-lcd');
+                document.getElementById('sysStatus').innerHTML = 'SYS: READY';
+            }, 3400);
+        }
+
+        // 按下左下角開關解鎖卡片內容
+        function triggerUnlock() {
             if (isUnlocked) return;
             isUnlocked = true;
 
-            playButtonClickSound();
-            document.getElementById('tactileBtn').classList.add('pressed');
+            playSound('click');
+            document.getElementById('tactileBtn').style.transform = 'translateY(2px)';
             document.getElementById('switchHint').style.display = 'none';
 
             setTimeout(() => {
                 document.getElementById('cardTitle').innerHTML = messages[currentLang].title;
                 typeWriter(messages[currentLang].text, 'typewriter', 35);
                 speakSequence();
-            }, 250);
+            }, 200);
         }
     </script>
 </body>
