@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>教師節卡片</title>
+    <title>精密電路板 LCD 教師節卡片</title>
     <style>
         * {
             box-sizing: border-box;
@@ -115,7 +115,7 @@
             cursor: pointer;
             box-shadow: 0 0 20px rgba(0, 255, 170, 0.4);
             letter-spacing: 1px;
-            display: none; /* 初始隱藏，關門後顯示 */
+            display: none;
             animation: pulseBtn 2s infinite alternate;
         }
 
@@ -302,32 +302,37 @@
             font-weight: bold;
             word-break: break-word;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        .tactile-switch-wrap {
-            position: absolute;
-            bottom: 14px; left: 20px;
-            display: flex; align-items: center; gap: 8px;
-            z-index: 40; cursor: pointer;
+        /* LCD 內部的觸控開始按鈕 */
+        .lcd-inner-start-btn {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #0a1c00;
+            background: #8aa825;
+            border: 2px solid #0a1c00;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #0a1c00;
+            letter-spacing: 1px;
+            transition: transform 0.1s, box-shadow 0.1s;
+            animation: pulseLcdBtn 1.2s infinite alternate;
         }
 
-        .tactile-btn {
-            width: 32px; height: 32px;
-            background: #222; border: 2px solid #555;
-            border-radius: 50%; position: relative;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 3px 0 #111;
-        }
-        .tactile-btn::after {
-            content: ''; width: 16px; height: 16px;
-            background: #ff3344; border-radius: 50%;
+        .lcd-inner-start-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #0a1c00;
         }
 
-        .switch-hint {
-            font-size: 0.72rem; color: #00ffaa; font-weight: bold;
-            animation: pulseHint 1s infinite alternate;
+        @keyframes pulseLcdBtn {
+            0% { background: #8aa825; }
+            100% { background: #a2c72e; box-shadow: 0 4px 12px rgba(10, 28, 0, 0.5); }
         }
-        @keyframes pulseHint { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
         .pcb-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -388,7 +393,7 @@
                 </div>
             </div>
 
-            <!-- 超精密密集元件陣列 Zone -->
+            <!-- 超精密元件陣列 Zone -->
             <div class="dense-components-grid" id="denseGrid"></div>
 
             <!-- SVG 貫穿線路 -->
@@ -405,12 +410,6 @@
                     <div class="lcd-header-text" id="cardTitle">READY</div>
                     <div class="lcd-body-text" id="typewriter"></div>
                 </div>
-            </div>
-
-            <!-- 左下角微動開關 -->
-            <div class="tactile-switch-wrap" onclick="triggerUnlock()">
-                <div class="tactile-btn" id="tactileBtn"></div>
-                <div class="switch-hint" id="switchHint">← 按下開關解鎖卡片</div>
             </div>
 
             <!-- 簽名檔 -->
@@ -494,6 +493,7 @@
             let i = 0;
             const elem = document.getElementById(elementId);
             const sigElem = document.getElementById('signatureText');
+            elem.style.display = 'block'; // 切換回文字展示模式
             elem.innerHTML = '';
             sigElem.classList.remove('visible');
 
@@ -522,18 +522,16 @@
             const enUtterance = new SpeechSynthesisUtterance("Dear Teacher, Happy Teachers' Day! Thank you for your guidance and encouragement. Wishing you health and happiness every day! Student Yong-Xu Zhang.");
             enUtterance.lang = 'en-US'; enUtterance.rate = 0.95;
 
-            // 中文朗讀完畢切換為英文
             zhUtterance.onend = function () {
                 if (isMuted) return;
                 switchLanguage('en');
                 synth.speak(enUtterance);
             };
 
-            // 英文朗讀完全結束後，倒數 10 秒自動關門
             enUtterance.onend = function () {
                 setTimeout(() => {
                     closeDoorSequence();
-                }, 10000); // 英文播放結束後 10 秒
+                }, 10000);
             };
 
             synth.speak(zhUtterance);
@@ -542,8 +540,8 @@
         function closeDoorSequence() {
             playSound('door');
             document.getElementById('doorOverlay').classList.remove('open');
-            document.getElementById('intro').style.display = 'none'; // 隱藏原本開頭按鈕
-            document.getElementById('reopenBtn').style.display = 'block'; // 顯示下方快捷按鈕
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('reopenBtn').style.display = 'block';
         }
 
         function quickReopenDoor() {
@@ -573,7 +571,7 @@
             if (isMuted) synth.cancel();
         }
 
-        // 背景幾何繪圖 Canvas
+        // 背景幾何繪圖
         const canvas = document.getElementById('effectsCanvas');
         const ctx = canvas.getContext('2d');
         function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -594,7 +592,7 @@
         }
         drawBackground();
 
-        // 核心動畫流程
+        // 動畫流程
         function startSequence() {
             initAudio();
             playSound('door');
@@ -623,10 +621,13 @@
                 document.getElementById('lcdFrame').classList.add('rise-up');
             }, 2100);
 
+            // LCD 亮燈並呈現內部按鈕
             setTimeout(() => {
                 document.getElementById('lcdFrame').classList.add('power-on');
                 document.getElementById('lcdDisplay').classList.add('powered');
-                document.getElementById('typewriter').innerHTML = '> 請按下左下角微動開關以解鎖卡片...';
+                document.getElementById('typewriter').innerHTML = `
+                    <button class="lcd-inner-start-btn" onclick="triggerUnlock()">[ ⚡ 點擊啟動解鎖 ]</button>
+                `;
             }, 2800);
 
             setTimeout(() => {
@@ -636,14 +637,12 @@
             }, 3400);
         }
 
-        // 解鎖卡片
+        // 點擊 LCD 內部按鈕解鎖卡片
         function triggerUnlock() {
             if (isUnlocked) return;
             isUnlocked = true;
 
             playSound('click');
-            document.getElementById('tactileBtn').style.transform = 'translateY(2px)';
-            document.getElementById('switchHint').style.display = 'none';
 
             setTimeout(() => {
                 document.getElementById('cardTitle').innerHTML = messages[currentLang].title;
