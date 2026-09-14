@@ -3,227 +3,410 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>教師節快樂！Happy Teachers' Day</title>
+    <title>【機密專案】教師節解鎖卡片</title>
     <style>
-        :root {
-            --primary-color: #6c5ce7;
-            --secondary-color: #a29bfe;
-            --accent-color: #ff7675;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #2d3436;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Consolas', 'Courier New', 'PingFang TC', 'Microsoft JhengHei', monospace;
         }
 
         body {
-            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-            background: linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%);
+            background-color: #050508;
+            color: #fff;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-
-        /* 漂浮裝飾背景粒子 */
-        .bg-particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            animation: float 8s infinite ease-in-out;
-            z-index: 0;
-        }
-        .p1 { width: 100px; height: 100px; top: 10%; left: 10%; animation-delay: 0s; }
-        .p2 { width: 150px; height: 150px; bottom: 15%; right: 10%; animation-delay: 2s; }
-        .p3 { width: 80px; height: 80px; bottom: 20%; left: 15%; animation-delay: 4s; }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(10deg); }
-        }
-
-        /* 卡片容器 */
-        .card-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            perspective: 1000px;
-            z-index: 1;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             overflow: hidden;
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        /* 卡片封面頂圖 */
-        .card-header {
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
             position: relative;
         }
 
-        .card-header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
+        /* 畫布：代碼瀑布與電流效果 */
+        #effectsCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
         }
 
-        .card-header p {
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-
-        .icon-badge {
-            width: 70px;
-            height: 70px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 35px;
-            margin: 0 auto 15px auto;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-
-        /* 卡片內文區域 */
-        .card-body {
-            padding: 30px 25px;
-            color: var(--text-color);
-            line-height: 1.8;
-        }
-
-        .salutation {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #0984e3;
-            margin-bottom: 15px;
-        }
-
-        .message {
-            font-size: 1rem;
-            text-align: justify;
-            margin-bottom: 25px;
-            white-space: pre-line;
-        }
-
-        .signature {
-            text-align: right;
-            border-top: 1px dashed #dfe6e9;
-            padding-top: 15px;
-        }
-
-        .sender-name {
-            font-weight: bold;
-            color: #2d3436;
-            font-size: 1.1rem;
-        }
-
-        .date {
-            font-size: 0.85rem;
-            color: #b2bec3;
-        }
-
-        /* 互動按鈕 */
-        .interactive-area {
+        /* --- 階段一：入場按鈕區 --- */
+        .intro-container {
+            position: relative;
+            z-index: 10;
             text-align: center;
-            padding-bottom: 25px;
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
-        .btn-heart {
-            background-color: #ff7675;
-            color: white;
-            border: none;
-            padding: 10px 20px;
+        .intro-container.hidden {
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+
+        .start-btn {
+            position: relative;
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00f3ff;
+            background: rgba(0, 243, 255, 0.05);
+            border: 2px solid #00f3ff;
             border-radius: 50px;
-            font-size: 0.95rem;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(255, 118, 117, 0.4);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4), inset 0 0 15px rgba(0, 243, 255, 0.2);
+            text-shadow: 0 0 10px #00f3ff;
             transition: all 0.3s ease;
+            outline: none;
+            overflow: hidden;
         }
 
-        .btn-heart:hover {
-            background-color: #d63031;
+        .start-btn:hover {
+            background: #00f3ff;
+            color: #000;
+            box-shadow: 0 0 40px #00f3ff, inset 0 0 20px #ffffff;
+            text-shadow: none;
             transform: scale(1.05);
         }
 
-        /* 點讚特效數值 */
-        .count {
-            margin-left: 5px;
+        .btn-subtext {
+            margin-top: 15px;
+            color: #8a8a8a;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        /* --- 全螢幕閃光脈衝 --- */
+        .flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s ease-out;
+        }
+
+        .flash-active {
+            opacity: 0.9;
+        }
+
+        /* --- 階段三：主卡片區 --- */
+        .card-container {
+            position: relative;
+            z-index: 20;
+            width: 90%;
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(50px) scale(0.9);
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        .card-container.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .glass-card {
+            background: rgba(18, 18, 28, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 電路板外框光線 */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, #00f3ff, #ff007f, transparent);
+            animation: circuitScan 3s linear infinite;
+        }
+
+        @keyframes circuitScan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .card-title {
+            font-size: 2rem;
+            color: #00f3ff;
+            text-align: center;
+            margin-bottom: 25px;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
+            letter-spacing: 2px;
+        }
+
+        .card-body {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            min-height: 120px;
+            white-space: pre-line;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+
+        .signature {
+            color: #ff007f;
             font-weight: bold;
+            font-size: 1.1rem;
+            text-shadow: 0 0 8px rgba(ff, 0, 127, 0.5);
+        }
+
+        .date-tag {
+            color: #8a8a8a;
+            font-size: 0.85rem;
+        }
+
+        /* 動態心形電流圖標 */
+        .core-heart {
+            display: block;
+            margin: 0 auto 20px auto;
+            width: 60px;
+            height: 60px;
+            background: #ff007f;
+            transform: rotate(-45deg);
+            position: relative;
+            animation: heartBeat 1.2s infinite ease-in-out;
+            box-shadow: 0 0 20px #ff007f;
+        }
+
+        .core-heart::before, .core-heart::after {
+            content: "";
+            width: 60px;
+            height: 60px;
+            background: #ff007f;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .core-heart::before { top: -30px; left: 0; }
+        .core-heart::after { left: 30px; top: 0; }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: rotate(-45deg) scale(0.9); box-shadow: 0 0 20px #ff007f; }
+            50% { transform: rotate(-45deg) scale(1.1); box-shadow: 0 0 40px #ff007f, 0 0 60px #00f3ff; }
+        }
+
+        /* 畫面震撼抖動動畫 */
+        .shake {
+            animation: shakeAnim 0.5s ease-in-out;
+        }
+
+        @keyframes shakeAnim {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-10px, 10px); }
+            40% { transform: translate(10px, -10px); }
+            60% { transform: translate(-5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0, 0); }
         }
     </style>
 </head>
 <body>
 
-    <!-- 背景動態圓球 -->
-    <div class="bg-particle p1"></div>
-    <div class="bg-particle p2"></div>
-    <div class="bg-particle p3"></div>
+    <canvas id="effectsCanvas"></canvas>
+    <div class="flash-overlay" id="flash"></div>
 
-    <div class="card-container">
-        <div class="card">
-            <!-- 封面圖示與標題 -->
-            <div class="card-header">
-                <div class="icon-badge">🎓</div>
-                <h1>教師節快樂！</h1>
-                <p>Happy Teachers' Day</p>
-            </div>
+    <!-- 第一階段：入口按鈕 -->
+    <div class="intro-container" id="intro">
+        <button class="start-btn" onclick="startExperience()">
+            ⚡ 啟動教師節核心程式
+        </button>
+        <div class="btn-subtext">[ 提示：請點擊按鈕以解鎖專屬訊息 ]</div>
+    </div>
 
-            <!-- 卡片內容（可自由修改文字） -->
-            <div class="card-body">
-                <div class="salutation">親愛的 [老師姓名] 老師：</div>
-                
-                <div class="message">
-                    感謝您一直以來的用心指導與耐心包容。在學習的道路上，有您的指引與鼓勵，讓我能夠不斷突破自我、探索新知。
+    <!-- 第三階段：卡片主體 -->
+    <div class="card-container" id="cardContainer">
+        <div class="glass-card">
+            <div class="core-heart"></div>
+            <h1 class="card-title">&lt; Happy Teachers' Day /&gt;</h1>
+            
+            <div class="card-body" id="typewriter"></div>
 
-                    祝您教師節快樂、身體健康，每天都有好心情！✨
-                </div>
-
-                <div class="signature">
-                    <div class="sender-name">學生 [您的名字] 敬上</div>
-                    <div class="date">2026 年 9 月 28 日</div>
-                </div>
-            </div>
-
-            <!-- 互動按鈕區 -->
-            <div class="interactive-area">
-                <button class="btn-heart" onclick="addHeart()">
-                    ❤️ 送上感謝心意 <span class="count" id="likeCount">0</span>
-                </button>
+            <div class="card-footer">
+                <div class="date-tag">System.Date: 09-28</div>
+                <div class="signature">-- 學生 敬上 💻</div>
             </div>
         </div>
     </div>
 
     <script>
-        let count = 0;
-        function addHeart() {
-            count++;
-            document.getElementById('likeCount').innerText = count;
-            
-            // 按鈕微跳動動畫
-            const btn = document.querySelector('.btn-heart');
-            btn.style.transform = 'scale(0.95)';
+        const canvas = document.getElementById('effectsCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // 代碼瀑布流參數
+        const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ<>{}[]=/+*#@!&';
+        const fontSize = 14;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = Array(columns).fill(0);
+        
+        // 電流閃電數組
+        let bolts = [];
+        let isIntensityMode = false;
+
+        function drawEffects() {
+            // 背景漸暗（製造尾影）
+            ctx.fillStyle = 'rgba(5, 5, 8, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 1. 繪製矩陣代碼流
+            ctx.fillStyle = isIntensityMode ? '#00f3ff' : '#005577';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                // 隨機亮色字頭
+                if (Math.random() > 0.85) {
+                    ctx.fillStyle = '#ffffff';
+                } else {
+                    ctx.fillStyle = isIntensityMode ? '#00f3ff' : '#003344';
+                }
+
+                ctx.fillText(text, x, y);
+
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+
+            // 2. 繪製高壓電流閃電
+            if (isIntensityMode) {
+                for (let i = bolts.length - 1; i >= 0; i--) {
+                    bolts[i].draw();
+                    bolts[i].update();
+                    if (bolts[i].life <= 0) bolts.splice(i, 1);
+                }
+
+                if (Math.random() < 0.6) {
+                    bolts.push(new Lightning());
+                }
+            }
+
+            requestAnimationFrame(drawEffects);
+        }
+
+        // 電流 Lightning 物件
+        class Lightning {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = 0;
+                this.path = [{x: this.x, y: this.y}];
+                this.life = 10;
+                this.color = Math.random() > 0.5 ? '#00f3ff' : '#ff007f';
+                this.generatePath();
+            }
+
+            generatePath() {
+                let curX = this.x;
+                let curY = this.y;
+                while (curY < canvas.height) {
+                    curX += (Math.random() - 0.5) * 60;
+                    curY += Math.random() * 40 + 10;
+                    this.path.push({x: curX, y: curY});
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = Math.random() * 3 + 1;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+
+                for (let i = 0; i < this.path.length - 1; i++) {
+                    ctx.moveTo(this.path[i].x, this.path[i].y);
+                    ctx.lineTo(this.path[i+1].x, this.path[i+1].y);
+                }
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+
+            update() {
+                this.life--;
+            }
+        }
+
+        drawEffects();
+
+        // --- 打字機效果文字 ---
+        const cardMessage = "親愛的老師：\n\n感謝您就像強大的核心邏輯與演算法，引導我們在知識的網絡中突破盲點、除錯升級。\n\n祝您教師節快樂，程式永遠無 bug，每日運算滿滿幸福！✨";
+
+        function typeWriter(text, elementId, speed = 50) {
+            let i = 0;
+            const elem = document.getElementById(elementId);
+            elem.innerHTML = '';
+            function type() {
+                if (i < text.length) {
+                    elem.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // --- 點擊啟動動畫主邏輯 ---
+        function startExperience() {
+            const intro = document.getElementById('intro');
+            const flash = document.getElementById('flash');
+            const cardContainer = document.getElementById('cardContainer');
+
+            // 1. 隱藏入口按鈕
+            intro.classList.add('hidden');
+
+            // 2. 觸發超強電流與代碼爆發模式
+            isIntensityMode = true;
+            document.body.classList.add('shake');
+
+            // 3. 全螢幕閃光脈衝
             setTimeout(() => {
-                btn.style.transform = 'scale(1.05)';
-            }, 100);
+                flash.classList.add('flash-active');
+            }, 300);
+
+            setTimeout(() => {
+                flash.classList.remove('flash-active');
+            }, 500);
+
+            // 4. 動畫匯聚，顯現主卡片
+            setTimeout(() => {
+                document.body.classList.remove('shake');
+                cardContainer.classList.add('visible');
+                
+                // 啟動打字機效果
+                typeWriter(cardMessage, 'typewriter', 60);
+            }, 800);
         }
     </script>
 </body>
