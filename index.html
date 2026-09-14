@@ -127,7 +127,6 @@
             transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 鏡頭運鏡狀態 */
         .pcb-board.step-zoom-out { transform: scale(0.72); }
         .pcb-board.step-pan-down { transform: scale(0.85) translateY(-40px); }
         .pcb-board.step-zoom-lcd { transform: scale(1.05) translateY(0px); }
@@ -164,7 +163,7 @@
         .pulse-particle { fill: #00ffaa; opacity: 0; transition: opacity 0.3s; }
         .pulse-particle.active { opacity: 1; }
 
-        /* --- LCD 螢幕區塊（位置大幅上移） --- */
+        /* --- LCD 螢幕區塊 (位置已上移優化閱讀) --- */
         .lcd-screen-frame {
             position: absolute; bottom: -400px; left: 5%; width: 90%; height: 380px;
             background: #0a140b; border: 3px solid #000; border-radius: 12px; padding: 12px;
@@ -172,7 +171,6 @@
             z-index: 30; transition: bottom 1s cubic-bezier(0.175, 0.885, 0.32, 1.27), box-shadow 0.5s ease;
         }
 
-        /* LCD 浮出後距離底部 110px，避免視線下移累積疲勞 */
         .lcd-screen-frame.rise-up { bottom: 110px; }
 
         .lcd-screen-frame.power-on {
@@ -219,27 +217,52 @@
         .pcb-header { display: flex; justify-content: space-between; align-items: center; z-index: 30; margin-bottom: 6px; }
         .sys-status { font-size: 0.68rem; color: #d4af37; font-weight: bold; }
 
-        .audio-btn, .lang-btn {
+        .ctrl-btn {
             background: rgba(0,0,0,0.5); border: 1px solid #00ffaa; color: #00ffaa;
             padding: 3px 8px; font-size: 0.72rem; font-weight: bold; border-radius: 6px; cursor: pointer;
         }
-        .lang-switch { display: flex; background: rgba(0,0,0,0.5); border: 1px solid #00ffaa; border-radius: 6px; padding: 2px; }
-        .lang-btn { border: none; background: none; color: #447755; }
-        .lang-btn.active { background: #00ffaa; color: #051a0e; }
-
-        /* --- PDF 輸出隱藏樣式 (直式 A4 格式) --- */
-        #pdfTemplate {
-            display: none; background: #ffffff; color: #111111; width: 210mm; min-height: 297mm;
-            padding: 25mm 20mm; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-            position: absolute; top: -9999px; left: -9999px;
+        .ctrl-btn-download {
+            background: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; color: #ffd700;
+            padding: 3px 8px; font-size: 0.72rem; font-weight: bold; border-radius: 6px; cursor: pointer;
         }
-        .pdf-header { text-align: center; border-bottom: 3px double #104e28; padding-bottom: 15px; margin-bottom: 30px; }
-        .pdf-header h1 { font-size: 26pt; color: #104e28; margin-bottom: 5px; }
-        .pdf-header h3 { font-size: 14pt; color: #555; font-weight: normal; }
-        .pdf-salutation { font-size: 16pt; font-weight: bold; margin-bottom: 20px; color: #222; }
-        .pdf-content-zh { font-size: 13pt; line-height: 1.9; color: #222; margin-bottom: 25px; text-indent: 2em; }
-        .pdf-content-en { font-size: 11pt; line-height: 1.6; color: #555; font-style: italic; background: #f8f9fa; border-left: 4px solid #104e28; padding: 15px; margin-bottom: 40px; }
-        .pdf-footer-sig { text-align: right; font-size: 14pt; font-weight: bold; color: #104e28; margin-top: 40px; }
+        .lang-switch { display: flex; background: rgba(0,0,0,0.5); border: 1px solid #00ffaa; border-radius: 6px; padding: 2px; }
+        .lang-btn { border: none; background: none; color: #447755; padding: 1px 5px; font-weight: bold; font-size: 0.72rem; cursor: pointer; }
+        .lang-btn.active { background: #00ffaa; color: #051a0e; border-radius: 4px; }
+
+        /* --- PDF 花卉與精美飾邊 (直式 A4 排版) --- */
+        #pdfTemplate {
+            display: none; background: #fffcf7; color: #2c3e50; width: 210mm; min-height: 297mm;
+            padding: 20mm 18mm; font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            position: absolute; top: -9999px; left: -9999px; box-sizing: border-border;
+        }
+
+        .pdf-frame {
+            border: 3px double #d4af37; height: 100%; min-height: 257mm; padding: 20px;
+            position: relative; background: #ffffff; border-radius: 8px;
+            box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        /* 花卉角落圖騰 */
+        .flower-corner { position: absolute; width: 65px; height: 65px; pointer-events: none; opacity: 0.85; }
+        .top-left { top: 8px; left: 8px; }
+        .top-right { top: 8px; right: 8px; transform: scaleX(-1); }
+        .bottom-left { bottom: 8px; left: 8px; transform: scaleY(-1); }
+        .bottom-right { bottom: 8px; right: 8px; transform: scale(-1); }
+
+        .pdf-header { text-align: center; border-bottom: 2px dashed #e8d5b5; padding-bottom: 18px; margin-bottom: 25px; margin-top: 10px; }
+        .pdf-header h1 { font-size: 26pt; color: #2e5a44; margin-bottom: 6px; font-weight: bold; letter-spacing: 2px; }
+        .pdf-header h3 { font-size: 13pt; color: #886e4b; font-weight: normal; letter-spacing: 1px; }
+
+        .pdf-salutation { font-size: 16pt; font-weight: bold; margin-bottom: 22px; color: #1b3629; margin-left: 10px; }
+        .pdf-content-zh { font-size: 13.5pt; line-height: 2.0; color: #2c3e50; margin-bottom: 28px; text-indent: 2em; padding: 0 10px; }
+        
+        .pdf-content-en {
+            font-size: 11pt; line-height: 1.7; color: #5a6b5c; font-style: italic;
+            background: #f4f8f5; border-left: 4px solid #2e5a44; border-radius: 4px;
+            padding: 16px 20px; margin: 0 10px 35px 10px;
+        }
+
+        .pdf-footer-sig { text-align: right; font-size: 14pt; font-weight: bold; color: #2e5a44; margin-top: 30px; padding-right: 15px; }
     </style>
 </head>
 <body>
@@ -257,10 +280,10 @@
             <div class="audio-warning">請開啟聲音</div>
         </div>
 
-        <!-- 關門後呈現的快捷功能按鈕組 -->
+        <!-- 關門後的快捷功能按鈕組 -->
         <div class="shortcut-btn-group" id="shortcutGroup">
             <button class="action-shortcut-btn" onclick="quickReopenDoor()">📜 查看卡片內容</button>
-            <button class="action-shortcut-btn" style="color: #ffd700; border-color: #ffd700;" onclick="promptDownloadPDF()">📥 下載專屬卡片 PDF</button>
+            <button class="action-shortcut-btn" style="color: #ffd700; border-color: #ffd700;" onclick="promptDownloadPDF()">📥 下載卡片 PDF</button>
         </div>
     </div>
 
@@ -270,8 +293,9 @@
             
             <div class="pcb-header">
                 <div class="sys-status" id="sysStatus">SYS: OFFLINE</div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="audio-btn" id="audioToggleBtn" onclick="toggleAudio()">🔊 語音</button>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <button class="ctrl-btn-download" onclick="promptDownloadPDF()">📥 下載專屬卡片</button>
+                    <button class="ctrl-btn" id="audioToggleBtn" onclick="toggleAudio()">🔊 語音</button>
                     <div class="lang-switch">
                         <button class="lang-btn active" id="btn-zh" onclick="manualSwitchLanguage('zh')">中</button>
                         <button class="lang-btn" id="btn-en" onclick="manualSwitchLanguage('en')">EN</button>
@@ -290,7 +314,7 @@
                 <circle cx="220" cy="440" r="5" class="pulse-particle" id="p2" />
             </svg>
 
-            <!-- 底部 LCD 螢幕 (位置已大幅上移) -->
+            <!-- 底部 LCD 螢幕 -->
             <div class="lcd-screen-frame" id="lcdFrame">
                 <div class="lcd-display" id="lcdDisplay">
                     <div class="lcd-header-text" id="cardTitle">READY</div>
@@ -300,21 +324,54 @@
         </div>
     </div>
 
-    <!-- 隱藏的直式 A4 PDF 輸出範本 -->
+    <!-- 隱藏的直式 A4 花卉繪飾 PDF 輸出範本 -->
     <div id="pdfTemplate">
-        <div class="pdf-header">
-            <h1>🌸 教師節感謝卡 🌸</h1>
-            <h3>Teacher's Day Appreciation Card</h3>
-        </div>
-        <div class="pdf-salutation" id="pdfTeacherName">親愛的老師：</div>
-        <div class="pdf-content-zh">
-            祝您教師節快樂！在這特別的日子裡，想向您表達最誠摯的感謝。感謝您一直以來無私的奉獻與耐心的陪伴，不論是在課堂上引領我們汲取知識，還是在迷惘時給予溫暖的鼓勵與指引，您的言傳身教都深刻地影響著我們。願您在教導學生之餘，也能好好照顧自己。祝您工作順心、身體健康，每天都充滿陽光與笑容！
-        </div>
-        <div class="pdf-content-en">
-            Happy Teachers' Day! On this special day, I would like to express my most sincere gratitude to you. Thank you for your selfless dedication and patient guidance. Wishing you good health, happiness, and all the best in every day! ✨
-        </div>
-        <div class="pdf-footer-sig">
-            學生 張永旭 敬上 💻
+        <div class="pdf-frame">
+            <!-- 柔和花卉角落裝飾 (SVG) -->
+            <svg class="flower-corner top-left" viewBox="0 0 100 100">
+                <path d="M10,90 Q10,10 90,10" fill="none" stroke="#d4af37" stroke-width="2"/>
+                <circle cx="25" cy="25" r="12" fill="#f4a6b2" opacity="0.8"/>
+                <circle cx="20" cy="40" r="8" fill="#e8c5ce" opacity="0.8"/>
+                <circle cx="40" cy="20" r="8" fill="#e8c5ce" opacity="0.8"/>
+                <path d="M25,25 Q40,50 60,30" fill="none" stroke="#7ca982" stroke-width="2"/>
+            </svg>
+            <svg class="flower-corner top-right" viewBox="0 0 100 100">
+                <path d="M10,90 Q10,10 90,10" fill="none" stroke="#d4af37" stroke-width="2"/>
+                <circle cx="25" cy="25" r="12" fill="#f4a6b2" opacity="0.8"/>
+                <circle cx="20" cy="40" r="8" fill="#e8c5ce" opacity="0.8"/>
+                <circle cx="40" cy="20" r="8" fill="#e8c5ce" opacity="0.8"/>
+            </svg>
+            <svg class="flower-corner bottom-left" viewBox="0 0 100 100">
+                <path d="M10,90 Q10,10 90,10" fill="none" stroke="#d4af37" stroke-width="2"/>
+                <circle cx="25" cy="25" r="12" fill="#f4a6b2" opacity="0.8"/>
+                <circle cx="20" cy="40" r="8" fill="#e8c5ce" opacity="0.8"/>
+                <circle cx="40" cy="20" r="8" fill="#e8c5ce" opacity="0.8"/>
+            </svg>
+            <svg class="flower-corner bottom-right" viewBox="0 0 100 100">
+                <path d="M10,90 Q10,10 90,10" fill="none" stroke="#d4af37" stroke-width="2"/>
+                <circle cx="25" cy="25" r="12" fill="#f4a6b2" opacity="0.8"/>
+                <circle cx="20" cy="40" r="8" fill="#e8c5ce" opacity="0.8"/>
+                <circle cx="40" cy="20" r="8" fill="#e8c5ce" opacity="0.8"/>
+            </svg>
+
+            <div class="pdf-header">
+                <h1>🌸 教師節感念卡 🌸</h1>
+                <h3>Teacher's Day Appreciation Card</h3>
+            </div>
+            
+            <div class="pdf-salutation" id="pdfTeacherName">親愛的老師：</div>
+            
+            <div class="pdf-content-zh">
+                祝您教師節快樂！在這特別的日子裡，想向您表達最誠摯的感謝。感謝您一直以來無私的奉獻與耐心的陪伴，不論是在課堂上引領我們汲取知識，還是在迷惘時給予溫暖的鼓勵與指引，您的言傳身教都深刻地影響著我們。願您在教導學生之餘，也能好好照顧自己。祝您工作順心、身體健康，每天都充滿陽光與笑容！✨
+            </div>
+            
+            <div class="pdf-content-en">
+                Dear Teacher, Happy Teachers' Day! On this special day, I would like to express my most sincere gratitude to you. Thank you for your selfless dedication, patience, and guidance. Your passion for teaching inspires us every day. Wishing you good health, great happiness, and all the best! ✨
+            </div>
+            
+            <div class="pdf-footer-sig">
+                學生 張永旭 敬上 💻
+            </div>
         </div>
     </div>
 
@@ -366,7 +423,6 @@
             osc.start(now); osc.stop(now + 0.8);
         }
 
-        // 豐滿感言內容（包含學生敬上落款於文本內部）
         const messages = {
             zh: {
                 title: "> TEACHER'S DAY CARD <",
@@ -397,7 +453,6 @@
                     if (char === '\n') {
                         elem.innerHTML += '<br>';
                     } else if (i >= text.length) {
-                        // 簽名部分加上樣式
                         elem.innerHTML += `<span class="signature-in-lcd">${char}</span>`;
                     } else {
                         elem.innerHTML += char;
@@ -414,7 +469,7 @@
             if (!('speechSynthesis' in window) || isMuted) return;
             synth.cancel();
 
-            const zhUtterance = new SpeechSynthesisUtterance("親愛的老師祝您教師節快樂！感謝您無私的奉獻與耐心陪伴，祝您工作順心、身體健康，每天都有好心情！學生張永旭敬上。");
+            const zhUtterance = new SpeechSynthesisUtterance("親愛的老師祝您教師節快樂！感謝您無私的奉獻與耐心陪伴，祝您工作順心、身體健康，每天都有好心情！學生 張永旭 敬上。");
             zhUtterance.lang = 'zh-TW'; zhUtterance.rate = 0.95;
 
             const enUtterance = new SpeechSynthesisUtterance("Dear Teacher, Happy Teachers' Day! Thank you for your guidance and encouragement. Wishing you health and happiness every day! Student Yong-Xu Zhang.");
@@ -426,11 +481,11 @@
                 synth.speak(enUtterance);
             };
 
-            // 英文播放結束後，等待 3 秒觸發關門
+            // 英文播放結束 3 秒後自動關門
             enUtterance.onend = function () {
                 setTimeout(() => {
                     closeDoorSequence();
-                }, 3000); // 3 秒後關門
+                }, 3000);
             };
 
             synth.speak(zhUtterance);
@@ -448,8 +503,9 @@
             document.getElementById('doorOverlay').classList.add('open');
         }
 
-        /* 詢問老師名字並生成 PDF */
+        /* 下載專屬卡片 PDF 流程 */
         function promptDownloadPDF() {
+            synth.cancel();
             const teacherName = prompt("請問老師如何稱呼呢？（例如：王老師 / Teacher Wang）", "老師");
             if (teacherName !== null && teacherName.trim() !== "") {
                 document.getElementById('pdfTeacherName').innerText = `親愛的 ${teacherName.trim()}：`;
@@ -463,7 +519,7 @@
 
             const opt = {
                 margin:       0,
-                filename:     `教師節感謝卡_張永旭敬上.pdf`,
+                filename:     `教師節感念卡_電二乙_張永旭敬上.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2 },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -491,12 +547,12 @@
         function toggleAudio() {
             isMuted = !isMuted;
             const btn = document.getElementById('audioToggleBtn');
-            btn.innerHTML = isMuted ? '🔇 靜音' : '🔊 語音';
+            btn.innerHTML = isMuted ? '🔇 靜音' : '🔊 朗讀';
             btn.style.color = isMuted ? '#888' : '#00ffaa';
             if (isMuted) synth.cancel();
         }
 
-        // 背景繪圖 Canvas
+        // 背景繪圖
         const canvas = document.getElementById('effectsCanvas');
         const ctx = canvas.getContext('2d');
         function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -517,7 +573,7 @@
         }
         drawBackground();
 
-        // 核心動畫流程
+        // 動畫流程
         function startSequence() {
             initAudio();
             playSound('door');
