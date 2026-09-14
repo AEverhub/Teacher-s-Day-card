@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>教師節卡片</title>
+    <title>3D 精密邏輯電路板 LCD 教師節卡片</title>
     <style>
         * {
             box-sizing: border-box;
@@ -25,6 +24,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            perspective: 1000px;
         }
 
         html {
@@ -97,7 +97,7 @@
             50% { opacity: 0.4; }
         }
 
-        /* --- 第二階段：PCB 電路板與 LCD 模組 --- */
+        /* --- 第二階段：3D PCB 電路板與 LCD 模組 --- */
         .card-container {
             position: fixed;
             top: 0;
@@ -111,23 +111,24 @@
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transform: scale(0.85);
+            transform: rotateX(15deg) translateY(30px) scale(0.85);
             transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: none;
+            transform-style: preserve-3d;
         }
 
         .card-container.visible {
             opacity: 1;
-            transform: scale(1);
+            transform: rotateX(10deg) translateY(0) scale(1);
             pointer-events: auto;
         }
 
-        /* 鏡頭拉近放大至 LCD 效果 */
+        /* LCD 放大置中效果 */
         .card-container.zoom-lcd {
-            transform: scale(1.08);
+            transform: rotateX(0deg) translateY(0) scale(1.12);
         }
 
-        /* PCB 深綠色精密電路板 */
+        /* 3D 深綠色精密主電路板 (Main PCB) */
         .pcb-board {
             width: 100%;
             height: 100%;
@@ -141,31 +142,125 @@
             border: 4px solid #144e2b;
             border-radius: 18px;
             padding: 20px;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(0, 255, 170, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), inset 0 0 20px rgba(0, 255, 170, 0.15);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: all 0.8s ease;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-style: preserve-3d;
+        }
+
+        /* 頂部更大塊的母板區塊 (Main Logic Board Zone) */
+        .top-circuit-zone {
+            width: 100%;
+            height: 100px;
+            background: rgba(5, 26, 14, 0.8);
+            border: 2px dashed #1b5e35;
+            border-radius: 10px;
+            position: relative;
+            padding: 8px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 22;
+        }
+
+        /* 元件：SMD 電阻與電容 (Resistors & Capacitors) */
+        .smd-component {
+            width: 32px;
+            height: 16px;
+            background: #333;
+            border-left: 6px solid #aaa;
+            border-right: 6px solid #aaa;
+            border-radius: 2px;
+            position: relative;
+            font-size: 0.55rem;
+            color: #d4af37;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.6);
+        }
+
+        .smd-capacitor {
+            width: 18px;
+            height: 24px;
+            background: #b87333;
+            border-top: 3px solid #ddd;
+            border-bottom: 3px solid #111;
+            border-radius: 3px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.6);
+        }
+
+        /* 元件：TTL / CMOS IC 晶片 (含邏輯閘符號) */
+        .ic-chip {
+            width: 110px;
+            height: 55px;
+            background: #151515;
+            border: 1px solid #444;
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.8);
+        }
+
+        .ic-chip::before {
+            content: '';
+            position: absolute;
+            left: -3px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 12px;
+            background: #000;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .ic-label {
+            position: absolute;
+            top: 2px;
+            font-size: 0.55rem;
+            color: #888;
+            letter-spacing: 0.5px;
+        }
+
+        /* 邏輯閘 SVG 符號 */
+        .gate-symbol {
+            width: 45px;
+            height: 25px;
+            stroke: #d4af37;
+            stroke-width: 1.8;
+            fill: none;
+            transition: stroke 0.3s ease, filter 0.3s ease;
+        }
+
+        .ic-chip.active .gate-symbol {
+            stroke: #00ffaa;
+            filter: drop-shadow(0 0 4px #00ffaa);
         }
 
         /* 精密銅線走線 (Copper Traces) */
         .pcb-trace {
             position: absolute;
-            background: rgba(212, 175, 55, 0.2);
+            background: rgba(212, 175, 55, 0.25);
             pointer-events: none;
-            transition: all 0.5s ease;
+            transition: all 0.4s ease;
+            z-index: 21;
         }
 
-        .trace-main-1 { top: 40px; left: 0; width: 120px; height: 3px; }
-        .trace-main-2 { top: 40px; left: 120px; width: 3px; height: 100px; }
-        .trace-lcd-in { bottom: 120px; left: 50%; width: 3px; height: 60px; transform: translateX(-50%); }
+        .trace-power-to-res { top: 30px; left: 15px; width: 45px; height: 3px; }
+        .trace-res-to-ic { top: 30px; left: 100px; width: 80px; height: 3px; }
+        .trace-ic-to-lcd { top: 110px; left: 50%; width: 3px; height: 35px; transform: translateX(-50%); }
 
         /* 電流通過與亮燈動畫 */
         .pcb-trace.active {
             background: #00ffaa;
-            box-shadow: 0 0 10px #00ffaa;
+            box-shadow: 0 0 10px #00ffaa, 0 0 18px #00ffaa;
         }
 
         /* LCD 針腳接頭 (Pin Header 1~16) */
@@ -173,7 +268,7 @@
             display: flex;
             justify-content: center;
             gap: 6px;
-            margin-bottom: 8px;
+            margin: 6px 0;
             z-index: 25;
         }
 
@@ -250,7 +345,7 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             z-index: 30;
         }
 
@@ -304,19 +399,20 @@
             border: 3px solid #000;
             border-radius: 8px;
             padding: 12px;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 255, 170, 0.2);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 255, 170, 0.25);
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            margin: 6px 0;
+            margin: 4px 0;
             transition: all 0.5s ease;
+            transform-style: preserve-3d;
         }
 
         .lcd-display {
             width: 100%;
             height: 100%;
-            background: #6b8e11; /* 點陣液晶綠色背光 */
+            background: #6b8e11;
             color: #0a1c00;
             border-radius: 4px;
             padding: 12px;
@@ -371,6 +467,7 @@
             align-items: flex-end;
             padding-top: 4px;
             z-index: 30;
+            min-height: 24px;
         }
 
         .signature {
@@ -379,6 +476,14 @@
             font-size: 0.85rem;
             text-align: right;
             line-height: 1.3;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .signature.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -392,13 +497,13 @@
         <div class="audio-warning">請開啟聲音</div>
     </div>
 
-    <!-- 第二階段：PCB 電路板與 LCD 顯示螢幕 -->
+    <!-- 第二階段：3D PCB 電路板與 LCD 顯示螢幕 -->
     <div class="card-container" id="cardContainer">
         <div class="pcb-board">
-            <!-- 精密導線 -->
-            <div class="pcb-trace trace-main-1" id="tr1"></div>
-            <div class="pcb-trace trace-main-2" id="tr2"></div>
-            <div class="pcb-trace trace-lcd-in" id="trLcd"></div>
+            <!-- 導線 -->
+            <div class="pcb-trace trace-power-to-res" id="tr1"></div>
+            <div class="pcb-trace trace-res-to-ic" id="tr2"></div>
+            <div class="pcb-trace trace-ic-to-lcd" id="trLcd"></div>
 
             <!-- PCB 頂部列 -->
             <div class="pcb-header">
@@ -410,6 +515,27 @@
                         <button class="lang-btn" id="btn-en" onclick="manualSwitchLanguage('en')">EN</button>
                     </div>
                 </div>
+            </div>
+
+            <!-- 母電路板區域 (TTL/CMOS IC + 貼片元件) -->
+            <div class="top-circuit-zone">
+                <div class="smd-component">10kΩ</div>
+                <div class="smd-capacitor"></div>
+                
+                <!-- TTL 邏輯 IC 晶片 (內含 NAND/OR 閘極符號) -->
+                <div class="ic-chip" id="icChip">
+                    <span class="ic-label">74HC00 TTL</span>
+                    <svg class="gate-symbol" viewBox="0 0 50 30">
+                        <!-- NAND 邏輯閘符號 -->
+                        <path d="M 5 5 L 20 5 C 32 5, 32 25, 20 25 L 5 25 Z" />
+                        <circle cx="36" cy="15" r="3" />
+                        <line x1="0" y1="10" x2="5" y2="10" />
+                        <line x1="0" y1="20" x2="5" y2="20" />
+                        <line x1="39" y1="15" x2="48" y2="15" />
+                    </svg>
+                </div>
+
+                <div class="smd-component">0.1µF</div>
             </div>
 
             <!-- LCD 16 Pin 針腳接頭 -->
@@ -434,7 +560,7 @@
                 <div class="switch-hint" id="switchHint">← 按下開關解鎖卡片</div>
             </div>
 
-            <!-- 頁尾 -->
+            <!-- 頁尾 (學生簽名檔：文本播完後顯示) -->
             <div class="pcb-footer">
                 <div class="signature" id="signatureText">學生 張永旭 敬上 💻</div>
             </div>
@@ -453,7 +579,6 @@
             }
         }
 
-        // 1. 繼電器閉合與電流脈動聲
         function playRelayAndCurrentSound() {
             if (!audioCtx || isMuted) return;
             const now = audioCtx.currentTime;
@@ -473,7 +598,6 @@
             osc.stop(now + 0.4);
         }
 
-        // 2. 微動開關按壓聲 (Button Click)
         function playButtonClickSound() {
             if (!audioCtx || isMuted) return;
             const now = audioCtx.currentTime;
@@ -493,7 +617,7 @@
             osc.stop(now + 0.08);
         }
 
-        // --- Web Speech API 語音朗讀引擎 (中 ➔ 英 自動接續) ---
+        // --- Web Speech API 語音朗讀引擎 ---
         const synth = window.speechSynthesis;
 
         function speakSequence() {
@@ -502,19 +626,16 @@
 
             if (isMuted) return;
 
-            // 中文朗讀內容
             const zhText = "老師祝您教師節快樂！親愛的老師：感謝您像點亮心智的催化劑與恆定的能量源，以無私的耐性為我們化解學習中的疑難。不論是嚴謹的邏輯思維、深刻的知識傳承，或是溫暖的春風化雨，您都引導我們找到專屬的方向與共鳴。祝您教師節快樂！桃李滿天下，事事順心、喜樂安康！學生張永旭敬上。";
             const zhUtterance = new SpeechSynthesisUtterance(zhText);
             zhUtterance.lang = 'zh-TW';
             zhUtterance.rate = 0.95;
 
-            // 英文朗讀內容
             const enText = "Dear Teacher, Happy Teachers' Day! Thank you for being a constant source of wisdom and inspiration. Like a vital catalyst and steady guidance, you bring clarity to complex knowledge and help us discover our potential. We truly appreciate your patience, dedication, and warmth. Wishing you a wonderful Teachers' Day, excellent health, and continued happiness every day! Student Yong-Xu Zhang.";
             const enUtterance = new SpeechSynthesisUtterance(enText);
             enUtterance.lang = 'en-US';
             enUtterance.rate = 0.95;
 
-            // 中文播完，自動切換英文介面並播報英文
             zhUtterance.onend = function () {
                 if (isMuted) return;
                 switchLanguage('en');
@@ -546,7 +667,7 @@
             }
         }
 
-        // --- Canvas 專用背景：純數學與電學公式/向量動畫 ---
+        // --- Canvas 專用背景 ---
         const canvas = document.getElementById('effectsCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -564,7 +685,6 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
 
-            // 網格背景
             ctx.strokeStyle = 'rgba(0, 255, 170, 0.04)';
             ctx.lineWidth = 1;
             const gridSize = 45;
@@ -575,7 +695,6 @@
                 ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
             }
 
-            // 正弦與餘弦動態波形
             ctx.lineWidth = 1.6;
             let waveYCenter = 85;
 
@@ -588,26 +707,6 @@
             }
             ctx.stroke();
 
-            // 極座標阻抗相位圖
-            let phasorX = 70;
-            let phasorY = canvas.height - 85;
-            let phasorRadius = 30;
-
-            ctx.strokeStyle = 'rgba(0, 255, 170, 0.2)';
-            ctx.beginPath();
-            ctx.arc(phasorX, phasorY, phasorRadius, 0, Math.PI * 2);
-            ctx.stroke();
-
-            let angle = timeStep * 1.5;
-            let vecX = phasorX + phasorRadius * Math.cos(angle);
-            let vecY = phasorY - phasorRadius * Math.sin(angle);
-            ctx.strokeStyle = '#00ffaa';
-            ctx.beginPath();
-            ctx.moveTo(phasorX, phasorY);
-            ctx.lineTo(vecX, vecY);
-            ctx.stroke();
-
-            // 動態公式文字標記
             ctx.fillStyle = 'rgba(0, 255, 170, 0.45)';
             ctx.font = '11px monospace';
             ctx.fillText(`f(x) = A·sin(ωt + φ)`, 15, 25);
@@ -620,7 +719,7 @@
 
         drawMathAndElectronicsGraphics();
 
-        // --- 通用科目卡片內文設定 ---
+        // --- 卡片內容設定 ---
         const messages = {
             zh: {
                 title: "> LCD1602: TEACHER'S DAY <",
@@ -638,11 +737,15 @@
         let typewriterTimeout;
         let isUnlocked = false;
 
+        // 打字機功能 (文本完結後才顯示學生姓名)
         function typeWriter(text, elementId, speed = 30) {
             clearTimeout(typewriterTimeout);
             let i = 0;
             const elem = document.getElementById(elementId);
+            const sigElem = document.getElementById('signatureText');
+            
             elem.innerHTML = '';
+            sigElem.classList.remove('visible'); // 隱藏簽名
 
             function type() {
                 if (i < text.length) {
@@ -650,6 +753,10 @@
                     elem.innerHTML += char === '\n' ? '<br>' : char;
                     i++;
                     typewriterTimeout = setTimeout(type, speed);
+                } else {
+                    // 文本顯示結束後，讓簽名浮現出來
+                    sigElem.innerHTML = messages[currentLang].signature;
+                    sigElem.classList.add('visible');
                 }
             }
             type();
@@ -663,7 +770,6 @@
             document.getElementById('btn-en').classList.toggle('active', lang === 'en');
 
             document.getElementById('cardTitle').innerHTML = messages[lang].title;
-            document.getElementById('signatureText').innerHTML = messages[lang].signature;
 
             typeWriter(messages[lang].text, 'typewriter', 25);
         }
@@ -673,7 +779,7 @@
             switchLanguage(lang);
         }
 
-        // --- 電流導通動畫序列 ---
+        // --- TTL/CMOS 精密通電過場動畫 ---
         function startEnergizeSequence() {
             initAudio();
             playRelayAndCurrentSound();
@@ -682,26 +788,33 @@
             const container = document.getElementById('cardContainer');
             container.classList.add('visible');
 
-            // 1. 銅線流動動畫
+            // 1. 母電路板通電 -> 經由貼片電阻/電容
             setTimeout(() => { document.getElementById('tr1').classList.add('active'); }, 300);
-            setTimeout(() => { document.getElementById('tr2').classList.add('active'); }, 600);
-            setTimeout(() => { document.getElementById('trLcd').classList.add('active'); }, 900);
+            
+            // 2. 電流進入 TTL/CMOS IC 並點亮內部邏輯閘
+            setTimeout(() => { 
+                document.getElementById('tr2').classList.add('active');
+                document.getElementById('icChip').classList.add('active');
+            }, 650);
 
-            // 2. LCD 針腳依序通電亮燈
+            // 3. 邏輯 IC 輸出電流前往 LCD 電路接腳
+            setTimeout(() => { document.getElementById('trLcd').classList.add('active'); }, 1000);
+
+            // 4. LCD 16 Pin 針腳依序通電
             setTimeout(() => {
                 const pins = document.querySelectorAll('.pin-dot');
                 pins.forEach((pin, idx) => {
-                    setTimeout(() => { pin.classList.add('powered'); }, idx * 40);
+                    setTimeout(() => { pin.classList.add('powered'); }, idx * 35);
                 });
-            }, 1200);
+            }, 1300);
 
-            // 3. LCD 鏡頭拉近放大與提示點擊開關
+            // 5. 緩慢放大 LCD 螢幕至正中央
             setTimeout(() => {
                 container.classList.add('zoom-lcd');
                 document.getElementById('sysStatus').innerHTML = 'SYS: READY';
                 document.getElementById('cardTitle').innerHTML = '> LCD1602 BUSY <';
                 document.getElementById('typewriter').innerHTML = '<span style="color:#0f2c00; font-weight:bold;">> 請按下左下角微動開關以解鎖卡片...</span>';
-            }, 1800);
+            }, 1900);
         }
 
         // --- 點擊微動開關解鎖卡片 ---
