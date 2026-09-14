@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教師節快樂！Happy Teachers' Day</title>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #ff7675;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #2d3436;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* 漂浮裝飾背景粒子 */
+        .bg-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            animation: float 8s infinite ease-in-out;
+            z-index: 0;
+        }
+        .p1 { width: 100px; height: 100px; top: 10%; left: 10%; animation-delay: 0s; }
+        .p2 { width: 150px; height: 150px; bottom: 15%; right: 10%; animation-delay: 2s; }
+        .p3 { width: 80px; height: 80px; bottom: 20%; left: 15%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        /* 卡片容器 */
+        .card-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            perspective: 1000px;
+            z-index: 1;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 卡片封面頂圖 */
+        .card-header {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .card-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .card-header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .icon-badge {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            margin: 0 auto 15px auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        /* 卡片內文區域 */
+        .card-body {
+            padding: 30px 25px;
+            color: var(--text-color);
+            line-height: 1.8;
+        }
+
+        .salutation {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0984e3;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            font-size: 1rem;
+            text-align: justify;
+            margin-bottom: 25px;
+            white-space: pre-line;
+        }
+
+        .signature {
+            text-align: right;
+            border-top: 1px dashed #dfe6e9;
+            padding-top: 15px;
+        }
+
+        .sender-name {
+            font-weight: bold;
+            color: #2d3436;
+            font-size: 1.1rem;
+        }
+
+        .date {
+            font-size: 0.85rem;
+            color: #b2bec3;
+        }
+
+        /* 互動按鈕 */
+        .interactive-area {
+            text-align: center;
+            padding-bottom: 25px;
+        }
+
+        .btn-heart {
+            background-color: #ff7675;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 118, 117, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-heart:hover {
+            background-color: #d63031;
+            transform: scale(1.05);
+        }
+
+        /* 點讚特效數值 */
+        .count {
+            margin-left: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景動態圓球 -->
+    <div class="bg-particle p1"></div>
+    <div class="bg-particle p2"></div>
+    <div class="bg-particle p3"></div>
+
+    <div class="card-container">
+        <div class="card">
+            <!-- 封面圖示與標題 -->
+            <div class="card-header">
+                <div class="icon-badge">🎓</div>
+                <h1>教師節快樂！</h1>
+                <p>Happy Teachers' Day</p>
+            </div>
+
+            <!-- 卡片內容（可自由修改文字） -->
+            <div class="card-body">
+                <div class="salutation">親愛的 [老師姓名] 老師：</div>
+                
+                <div class="message">
+                    感謝您一直以來的用心指導與耐心包容。在學習的道路上，有您的指引與鼓勵，讓我能夠不斷突破自我、探索新知。
+
+                    祝您教師節快樂、身體健康，每天都有好心情！✨
+                </div>
+
+                <div class="signature">
+                    <div class="sender-name">學生 [您的名字] 敬上</div>
+                    <div class="date">2026 年 9 月 28 日</div>
+                </div>
+            </div>
+
+            <!-- 互動按鈕區 -->
+            <div class="interactive-area">
+                <button class="btn-heart" onclick="addHeart()">
+                    ❤️ 送上感謝心意 <span class="count" id="likeCount">0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let count = 0;
+        function addHeart() {
+            count++;
+            document.getElementById('likeCount').innerText = count;
+            
+            // 按鈕微跳動動畫
+            const btn = document.querySelector('.btn-heart');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = 'scale(1.05)';
+            }, 100);
+        }
+    </script>
+</body>
+</html>
