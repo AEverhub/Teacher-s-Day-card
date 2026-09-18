@@ -19,6 +19,51 @@
     button:focus-visible { outline:3px solid #fff; outline-offset:3px; }
     #effectsCanvas { position:fixed; inset:0; z-index:-1; pointer-events:none; }
 
+    /* ===== 正上方留言區塊 CSS ===== */
+    .top-comment-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 150;
+      background: rgba(5, 26, 14, 0.92); border-bottom: 1px solid var(--green);
+      backdrop-filter: blur(8px); padding: 8px 12px;
+      display: flex; gap: 8px; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,255,170,0.15);
+    }
+    .top-comment-bar input {
+      background: #020805; border: 1px solid #4a8062; color: #dfffe9;
+      padding: 6px 10px; border-radius: 6px; font-size: 0.78rem; outline: none;
+    }
+    .top-comment-bar input:focus { border-color: var(--green); box-shadow: 0 0 8px rgba(0,255,170,0.3); }
+    .top-comment-bar input[type="text"].name-input { width: 90px; }
+    .top-comment-bar input[type="text"].msg-input { flex: 1; max-width: 320px; }
+    .top-comment-bar button {
+      background: var(--green); color: var(--ink); border: none;
+      padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 0.78rem;
+      cursor: pointer; transition: opacity 0.2s; white-space: nowrap;
+    }
+    .top-comment-bar button:hover { opacity: 0.85; }
+
+    /* ===== 右上角留言顯示區塊 CSS ===== */
+    .top-right-toggle {
+      position: fixed; top: 10px; right: 12px; z-index: 160;
+      background: rgba(6, 32, 21, 0.9); border: 1px solid var(--gold);
+      color: var(--gold); padding: 6px 12px; border-radius: 20px;
+      font-size: 0.75rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 0 10px rgba(255,216,106,0.2); transition: all 0.2s;
+    }
+    .top-right-toggle:hover { background: var(--gold); color: var(--ink); }
+    .comments-drawer {
+      position: fixed; top: 46px; right: 12px; z-index: 160;
+      width: min(88vw, 280px); max-height: 320px; overflow-y: auto;
+      background: rgba(5, 26, 14, 0.95); border: 1px solid var(--green);
+      border-radius: 10px; padding: 10px; display: none; flex-direction: column; gap: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+    }
+    .comments-drawer.open { display: flex; }
+    .comments-header { font-size: 0.75rem; color: var(--gold); border-bottom: 1px dashed #4a8062; padding-bottom: 4px; font-weight: 700; }
+    .comment-item { background: rgba(0,0,0,0.3); border-left: 2px solid var(--green); padding: 6px 8px; border-radius: 4px; font-size: 0.72rem; }
+    .comment-item .author { color: var(--gold); font-weight: 700; margin-bottom: 2px; }
+    .comment-item .text { color: #dfffe9; word-break: break-all; }
+    .comment-item .time { color: #628b70; font-size: 0.6rem; text-align: right; margin-top: 2px; }
+
     .door-overlay { position:fixed; inset:0; z-index:100; display:grid; grid-template-columns:1fr 1fr; pointer-events:auto; }
     .door-overlay.is-open { pointer-events:none; visibility:hidden; transition:visibility 0s linear 1.15s; }
     .door { position:relative; background:linear-gradient(135deg,#151a1e,#0d1114 70%); border:2px solid #2a353d; box-shadow:inset 0 0 50px #000c; transition:transform 1.15s cubic-bezier(.77,0,.175,1); }
@@ -54,7 +99,7 @@
     body.is-blank { background:#000; }
     @keyframes pulse { 50% { opacity:.45; } }
 
-    .stage { width:100%; height:100svh; display:grid; place-items:center; padding:18px; }
+    .stage { width:100%; height:100svh; display:grid; place-items:center; padding:18px; padding-top:45px; }
     .pcb-board { position:relative; width:min(92vw,680px); height:min(88svh,820px); min-height:510px; padding:16px; overflow:hidden; display:flex; flex-direction:column; background-color:var(--pcb); background-image:radial-gradient(#0e3b20 15%,transparent 16%),radial-gradient(#0e3b20 15%,transparent 16%),linear-gradient(115deg,transparent 0 48%,#ffffff08 49%,transparent 51%); background-size:16px 16px,16px 16px,100% 100%; background-position:0 0,8px 8px,0 0; border:4px solid #104e28; border-radius:18px; box-shadow:inset 0 0 0 2px #183e27,inset 0 0 28px #000c,0 0 50px #000e; transition:transform 1s cubic-bezier(.25,1,.5,1); }
     .pcb-board::before { content:"JX-EDU 2026  •  REV 1.0  •  ROHS"; position:absolute; right:18px; top:76px; color:#c9d5a944; font:600 .48rem Arial,sans-serif; letter-spacing:1.5px; transform:rotate(90deg); transform-origin:right top; }
     .pcb-board::after { content:"+  GND  +  VCC  +  DATA  +"; position:absolute; left:24px; bottom:18px; color:#c9d5a944; font:600 .46rem Arial,sans-serif; letter-spacing:2px; }
@@ -124,17 +169,34 @@
     .flower.tl { top:0;left:0; }.flower.tr { top:0;right:0;transform:scaleX(-1); }.flower.bl { bottom:0;left:0;transform:scaleY(-1); }.flower.br { bottom:0;right:0;transform:scale(-1); }
 
     @media (max-width:600px) {
-      .stage { padding:10px; }
+      .stage { padding:10px; padding-top:45px; }
       .pcb-board { width:96vw; height:90svh; min-height:500px; padding:11px; }
       .controls { gap:3px; }.download-btn { display:none; }.sys-status { font-size:.58rem; }
       .lcd-frame { height:54%; padding:8px; }.lcd-display { padding:10px; }.lcd-body { font-size:.82rem; }
       .floating-actions { width:calc(100% - 24px); }.action-btn { flex:1; padding:9px 7px; font-size:.68rem; }
+      .top-right-toggle { right: 6px; padding: 4px 8px; font-size: 0.65rem; }
     }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; } }
   </style>
 </head>
 <body>
   <canvas id="effectsCanvas" aria-hidden="true"></canvas>
+
+  <!-- 正上方留言區 -->
+  <div class="top-comment-bar">
+    <input type="text" id="guestName" class="name-input" placeholder="姓名(1-4中文字)" maxlength="4">
+    <input type="text" id="guestMsg" class="msg-input" placeholder="輸入給老師的留言..." maxlength="100">
+    <button type="button" id="sendMsgBtn">送出留言</button>
+  </div>
+
+  <!-- 右上角留言清單切換按鈕與彈窗 -->
+  <button type="button" class="top-right-toggle" id="toggleDrawerBtn">💬 觀看留言 (<span id="msgCount">0</span>)</button>
+  <div class="comments-drawer" id="commentsDrawer">
+    <div class="comments-header">最新感念留言</div>
+    <div id="commentsList" style="display:flex; flex-direction:column; gap:6px;">
+      <div style="color:#628b70; font-size:0.7rem; text-align:center; padding:10px;">載入中...</div>
+    </div>
+  </div>
 
   <div class="door-overlay" id="doorOverlay" aria-label="卡片開場">
     <div class="door door-left" aria-hidden="true"></div><div class="door door-right" aria-hidden="true"></div>
@@ -218,11 +280,116 @@
     </article>
   </div>
 
+  <!-- Firebase 模組化載入與留言邏輯 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5WzxOytvsxlmzNyg4LozzHnhyzzUb-Iw",
+      authDomain: "smpapp-6b8fd.firebaseapp.com",
+      databaseURL: "https://smpapp-6b8fd-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "smpapp-6b8fd",
+      storageBucket: "smpapp-6b8fd.firebasestorage.app",
+      messagingSenderId: "361533748934",
+      appId: "1:361533748934:web:a5c3f9c76fc98e0df949c7",
+      measurementId: "G-CJV69GD1BP"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const commentsRef = ref(db, "teacher_day_comments");
+
+    // 敏感字詞與危險字詞過濾邏輯
+    const badWords = ["幹", "靠", "死", "白痴", "笨蛋", "fuck", "shit", "bitch", "script", "href", "eval", "<", ">"];
+    function filterText(str) {
+      let result = str;
+      badWords.forEach(word => {
+        const reg = new RegExp(word, "gi");
+        result = result.replace(reg, "***");
+      });
+      return result;
+    }
+
+    // 發送留言
+    document.getElementById("sendMsgBtn").addEventListener("click", () => {
+      const nameInput = document.getElementById("guestName").value.trim();
+      const msgInput = document.getElementById("guestMsg").value.trim();
+
+      // 名字驗證：限定 1~4 字繁/簡中文
+      const zhNamePattern = /^[\u4e00-\u9fa5]{1,4}$/;
+      if (!zhNamePattern.test(nameInput)) {
+        alert("請輸入 1 至 4 個中文字作為名字！");
+        return;
+      }
+
+      if (!msgInput) {
+        alert("請輸入留言內容！");
+        return;
+      }
+
+      // 過濾留言內容與名字
+      const cleanName = filterText(nameInput);
+      const cleanMsg = filterText(msgInput);
+
+      push(commentsRef, {
+        name: cleanName,
+        message: cleanMsg,
+        timestamp: Date.now()
+      }).then(() => {
+        document.getElementById("guestMsg").value = "";
+        alert("留言發送成功！");
+      }).catch(err => {
+        alert("留言發送失敗：" + err.message);
+      });
+    });
+
+    // 監聽 Firebase 資料庫變化並即時更新右上角清單
+    onValue(commentsRef, (snapshot) => {
+      const listEl = document.getElementById("commentsList");
+      const countEl = document.getElementById("msgCount");
+      listEl.innerHTML = "";
+      const data = snapshot.val();
+
+      if (!data) {
+        countEl.textContent = "0";
+        listEl.innerHTML = '<div style="color:#628b70; font-size:0.7rem; text-align:center; padding:10px;">目前尚無留言</div>';
+        return;
+      }
+
+      const items = Object.values(data).sort((a, b) => b.timestamp - a.timestamp);
+      countEl.textContent = items.length;
+
+      items.forEach(item => {
+        const itemEl = document.createElement("div");
+        itemEl.className = "comment-item";
+        
+        const dateStr = new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        // 安全處理 HTML 轉義
+        const safeName = document.createTextNode(item.name).textContent;
+        const safeMsg = document.createTextNode(item.message).textContent;
+
+        itemEl.innerHTML = `
+          <div class="author">${safeName}</div>
+          <div class="text">${safeMsg}</div>
+          <div class="time">${dateStr}</div>
+        `;
+        listEl.appendChild(itemEl);
+      });
+    });
+
+    // 右上角浮動視窗切換
+    document.getElementById("toggleDrawerBtn").addEventListener("click", () => {
+      document.getElementById("commentsDrawer").classList.toggle("open");
+    });
+  </script>
+
   <script>
     'use strict';
     const $ = id => document.getElementById(id);
-    const doorOverlay = $('doorOverlay'), intro = $('intro'), board = $('pcbBoard');
-    const lcdFrame = $('lcdFrame'), lcdDisplay = $('lcdDisplay'), typewriter = $('typewriter');
+    const doorOverlay = $('doorOverlay'), intro = $('intro'), board =$('pcbBoard');
+    const lcdFrame = $('lcdFrame'), lcdDisplay = $('lcdDisplay'), typewriter =$('typewriter');
     const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
     let audioCtx = null, muted = false, currentLang = 'zh', unlocked = false, typingTimer = 0, sequenceTimers = [];
 
@@ -258,18 +425,18 @@
       osc.connect(gain).connect(audioCtx.destination); osc.start(now); osc.stop(now+duration+.02);
     }
     function clearSequence(){ sequenceTimers.forEach(clearTimeout); sequenceTimers=[]; }
-    function openDoors(){ doorOverlay.classList.add('is-open'); intro.classList.add('is-hidden'); $('endPanel').classList.remove('visible'); $('floatingActions').classList.add('visible'); }
+    function openDoors(){ doorOverlay.classList.add('is-open'); intro.classList.add('is-hidden'); $('endPanel').classList.remove('visible');$('floatingActions').classList.add('visible'); }
     function closeDoors(){ doorOverlay.classList.remove('is-open'); intro.classList.add('is-hidden'); $('floatingActions').classList.remove('visible'); }
     function setStatus(text){ $('sysStatus').textContent=text; }
 
     function startSequence(){
-      document.body.classList.remove('is-blank'); $('endPanel').classList.remove('visible'); unlocked=false; currentLang='zh'; $('btnZh').classList.add('active');$('btnEn').classList.remove('active'); typewriter.replaceChildren(); $('cardTitle').textContent='READY';
+      document.body.classList.remove('is-blank'); $('endPanel').classList.remove('visible'); unlocked=false; currentLang='zh';$('btnZh').classList.add('active');$('btnEn').classList.remove('active'); typewriter.replaceChildren();$('cardTitle').textContent='READY';
       lcdFrame.classList.remove('rise','power'); lcdDisplay.classList.remove('powered'); board.classList.remove('zoom-out','pan-down','zoom-lcd'); ['trace1','trace2','trace3','trace4','trace5','particle1','particle2'].forEach(id=>$(id).classList.remove('active'));
       initAudio(); sound('door'); openDoors(); clearSequence();
       sequenceTimers.push(setTimeout(()=>{ board.classList.add('zoom-out'); setStatus('SYS: ENERGIZING'); },550));
       sequenceTimers.push(setTimeout(()=>{ sound('power'); ['trace1','trace2','trace3','trace4','trace5'].forEach(id=>$(id).classList.add('active')); $('particle1').classList.add('active');$('particle2').classList.add('active'); board.classList.remove('zoom-out');board.classList.add('pan-down'); },1350));
       sequenceTimers.push(setTimeout(()=>lcdFrame.classList.add('rise'),2050));
-      sequenceTimers.push(setTimeout(()=>{ lcdFrame.classList.add('power');lcdDisplay.classList.add('powered');typewriter.innerHTML='<button class="unlock-btn" id="unlockBtn" type="button">[ ⚡ 點擊啟動解鎖 ]</button>'; $('unlockBtn').addEventListener('click',unlock); },2750));
+      sequenceTimers.push(setTimeout(()=>{ lcdFrame.classList.add('power');lcdDisplay.classList.add('powered');typewriter.innerHTML='<button class="unlock-btn" id="unlockBtn" type="button">[  點擊啟動解鎖 ]</button>'; $('unlockBtn').addEventListener('click',unlock); },2750));
       sequenceTimers.push(setTimeout(()=>{ board.classList.remove('pan-down');board.classList.add('zoom-lcd');setStatus('SYS: READY'); },3350));
     }
     function renderMessage(lang=currentLang, speed=22){
@@ -294,9 +461,9 @@
     function finishReading(){
       if(synth)synth.cancel(); clearTimeout(typingTimer); clearSequence(); closeDoors(); setStatus('SYS: COMPLETE'); $('endPanel').classList.add('visible');
     }
-    function switchLanguage(lang){ if(!messages[lang])return; currentLang=lang; $('btnZh').classList.toggle('active',lang==='zh');$('btnEn').classList.toggle('active',lang==='en'); if(unlocked)renderMessage(lang); else $('cardTitle').textContent=messages[lang].title; }
-    function toggleAudio(){ muted=!muted; $('audioToggle').textContent=muted?'🔇 靜音':'🔊 語音'; $('audioToggle').setAttribute('aria-pressed',String(muted)); $('audioToggle').style.color=muted?'#888':'var(--green)'; if(muted&&synth)synth.cancel(); }
-    function showNameModal(){ $('nameModal').classList.add('visible'); $('teacherNameInput').focus(); }
+    function switchLanguage(lang){ if(!messages[lang])return; currentLang=lang; $('btnZh').classList.toggle('active',lang==='zh');$('btnEn').classList.toggle('active',lang==='en'); if(unlocked)renderMessage(lang); else$('cardTitle').textContent=messages[lang].title; }
+    function toggleAudio(){ muted=!muted; $('audioToggle').textContent=muted?'🔇 靜音':'🔊 語音'; $('audioToggle').setAttribute('aria-pressed',String(muted));$('audioToggle').style.color=muted?'#888':'var(--green)'; if(muted&&synth)synth.cancel(); }
+    function showNameModal(){ $('nameModal').classList.add('visible');$('teacherNameInput').focus(); }
     function hideNameModal(){ $('nameModal').classList.remove('visible'); }
     async function downloadPDF(nameOverride=null){
       if(!window.html2pdf){ alert('PDF 元件尚未載入，請確認網路後再試一次。'); return; }
@@ -307,7 +474,7 @@
       finally { wrapper.style.opacity='0'; }
     }
 
-    $('startBtn').addEventListener('click',startSequence); $('reopenBtn').addEventListener('click',()=>{sound('door');openDoors();}); $('downloadBtn').addEventListener('click',showNameModal); $('downloadTop').addEventListener('click',showNameModal); $('endDownloadBtn').addEventListener('click',showNameModal); $('restartBtn').addEventListener('click',startSequence); $('finishBtn').addEventListener('click',()=>{if(synth)synth.cancel();clearSequence();localStorage.clear();sessionStorage.clear();document.body.classList.add('is-blank');}); $('cancelNameBtn').addEventListener('click',hideNameModal); $('anonymousCheck').addEventListener('change',e=>{ $('teacherNameInput').disabled=e.target.checked; if(e.target.checked)$('teacherNameInput').value=''; }); $('nameForm').addEventListener('submit',e=>{e.preventDefault(); const anonymous=$('anonymousCheck').checked; const name=anonymous?'':$('teacherNameInput').value; if(!anonymous&&!name.trim()){ $('teacherNameInput').focus(); return; } hideNameModal(); downloadPDF(name); }); $('audioToggle').addEventListener('click',toggleAudio); $('btnZh').addEventListener('click',()=>{if(synth)synth.cancel();switchLanguage('zh');}); $('btnEn').addEventListener('click',()=>{if(synth)synth.cancel();switchLanguage('en');});
+    $('startBtn').addEventListener('click',startSequence);$('reopenBtn').addEventListener('click',()=>{sound('door');openDoors();}); $('downloadBtn').addEventListener('click',showNameModal);$('downloadTop').addEventListener('click',showNameModal); $('endDownloadBtn').addEventListener('click',showNameModal);$('restartBtn').addEventListener('click',startSequence); $('finishBtn').addEventListener('click',()=>{if(synth)synth.cancel();clearSequence();localStorage.clear();sessionStorage.clear();document.body.classList.add('is-blank');});$('cancelNameBtn').addEventListener('click',hideNameModal); $('anonymousCheck').addEventListener('change',e=>{$('teacherNameInput').disabled=e.target.checked; if(e.target.checked)$('teacherNameInput').value=''; });$('nameForm').addEventListener('submit',e=>{e.preventDefault(); const anonymous=$('anonymousCheck').checked; const name=anonymous?'':$('teacherNameInput').value; if(!anonymous&&!name.trim()){ $('teacherNameInput').focus(); return; } hideNameModal(); downloadPDF(name); });$('audioToggle').addEventListener('click',toggleAudio); $('btnZh').addEventListener('click',()=>{if(synth)synth.cancel();switchLanguage('zh');});$('btnEn').addEventListener('click',()=>{if(synth)synth.cancel();switchLanguage('en');});
 
     const canvas=$('effectsCanvas'), ctx=canvas.getContext('2d');
     function resizeCanvas(){const dpr=Math.min(devicePixelRatio||1,2);canvas.width=innerWidth*dpr;canvas.height=innerHeight*dpr;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(dpr,0,0,dpr,0,0);}
