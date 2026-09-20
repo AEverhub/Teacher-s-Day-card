@@ -684,6 +684,36 @@
     #cardContainerModal.active .return-web-btn{display:block!important;visibility:visible!important;opacity:1!important}
     .floating-actions{bottom:max(86px,calc(env(safe-area-inset-bottom) + 70px))}
     .return-web-btn{bottom:max(16px,env(safe-area-inset-bottom))!important}
+
+    /* ===== 手機版 LCD 內容不溢出 ===== */
+    #cardContainerModal{isolation:isolate;overflow:hidden}
+    #cardContainerModal .stage{position:relative;z-index:2;overflow:hidden}
+    #cardContainerModal .pcb-board{overflow:hidden}
+    #cardContainerModal .lcd-frame{z-index:20;overflow:hidden}
+    #cardContainerModal .lcd-display{width:100%;height:100%;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;word-break:normal;overflow-wrap:anywhere;white-space:normal;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:0}
+    #cardContainerModal .lcd-title{max-width:100%;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+    #cardContainerModal .lcd-body{width:100%;max-width:100%;min-width:0;overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap;padding:15px 18px 80px;line-height:1.8}
+    #cardContainerModal .lcd-body br{content:"";display:block;height:.65em}
+    #cardContainerModal .lcd-body .cursor{display:inline-block;vertical-align:middle}
+    /* 退出動畫：獨立於浮動操作列，手機瀏覽器也能穩定點擊 */
+    #cardContainerModal .return-web-btn{position:fixed!important;left:50%!important;bottom:max(12px,env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;z-index:9999!important;display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;width:min(82vw,280px);min-height:46px}
+    #cardContainerModal .return-web-btn:active{transform:translateX(-50%) scale(.96)!important}
+    @media(max-width:700px){#cardContainerModal .lcd-frame{left:2%;width:96%;height:min(55svh,520px)}#cardContainerModal .lcd-frame.rise{bottom:max(84px,calc(env(safe-area-inset-bottom) + 78px))}#cardContainerModal .lcd-body{font-size:.92rem;padding:12px 14px 74px;line-height:1.75}}
+
+    /* ===== 手機版 LCD 內容不溢出 ===== */
+    #cardContainerModal{isolation:isolate;overflow:hidden}
+    #cardContainerModal .stage{position:relative;z-index:2;overflow:hidden}
+    #cardContainerModal .pcb-board{overflow:hidden}
+    #cardContainerModal .lcd-frame{z-index:20;overflow:hidden}
+    #cardContainerModal .lcd-display{width:100%;height:100%;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;word-break:normal;overflow-wrap:anywhere;white-space:normal;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:0}
+    #cardContainerModal .lcd-title{max-width:100%;overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+    #cardContainerModal .lcd-body{width:100%;max-width:100%;min-width:0;overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap;padding:15px 18px 80px;line-height:1.8}
+    #cardContainerModal .lcd-body br{content:"";display:block;height:.65em}
+    #cardContainerModal .lcd-body .cursor{display:inline-block;vertical-align:middle}
+    /* 退出動畫：獨立於浮動操作列，手機瀏覽器也能穩定點擊 */
+    #cardContainerModal .return-web-btn{position:fixed!important;left:50%!important;bottom:max(12px,env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;z-index:9999!important;display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;width:min(82vw,280px);min-height:46px}
+    #cardContainerModal .return-web-btn:active{transform:translateX(-50%) scale(.96)!important}
+    @media(max-width:700px){#cardContainerModal .lcd-frame{left:2%;width:96%;height:min(55svh,520px)}#cardContainerModal .lcd-frame.rise{bottom:max(84px,calc(env(safe-area-inset-bottom) + 78px))}#cardContainerModal .lcd-body{font-size:.92rem;padding:12px 14px 74px;line-height:1.75}}
   </style>
 </head>
 <body>
