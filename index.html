@@ -646,6 +646,23 @@
     .trace{stroke:#c89b3d99;stroke-width:5;filter:drop-shadow(0 1px 1px #000)}.trace.active{stroke:#00ffaa;filter:drop-shadow(0 0 5px #00ffaa)}
     .particle{fill:#fff}.particle.active{filter:drop-shadow(0 0 7px #00ffaa)}
     .lcd-frame{border-color:#202a2b;box-shadow:inset 0 0 0 2px #394242,inset 0 0 15px #000e,0 8px 20px #000c}.lcd-display{border:1px solid #5e751a;box-shadow:inset 0 0 20px #152000}
+
+    .return-web-btn{position:fixed;z-index:175;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);padding:11px 24px;color:#fff;background:linear-gradient(135deg,#da3633,#9d222f);border:1px solid #ff7b72;border-radius:9px;box-shadow:0 0 18px #da363355,0 5px 18px #000b;font-size:.8rem;font-weight:800;letter-spacing:.5px;cursor:pointer;transition:transform .15s var(--ease-out),box-shadow .2s ease}
+    .return-web-btn:hover{box-shadow:0 0 26px #ff5e5e88,0 7px 22px #000c}.return-web-btn:active{transform:translateX(-50%) scale(.96)}
+
+    /* ===== 藍色 PCB 與更真實 LCD / 銅箔接法 ===== */
+    #cardContainerModal{background:#02060e}
+    .pcb-board{background-color:#061d35;background-image:radial-gradient(#195383 14%,transparent 15%),linear-gradient(115deg,transparent 0 48%,#ffffff08 49%,transparent 51%);border-color:#12609a;box-shadow:inset 0 0 0 2px #164d78,inset 0 0 32px #000e,0 0 60px #06345b}
+    .pcb-board::before,.pcb-board::after{color:#74bde055}
+    .dense-grid{background-color:#061d35;background-image:linear-gradient(#6bb6e012 1px,transparent 1px),linear-gradient(90deg,#6bb6e012 1px,transparent 1px),radial-gradient(#1c5f8d 14%,transparent 15%);box-shadow:inset 0 0 20px #000e,inset 0 0 0 1px #45a6df44}
+    .trace{stroke:#e0a93cbb;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 1px #000)}.trace.active{stroke:#49e5ff;filter:drop-shadow(0 0 6px #49e5ff)}
+    .pad{fill:#dcae43;stroke:#ffe49b;filter:drop-shadow(0 0 3px #e6b64c)}.particle{fill:#fff}.particle.active{filter:drop-shadow(0 0 8px #49e5ff)}
+    .lcd-frame{background:linear-gradient(145deg,#111a24,#050a10);border:3px solid #243b4d;box-shadow:inset 0 0 0 2px #51697b,inset 0 0 16px #000,0 8px 22px #000e}
+    .lcd-frame::before{content:"LCD-1602 / BACKLIGHT ON";position:absolute;right:14px;top:-18px;color:#68b6df;font:600 .48rem Arial,sans-serif;letter-spacing:1.2px}
+    .lcd-display{position:relative;background:linear-gradient(115deg,#0e4770,#1685b9 45%,#063456);color:#bdefff;border:2px solid #8adfff;box-shadow:inset 0 0 18px #001d35,inset 0 0 0 2px #0b263a,0 0 20px #28cfff55;overflow:hidden}
+    .lcd-display::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#ffffff08 0 1px,transparent 1px 4px),linear-gradient(120deg,#ffffff22,transparent 28% 70%,#0004)}
+    .lcd-title,.lcd-body{position:relative;z-index:1}.lcd-title{color:#d4fbff;text-shadow:0 0 8px #80eaff}.lcd-body{color:#d8fbff;text-shadow:0 0 5px #3ac7f5}.unlock-btn{color:#d9faff;background:#1279a7;border-color:#b7f1ff;box-shadow:0 4px 0 #03243a,0 0 15px #36d7ff88}
+    .lcd-body .cursor{background:#e5fbff}
   </style>
 </head>
 <body>
@@ -805,11 +822,10 @@
         </header>
         <div class="dense-grid" id="denseGrid" aria-label="PCB 元件區"></div>
         <svg class="traces" viewBox="0 0 680 820" preserveAspectRatio="none" aria-hidden="true">
-          <path class="trace" id="trace1" d="M42 115V300H150V408H208"/><path class="trace" id="trace2" d="M280 88V270H385V438H465"/>
-          <path class="trace" id="trace3" d="M610 105V245H530V345H580"/><path class="trace" id="trace4" d="M86 270H35V510H145"/>
-          <path class="trace" id="trace5" d="M460 210V175H575"/>
-          <circle class="pad" cx="42" cy="115" r="5"/><circle class="pad" cx="208" cy="408" r="5"/><circle class="pad" cx="465" cy="438" r="5"/><circle class="pad" cx="580" cy="345" r="5"/>
-          <circle class="particle" id="particle1" cx="208" cy="408" r="5"/><circle class="particle" id="particle2" cx="465" cy="438" r="5"/>
+          <path class="trace" id="trace1" d="M48 90V210H138V300H228V410"/><path class="trace" id="trace2" d="M340 74V158H294V252H360V410"/><path class="trace" id="trace3" d="M625 105V186H540V278H500V410"/><path class="trace" id="trace4" d="M94 410H58V520H190V570"/><path class="trace" id="trace5" d="M450 570H592V438H548"/>
+          <path class="trace" d="M170 110V148H240V184"/><path class="trace" d="M410 100V132H478V166"/><path class="trace" d="M235 470H300V520"/><path class="trace" d="M390 470V530H455"/>
+          <circle class="pad" cx="48" cy="90" r="5"/><circle class="pad" cx="228" cy="410" r="5"/><circle class="pad" cx="360" cy="410" r="5"/><circle class="pad" cx="500" cy="410" r="5"/><circle class="pad" cx="190" cy="570" r="5"/><circle class="pad" cx="548" cy="438" r="5"/>
+          <circle class="particle" id="particle1" cx="228" cy="410" r="5"/><circle class="particle" id="particle2" cx="500" cy="410" r="5"/>
         </svg>
         <section class="lcd-frame" id="lcdFrame" aria-live="polite">
           <div class="lcd-display" id="lcdDisplay">
@@ -823,6 +839,7 @@
     <nav class="floating-actions" id="floatingActions" aria-label="卡片功能">
       <button class="action-btn" id="reopenBtn" type="button">查看卡片內容</button>
       <button class="action-btn gold" id="downloadBtn" type="button">下載 PDF</button>
+      <button class="return-web-btn" id="returnWebBtn" type="button">返回網頁</button>
     </nav>
 
     <div class="ui-modal" id="nameModal" role="dialog" aria-modal="true" aria-labelledby="nameModalTitle">
@@ -1247,6 +1264,8 @@
         if(ci<line.length){ let target=wrap.lastChild; if(!target||target.nodeType!==Node.TEXT_NODE) {target=document.createTextNode('');wrap.appendChild(target);} target.textContent+=line[ci++]; typingTimer=setTimeout(type,speed); }
         else { wrap.appendChild(document.createElement('br')); li++;ci=0;typingTimer=setTimeout(type,speed); }
         const preview=wrap.cloneNode(true); preview.appendChild(cursor.cloneNode(true)); typewriter.replaceChildren(preview);
+        // LCD 內容輸出時自動跟隨到底部，不需要使用者手動捲動。
+        lcdDisplay.scrollTop = lcdDisplay.scrollHeight;
       }
       type();
     }
@@ -1255,11 +1274,29 @@
       if(!synth||muted){ setTimeout(finishReading,6500); return; } synth.cancel();
       const zh=new SpeechSynthesisUtterance('親愛的老師，祝您教師節快樂！謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。感謝您的耐心引導、溫暖陪伴，讓我們更勇敢地成長。願您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！學生張永旭敬上。'); zh.lang='zh-TW';zh.rate=.95;
       const en=new SpeechSynthesisUtterance("Dear Teacher, Happy Teachers' Day! Thank you for teaching us more than lessons from a textbook. Your patience, care, and guidance help us face challenges and grow with courage. May every day bring you appreciation, good health, peace, and many reasons to smile! Student Yong-Xu Zhang."); en.lang='en-US';en.rate=.95;
-      zh.onend=()=>{if(!muted){switchLanguage('en');synth.speak(en);}}; en.onend=()=>setTimeout(finishReading,1800); synth.speak(zh);
+      zh.onend=()=>{
+        if(muted)return;
+        // 中文播放完成後，立即切換英文文字並開始英文語音。
+        switchLanguage('en');
+        setStatus('SYS: ENGLISH AUDIO', true);
+        lcdDisplay.scrollTop = lcdDisplay.scrollHeight;
+        synth.speak(en);
+      };
+      en.onend=()=>setTimeout(finishReading,1800);
+      synth.speak(zh);
     }
 
+    function returnToPortal(){
+      if(synth)synth.cancel();
+      clearSequence();
+      cardModal.classList.remove('show');
+      setTimeout(()=>cardModal.classList.remove('active'),260);
+      $('openCardBtn').focus({preventScroll:true});
+    }
     function finishReading(){
       if(synth)synth.cancel(); clearTimeout(typingTimer); clearSequence(); closeDoors(); setStatus('SYS: COMPLETE', true); $('endPanel').classList.add('visible');
+      // 保留完成畫面片刻，讓使用者看見完成狀態後自動返回主頁。
+      setTimeout(returnToPortal, 3200);
     }
     function switchLanguage(lang){ if(!messages[lang])return; currentLang=lang; $('btnZh').classList.toggle('active',lang==='zh');$('btnEn').classList.toggle('active',lang==='en'); if(unlocked)renderMessage(lang); else$('cardTitle').textContent=messages[lang].title; }
     function toggleAudio(){ muted=!muted; $('audioToggle').textContent=muted?'🔇 靜音':'🔊 語音'; $('audioToggle').setAttribute('aria-pressed',String(muted));$('audioToggle').style.color=muted?'#888':'var(--green)'; if(muted&&synth)synth.cancel(); }
@@ -1306,12 +1343,7 @@
     $('downloadBtn').addEventListener('click',showNameModal);$('downloadTop').addEventListener('click',showNameModal);
     $('endDownloadBtn').addEventListener('click',showNameModal);$('mainDownloadPdfBtn').addEventListener('click', showNameModal);
 
-    $('restartBtn').addEventListener('click',startSequence);$('finishBtn').addEventListener('click',()=>{
-      if(synth)synth.cancel();
-      clearSequence();
-      cardModal.classList.remove('show');
-      setTimeout(()=>cardModal.classList.remove('active'),260);
-    });
+    $('restartBtn').addEventListener('click',startSequence);$('finishBtn').addEventListener('click',returnToPortal);$('returnWebBtn').addEventListener('click',returnToPortal);
 
     $('cancelNameBtn').addEventListener('click',hideNameModal);
     $('anonymousCheck').addEventListener('change',e=>{$('teacherNameInput').disabled=e.target.checked; if(e.target.checked)$('teacherNameInput').value=''; });$('nameForm').addEventListener('submit',e=>{e.preventDefault(); const anonymous=$('anonymousCheck').checked; const name=anonymous?'':$('teacherNameInput').value; if(!anonymous&&!name.trim()){ $('teacherNameInput').focus(); return; } hideNameModal(); downloadPDF(name); });$('audioToggle').addEventListener('click',toggleAudio);
