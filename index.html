@@ -714,6 +714,26 @@
     #cardContainerModal .return-web-btn{position:fixed!important;left:50%!important;bottom:max(12px,env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;z-index:9999!important;display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;width:min(82vw,280px);min-height:46px}
     #cardContainerModal .return-web-btn:active{transform:translateX(-50%) scale(.96)!important}
     @media(max-width:700px){#cardContainerModal .lcd-frame{left:2%;width:96%;height:min(55svh,520px)}#cardContainerModal .lcd-frame.rise{bottom:max(84px,calc(env(safe-area-inset-bottom) + 78px))}#cardContainerModal .lcd-body{font-size:.92rem;padding:12px 14px 74px;line-height:1.75}}
+
+    /* 預寫 PDF 卡片模板，不擷取動畫畫面 */
+    #pdfTemplateWrapper{position:fixed;left:-10000px;top:0;width:210mm;opacity:0;pointer-events:none}
+    #pdfTemplate{display:block;width:210mm;min-height:297mm;background:#fffcf7}
+    #pdfTemplate .pdf-frame{page-break-inside:avoid;break-inside:avoid}
+    /* LCD 下方獨立退出按鈕，永遠在卡片畫面內可見 */
+    .lcd-exit-btn{position:absolute;z-index:100;left:50%;bottom:12px;transform:translateX(-50%);display:none;width:min(78%,300px);min-height:42px;padding:9px 18px;color:#fff;background:linear-gradient(135deg,#e14848,#971f2d);border:2px solid #ff9b91;border-radius:8px;box-shadow:0 0 18px #ff414177,0 4px 12px #000b;font-size:.8rem;font-weight:800;cursor:pointer}
+    #cardContainerModal.active .lcd-exit-btn{display:block}
+    .lcd-exit-btn:active{transform:translateX(-50%) scale(.96)}
+    @media(max-width:700px){.lcd-exit-btn{bottom:10px;min-height:44px;width:74%}}
+
+    /* 預寫 PDF 卡片模板，不擷取動畫畫面 */
+    #pdfTemplateWrapper{position:fixed;left:-10000px;top:0;width:210mm;opacity:0;pointer-events:none}
+    #pdfTemplate{display:block;width:210mm;min-height:297mm;background:#fffcf7}
+    #pdfTemplate .pdf-frame{page-break-inside:avoid;break-inside:avoid}
+    /* LCD 下方獨立退出按鈕，永遠在卡片畫面內可見 */
+    .lcd-exit-btn{position:absolute;z-index:100;left:50%;bottom:12px;transform:translateX(-50%);display:none;width:min(78%,300px);min-height:42px;padding:9px 18px;color:#fff;background:linear-gradient(135deg,#e14848,#971f2d);border:2px solid #ff9b91;border-radius:8px;box-shadow:0 0 18px #ff414177,0 4px 12px #000b;font-size:.8rem;font-weight:800;cursor:pointer}
+    #cardContainerModal.active .lcd-exit-btn{display:block}
+    .lcd-exit-btn:active{transform:translateX(-50%) scale(.96)}
+    @media(max-width:700px){.lcd-exit-btn{bottom:10px;min-height:44px;width:74%}}
   </style>
 </head>
 <body>
@@ -884,6 +904,7 @@
             <div class="lcd-body" id="typewriter"></div>
           </div>
         </section>
+        <button class="lcd-exit-btn" id="lcdExitBtn" type="button">退出動畫・返回網頁</button>
       </section>
     </main>
 
@@ -1334,14 +1355,18 @@
     lcdDisplay.addEventListener('wheel',()=>{autoFollowReading=false},{passive:true});
 
     function speakSequence(){
-      if(!synth||muted){ setTimeout(finishReading,6500); return; } synth.cancel();
-      const zh=new SpeechSynthesisUtterance('親愛的老師，祝您教師節快樂！謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。感謝您的耐心引導、溫暖陪伴，讓我們更勇敢地成長。您在課堂上願意一次又一次回答問題，也願意在我們失去信心時給予鼓勵。那些看似平凡的提醒，其實都成為我們繼續努力的重要力量。即使未來走到不同的地方，我們仍會記得您教會我們的態度與選擇。願您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！學生張永旭敬上。'); zh.lang='zh-TW';zh.rate=.95;
+      if(!synth||muted){ setTimeout(finishReading,6500); return; }
+      synth.cancel();
+      const zhItem=messages.zh;
+      const enItem=messages.en;
+      const zhText=zhItem.text+'\n\n'+zhItem.signature;
+      const enText=enItem.text+'\n\n'+enItem.signature;
+      const zh=new SpeechSynthesisUtterance(zhText); zh.lang='zh-TW'; zh.rate=.92;
+      const en=new SpeechSynthesisUtterance(enText); en.lang='en-US'; en.rate=.92;
       zh.onboundary=(event)=>{speechCharIndex=event.charIndex||speechCharIndex;setReadingProgress(speechCharIndex,zh.text.length)};
-      const en=new SpeechSynthesisUtterance("Dear Teacher, Happy Teachers' Day! Thank you for teaching us more than lessons from a textbook. Your patience, care, and guidance help us face challenges and grow with courage. You answered our questions again and again, and you encouraged us whenever we lost confidence. These simple moments became an important strength that helps us keep moving forward. Wherever we go in the future, we will remember the attitude and choices you taught us. May every day bring you appreciation, good health, peace, and many reasons to smile! Student Yong-Xu Zhang."); en.lang='en-US';en.rate=.95;
       en.onboundary=(event)=>{speechCharIndex=event.charIndex||speechCharIndex;setReadingProgress(speechCharIndex,en.text.length)};
       zh.onend=()=>{
         if(muted)return;
-        // 中文播放完成後，立即切換英文文字並開始英文語音。
         switchLanguage('en');
         setStatus('SYS: ENGLISH AUDIO', true);
         speechCharIndex=0;
@@ -1396,7 +1421,7 @@
       const oldWrapperStyle={position:wrapper.style.position,left:wrapper.style.left,top:wrapper.style.top,opacity:wrapper.style.opacity,zIndex:wrapper.style.zIndex};
       wrapper.style.position='absolute'; wrapper.style.left='0'; wrapper.style.top='0'; wrapper.style.zIndex='-1'; wrapper.style.opacity='1';
       try {
-        await html2pdf().set({margin:0,filename:'教師節感念卡_張永旭敬上.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#fffcf7'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from($('pdfTemplate')).save();
+        await html2pdf().set({margin:0,filename:'教師節感念卡_張永旭敬上.pdf',pagebreak:{mode:['css']},image:{type:'jpeg',quality:1},html2canvas:{scale:2,useCORS:true,backgroundColor:'#fffcf7',scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from($('pdfTemplate')).save();
         showToast('卡片 PDF 已產生完成！', 'success');
       } catch(err) {
         showToast('PDF 產生失敗，請再試一次。', 'error');
@@ -1411,7 +1436,7 @@
     $('downloadBtn').addEventListener('click',showNameModal);$('downloadTop').addEventListener('click',showNameModal);
     $('endDownloadBtn').addEventListener('click',showNameModal);$('mainDownloadPdfBtn').addEventListener('click', showNameModal);
 
-    $('restartBtn').addEventListener('click',startSequence);$('finishBtn').addEventListener('click',returnToPortal);$('returnWebBtn').addEventListener('click',returnToPortal);
+    $('restartBtn').addEventListener('click',startSequence);$('finishBtn').addEventListener('click',returnToPortal);$('returnWebBtn').addEventListener('click',returnToPortal);$('lcdExitBtn').addEventListener('click',returnToPortal);$('lcdExitBtn').addEventListener('click',returnToPortal);
 
     $('cancelNameBtn').addEventListener('click',hideNameModal);
     $('anonymousCheck').addEventListener('change',e=>{$('teacherNameInput').disabled=e.target.checked; if(e.target.checked)$('teacherNameInput').value=''; });$('nameForm').addEventListener('submit',e=>{e.preventDefault(); const anonymous=$('anonymousCheck').checked; const name=anonymous?'':$('teacherNameInput').value; if(!anonymous&&!name.trim()){ $('teacherNameInput').focus(); return; } hideNameModal(); downloadPDF(name); });$('audioToggle').addEventListener('click',toggleAudio);
