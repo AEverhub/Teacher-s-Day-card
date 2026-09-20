@@ -663,6 +663,15 @@
     .lcd-display::before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#ffffff08 0 1px,transparent 1px 4px),linear-gradient(120deg,#ffffff22,transparent 28% 70%,#0004)}
     .lcd-title,.lcd-body{position:relative;z-index:1}.lcd-title{color:#d4fbff;text-shadow:0 0 8px #80eaff}.lcd-body{color:#d8fbff;text-shadow:0 0 5px #3ac7f5}.unlock-btn{color:#d9faff;background:#1279a7;border-color:#b7f1ff;box-shadow:0 4px 0 #03243a,0 0 15px #36d7ff88}
     .lcd-body .cursor{background:#e5fbff}
+
+    /* ===== 使用者操作修正：放大 LCD、慢速跟讀、手動接管 ===== */
+    .lcd-frame{left:3%;width:94%;height:min(500px,64%);bottom:-500px}
+    .lcd-frame.rise{bottom:clamp(40px,8vh,76px)}
+    .lcd-display{font-size:1rem;scroll-behavior:smooth;touch-action:pan-y;overscroll-behavior:contain}
+    .lcd-body{font-size:1rem;line-height:1.85;padding:16px 18px}
+    .return-web-btn{z-index:260!important;bottom:max(22px,env(safe-area-inset-bottom));min-width:168px;background:linear-gradient(135deg,#f04444,#981d2e)!important;border:2px solid #ff9890!important;box-shadow:0 0 25px #ff3d4d88,0 8px 26px #000d!important;font-size:.84rem!important}
+    .return-web-btn::before{content:'×  ';font-size:1.05rem}
+    @media(max-width:700px){.lcd-frame{height:min(58svh,500px);bottom:-520px}.lcd-frame.rise{bottom:clamp(58px,10vh,90px)}.lcd-body{font-size:.95rem;padding:13px}}
   </style>
 </head>
 <body>
@@ -839,7 +848,7 @@
     <nav class="floating-actions" id="floatingActions" aria-label="卡片功能">
       <button class="action-btn" id="reopenBtn" type="button">查看卡片內容</button>
       <button class="action-btn gold" id="downloadBtn" type="button">下載 PDF</button>
-      <button class="return-web-btn" id="returnWebBtn" type="button">返回網頁</button>
+      <button class="return-web-btn" id="returnWebBtn" type="button">退出動畫・返回網頁</button>
     </nav>
 
     <div class="ui-modal" id="nameModal" role="dialog" aria-modal="true" aria-labelledby="nameModalTitle">
@@ -1192,6 +1201,7 @@
     const bootProgress = $('bootProgress'), bootFill = $('bootFill'), bootStageLabel = $('bootStageLabel');
     const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
     let audioCtx = null, muted = false, currentLang = 'zh', unlocked = false, typingTimer = 0, sequenceTimers = [];
+    let autoFollowReading = true, speechCharIndex = 0;
 
     const messages = {
       zh: { title: "> TEACHER'S DAY CARD <", text: '敬愛的老師：\n\n祝您教師節快樂！\n\n謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。每一次耐心的講解、每一句溫暖的鼓勵，都像一盞燈，讓我們在迷惘時重新找到方向。\n\n感謝關鍵字：耐心引導・溫暖陪伴・勇敢成長\n\n因為有您的用心，我們開始相信自己的可能；因為有您的提醒，我們學會負責與堅持；因為有您的身教，我們懂得尊重、感恩與分享。這些珍貴的影響，會一直陪伴我們走向未來。\n\n願您保有教學的熱情，也擁有被理解、被珍惜的每一天。祝您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！', signature:'學生 張永旭 敬上 💻' },
@@ -1243,6 +1253,7 @@
     }
 
     function startSequence(){
+      autoFollowReading=true; speechCharIndex=0;
       document.body.classList.remove('is-blank'); $('endPanel').classList.remove('visible'); unlocked=false; currentLang='zh';$('btnZh').classList.add('active');$('btnEn').classList.remove('active'); typewriter.replaceChildren();$('cardTitle').textContent='READY';
       lcdFrame.classList.remove('rise','power'); lcdDisplay.classList.remove('powered'); board.classList.remove('zoom-out','pan-down','zoom-lcd'); ['trace1','trace2','trace3','trace4','trace5','particle1','particle2'].forEach(id=>$(id).classList.remove('active'));
       bootFill.style.width='0%'; bootStageLabel.textContent='INITIALIZING…'; bootProgress.classList.remove('visible');
@@ -1264,22 +1275,35 @@
         if(ci<line.length){ let target=wrap.lastChild; if(!target||target.nodeType!==Node.TEXT_NODE) {target=document.createTextNode('');wrap.appendChild(target);} target.textContent+=line[ci++]; typingTimer=setTimeout(type,speed); }
         else { wrap.appendChild(document.createElement('br')); li++;ci=0;typingTimer=setTimeout(type,speed); }
         const preview=wrap.cloneNode(true); preview.appendChild(cursor.cloneNode(true)); typewriter.replaceChildren(preview);
-        // LCD 內容輸出時自動跟隨到底部，不需要使用者手動捲動。
-        lcdDisplay.scrollTop = lcdDisplay.scrollHeight;
+        // 只有在使用者尚未手動接管時，LCD 才會自動跟隨朗讀位置。
+        // 捲動位置由語音 boundary 控制，避免文字打字速度造成過快捲動。
       }
       type();
     }
     function unlock(){ if(unlocked)return; unlocked=true; sound('click'); setTimeout(()=>{renderMessage(); speakSequence();},180); }
+    function setReadingProgress(index, total){
+      if(!autoFollowReading)return;
+      const ratio=Math.max(0,Math.min(1,(index||0)/Math.max(1,total||1)));
+      const max=Math.max(0,lcdDisplay.scrollHeight-lcdDisplay.clientHeight);
+      lcdDisplay.scrollTo({top:max*ratio,behavior:'smooth'});
+    }
+    lcdDisplay.addEventListener('pointerdown',()=>{autoFollowReading=false},{passive:true});
+    lcdDisplay.addEventListener('touchstart',()=>{autoFollowReading=false},{passive:true});
+    lcdDisplay.addEventListener('wheel',()=>{autoFollowReading=false},{passive:true});
+
     function speakSequence(){
       if(!synth||muted){ setTimeout(finishReading,6500); return; } synth.cancel();
       const zh=new SpeechSynthesisUtterance('親愛的老師，祝您教師節快樂！謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。感謝您的耐心引導、溫暖陪伴，讓我們更勇敢地成長。願您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！學生張永旭敬上。'); zh.lang='zh-TW';zh.rate=.95;
+      zh.onboundary=(event)=>{speechCharIndex=event.charIndex||speechCharIndex;setReadingProgress(speechCharIndex,zh.text.length)};
       const en=new SpeechSynthesisUtterance("Dear Teacher, Happy Teachers' Day! Thank you for teaching us more than lessons from a textbook. Your patience, care, and guidance help us face challenges and grow with courage. May every day bring you appreciation, good health, peace, and many reasons to smile! Student Yong-Xu Zhang."); en.lang='en-US';en.rate=.95;
+      en.onboundary=(event)=>{speechCharIndex=event.charIndex||speechCharIndex;setReadingProgress(speechCharIndex,en.text.length)};
       zh.onend=()=>{
         if(muted)return;
         // 中文播放完成後，立即切換英文文字並開始英文語音。
         switchLanguage('en');
         setStatus('SYS: ENGLISH AUDIO', true);
-        lcdDisplay.scrollTop = lcdDisplay.scrollHeight;
+        speechCharIndex=0;
+        if(autoFollowReading) lcdDisplay.scrollTo({top:0,behavior:'smooth'});
         synth.speak(en);
       };
       en.onend=()=>setTimeout(finishReading,1800);
@@ -1303,7 +1327,7 @@
     function showNameModal(){ $('nameModal').classList.add('visible');$('teacherNameInput').focus(); }
     function hideNameModal(){ $('nameModal').classList.remove('visible'); }
 
-    // 跳過開場動畫，直接進入已解鎖的卡片內容(讓不想等待的使用者更直覺)
+  
     function skipIntro(){
       clearSequence();
       sound('click');
@@ -1326,14 +1350,16 @@
       if(confirmBtn){ confirmBtn.disabled = true; confirmBtn.innerHTML = '<span class="btn-spinner"></span> 產生中'; }
       btns.forEach(b=>{ if(b) b.disabled = true; });
       const cleanName=(nameOverride||'').trim().replace(/老師$/,''); const honorific=cleanName ? cleanName+'老師' : '老師';
-      $('pdfTeacherName').textContent='敬愛的 '+honorific+'：'; const wrapper=$('pdfTemplateWrapper'); wrapper.style.opacity='1';
+      $('pdfTeacherName').textContent='敬愛的 '+honorific+'：'; const wrapper=$('pdfTemplateWrapper');
+      const oldWrapperStyle={position:wrapper.style.position,left:wrapper.style.left,top:wrapper.style.top,opacity:wrapper.style.opacity,zIndex:wrapper.style.zIndex};
+      wrapper.style.position='absolute'; wrapper.style.left='0'; wrapper.style.top='0'; wrapper.style.zIndex='-1'; wrapper.style.opacity='1';
       try {
         await html2pdf().set({margin:0,filename:'教師節感念卡_張永旭敬上.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#fffcf7'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from($('pdfTemplate')).save();
         showToast('卡片 PDF 已產生完成！', 'success');
       } catch(err) {
         showToast('PDF 產生失敗，請再試一次。', 'error');
       } finally {
-        wrapper.style.opacity='0';
+        wrapper.style.position=oldWrapperStyle.position; wrapper.style.left=oldWrapperStyle.left; wrapper.style.top=oldWrapperStyle.top; wrapper.style.zIndex=oldWrapperStyle.zIndex; wrapper.style.opacity=oldWrapperStyle.opacity || '0';
         if(confirmBtn){ confirmBtn.disabled = false; confirmBtn.innerHTML = originalConfirmHTML; }
         btns.forEach(b=>{ if(b) b.disabled = false; });
       }
