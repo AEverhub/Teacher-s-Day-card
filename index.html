@@ -672,6 +672,18 @@
     .return-web-btn{z-index:260!important;bottom:max(22px,env(safe-area-inset-bottom));min-width:168px;background:linear-gradient(135deg,#f04444,#981d2e)!important;border:2px solid #ff9890!important;box-shadow:0 0 25px #ff3d4d88,0 8px 26px #000d!important;font-size:.84rem!important}
     .return-web-btn::before{content:'×  ';font-size:1.05rem}
     @media(max-width:700px){.lcd-frame{height:min(58svh,500px);bottom:-520px}.lcd-frame.rise{bottom:clamp(58px,10vh,90px)}.lcd-body{font-size:.95rem;padding:13px}}
+
+    /* 退出動畫按鈕在全螢幕卡片期間永遠常駐 */
+    #cardContainerModal.active .floating-actions{opacity:1!important;pointer-events:auto!important;z-index:240}
+    #cardContainerModal.active .return-web-btn{display:block!important;visibility:visible!important;opacity:1!important}
+    .floating-actions{bottom:max(86px,calc(env(safe-area-inset-bottom) + 70px))}
+    .return-web-btn{bottom:max(16px,env(safe-area-inset-bottom))!important}
+
+    /* 退出動畫按鈕在全螢幕卡片期間永遠常駐 */
+    #cardContainerModal.active .floating-actions{opacity:1!important;pointer-events:auto!important;z-index:240}
+    #cardContainerModal.active .return-web-btn{display:block!important;visibility:visible!important;opacity:1!important}
+    .floating-actions{bottom:max(86px,calc(env(safe-area-inset-bottom) + 70px))}
+    .return-web-btn{bottom:max(16px,env(safe-area-inset-bottom))!important}
   </style>
 </head>
 <body>
@@ -697,33 +709,33 @@
       <div class="btn-wrapper">
         <div class="arrow-hint">▼ 點此處開啟互動卡片</div>
         <button type="button" class="portal-btn btn-red" id="openCardBtn">
-          ✉ 開啟教師節互動卡片
+           開啟教師節互動卡片
         </button>
       </div>
 
       <!-- 下載 PDF 按鈕 -->
       <div class="btn-wrapper">
         <button type="button" class="portal-btn btn-pdf" id="mainDownloadPdfBtn">
-          📄 下載專屬教師節卡片 (PDF)
+           下載專屬教師節卡片 (PDF)
         </button>
       </div>
 
       <!-- 黃色前往其他卡片按鈕 -->
       <div class="btn-wrapper">
         <button type="button" class="portal-btn btn-yellow" id="openModalBtn">
-          🔗 前往其他數位版卡片
+           前往其他數位版卡片
         </button>
       </div>
     </section>
 
     <!-- 2. 教師節由來與傳統習俗 -->
     <section class="info-section">
-      <h2>📚 教師節的由來</h2>
+      <h2> 教師節的由來</h2>
       <p>
         中華民國的教師節訂於每年的 9 月 28 日，這一天同時也是至聖先師「孔子」的誕辰紀念日。孔子創立私學、有教無類，打破了傳統上只有貴族才能受教育的限制，並提倡「因材施教」，被尊為華人教育精神的奠基者。在 1952 年，政府正式定 9 月 28 日為教師節，以感念廣大教師在教育崗位上的默付出與奉獻。
       </p>
 
-      <h2>🎏 教師節的傳統習俗</h2>
+      <h2> 教師節的傳統習俗</h2>
       <p>
         <strong>1. 祭孔大典：</strong>每年教師節清晨，各地孔廟（如臺北孔廟、臺南孔廟等）皆會舉行極具歷史意義的「釋奠典禮」，伴隨傳統雅樂與經典的三佾舞，隆重表達對至聖先師的敬意。
       </p>
@@ -739,7 +751,7 @@
 
     <!-- 3. Firebase 留言與面板統計區 -->
     <section class="comment-section">
-      <h2>💬 教師節留言板</h2>
+      <h2> 教師節留言板</h2>
       <p class="sub-hint">不論是老師或學生，都歡迎在這裡留下一句話</p>
 
       <div class="comment-input-box">
@@ -789,7 +801,7 @@
       <button type="button" id="sendMsgBtn">送出留言</button>
     </div>
 
-    <button type="button" class="top-right-toggle" id="toggleDrawerBtn">💬 觀看留言 (<span id="msgCount">0</span>)</button>
+    <button type="button" class="top-right-toggle" id="toggleDrawerBtn"> 觀看留言 (<span id="msgCount">0</span>)</button>
     <div class="comments-drawer" id="commentsDrawer">
       <div class="comments-header">最新留言</div>
       <div id="commentsList" style="display:flex; flex-direction:column; gap:6px;">
@@ -822,7 +834,7 @@
           <div class="sys-status" id="sysStatus">SYS: OFFLINE</div>
           <div class="controls">
             <button class="download-btn" id="downloadTop" type="button">下載卡片</button>
-            <button class="ctrl-btn" id="audioToggle" type="button" aria-pressed="false">🔊 語音</button>
+            <button class="ctrl-btn" id="audioToggle" type="button" aria-pressed="false"> 語音</button>
             <div class="lang-switch" aria-label="選擇語言">
               <button class="lang-btn active" id="btnZh" type="button">中</button>
               <button class="lang-btn" id="btnEn" type="button">EN</button>
@@ -944,7 +956,7 @@
       if (value.trim() === '/adminmod990420_&-') {
         if (!isAdminMode) {
           isAdminMode = true;
-          showToast('🔓 已成功解鎖管理員模式！', 'success');
+          showToast(' 已成功解鎖管理員模式！', 'success');
           renderAdminPanel();
           if (cachedCommentsData) renderCommentsUI(cachedCommentsData);
         }
@@ -971,7 +983,7 @@
       if (isAdminMode && container && !document.getElementById('resetStatsBtn')) {
         const card = document.createElement('div');
         card.className = 'admin-card';
-        card.innerHTML = `<button id="resetStatsBtn" class="reset-btn">🧹 重置數據面板 (瀏覽人數歸零)</button>`;
+        card.innerHTML = `<button id="resetStatsBtn" class="reset-btn"> 重置數據面板 (瀏覽人數歸零)</button>`;
         container.appendChild(card);
         document.getElementById('resetStatsBtn').onclick = resetPortalStats;
       }
@@ -1204,8 +1216,8 @@
     let autoFollowReading = true, speechCharIndex = 0;
 
     const messages = {
-      zh: { title: "> TEACHER'S DAY CARD <", text: '敬愛的老師：\n\n祝您教師節快樂！\n\n謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。每一次耐心的講解、每一句溫暖的鼓勵，都像一盞燈，讓我們在迷惘時重新找到方向。\n\n感謝關鍵字：耐心引導・溫暖陪伴・勇敢成長\n\n因為有您的用心，我們開始相信自己的可能；因為有您的提醒，我們學會負責與堅持；因為有您的身教，我們懂得尊重、感恩與分享。這些珍貴的影響，會一直陪伴我們走向未來。\n\n願您保有教學的熱情，也擁有被理解、被珍惜的每一天。祝您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！', signature:'學生 張永旭 敬上 💻' },
-      en: { title: "> TEACHER'S DAY CARD <", text: "Dear Teacher,\n\nHappy Teachers' Day!\n\nThank you for teaching us more than lessons from a textbook. Your patience, encouragement, and guidance have helped us think bravely, face challenges, and become better people.\n\nThree words of gratitude: Patience • Care • Courage\n\nBecause of you, we believe in our possibilities, learn to take responsibility, and understand the value of respect, gratitude, and sharing. Your influence will stay with us as we continue to grow.\n\nMay every day bring you appreciation, good health, peace, and many reasons to smile!", signature:'Student Yong-Xu Zhang 💻' }
+      zh: { title: "> TEACHER'S DAY CARD <", text: '敬愛的老師：\n\n祝您教師節快樂！\n\n謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。每一次耐心的講解、每一句溫暖的鼓勵，都像一盞燈，讓我們在迷惘時重新找到方向。\n\n感謝關鍵字：耐心引導・溫暖陪伴・勇敢成長\n\n因為有您的用心，我們開始相信自己的可能；因為有您的提醒，我們學會負責與堅持；因為有您的身教，我們懂得尊重、感恩與分享。這些珍貴的影響，會一直陪伴我們走向未來。\n\n願您保有教學的熱情，也擁有被理解、被珍惜的每一天。祝您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！', signature:'學生 張永旭 敬上 ' },
+      en: { title: "> TEACHER'S DAY CARD <", text: "Dear Teacher,\n\nHappy Teachers' Day!\n\nThank you for teaching us more than lessons from a textbook. Your patience, encouragement, and guidance have helped us think bravely, face challenges, and become better people.\n\nThree words of gratitude: Patience • Care • Courage\n\nBecause of you, we believe in our possibilities, learn to take responsibility, and understand the value of respect, gratitude, and sharing. Your influence will stay with us as we continue to grow.\n\nMay every day bring you appreciation, good health, peace, and many reasons to smile!", signature:'Student Yong-Xu Zhang ' }
     };
 
     // 生成 PCB 元件
@@ -1265,7 +1277,7 @@
       sequenceTimers.push(setTimeout(()=>{ lcdFrame.classList.add('power');lcdDisplay.classList.add('powered');typewriter.innerHTML='<button class="unlock-btn" id="unlockBtn" type="button">[  點擊啟動解鎖 ]</button>'; $('unlockBtn').addEventListener('click',unlock); setBootStage(3); },2750));
       sequenceTimers.push(setTimeout(()=>{ board.classList.remove('pan-down');board.classList.add('zoom-lcd');setStatus('SYS: READY', true); bootProgress.classList.remove('visible'); },3350));
     }
-    function renderMessage(lang=currentLang, speed=22){
+    function renderMessage(lang=currentLang, speed=7){
       clearTimeout(typingTimer); const item=messages[lang]; $('cardTitle').textContent=item.title; typewriter.replaceChildren();
       const lines=(item.text+'\n\n'+item.signature).split('\n'); let li=0, ci=0; const wrap=document.createDocumentFragment();
       const cursor=document.createElement('span'); cursor.className='cursor'; cursor.textContent='\u00A0';
@@ -1293,9 +1305,9 @@
 
     function speakSequence(){
       if(!synth||muted){ setTimeout(finishReading,6500); return; } synth.cancel();
-      const zh=new SpeechSynthesisUtterance('親愛的老師，祝您教師節快樂！謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。感謝您的耐心引導、溫暖陪伴，讓我們更勇敢地成長。願您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！學生張永旭敬上。'); zh.lang='zh-TW';zh.rate=.95;
+      const zh=new SpeechSynthesisUtterance('親愛的老師，祝您教師節快樂！謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。感謝您的耐心引導、溫暖陪伴，讓我們更勇敢地成長。您在課堂上願意一次又一次回答問題，也願意在我們失去信心時給予鼓勵。那些看似平凡的提醒，其實都成為我們繼續努力的重要力量。即使未來走到不同的地方，我們仍會記得您教會我們的態度與選擇。願您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！學生張永旭敬上。'); zh.lang='zh-TW';zh.rate=.95;
       zh.onboundary=(event)=>{speechCharIndex=event.charIndex||speechCharIndex;setReadingProgress(speechCharIndex,zh.text.length)};
-      const en=new SpeechSynthesisUtterance("Dear Teacher, Happy Teachers' Day! Thank you for teaching us more than lessons from a textbook. Your patience, care, and guidance help us face challenges and grow with courage. May every day bring you appreciation, good health, peace, and many reasons to smile! Student Yong-Xu Zhang."); en.lang='en-US';en.rate=.95;
+      const en=new SpeechSynthesisUtterance("Dear Teacher, Happy Teachers' Day! Thank you for teaching us more than lessons from a textbook. Your patience, care, and guidance help us face challenges and grow with courage. You answered our questions again and again, and you encouraged us whenever we lost confidence. These simple moments became an important strength that helps us keep moving forward. Wherever we go in the future, we will remember the attitude and choices you taught us. May every day bring you appreciation, good health, peace, and many reasons to smile! Student Yong-Xu Zhang."); en.lang='en-US';en.rate=.95;
       en.onboundary=(event)=>{speechCharIndex=event.charIndex||speechCharIndex;setReadingProgress(speechCharIndex,en.text.length)};
       zh.onend=()=>{
         if(muted)return;
@@ -1323,11 +1335,11 @@
       setTimeout(returnToPortal, 3200);
     }
     function switchLanguage(lang){ if(!messages[lang])return; currentLang=lang; $('btnZh').classList.toggle('active',lang==='zh');$('btnEn').classList.toggle('active',lang==='en'); if(unlocked)renderMessage(lang); else$('cardTitle').textContent=messages[lang].title; }
-    function toggleAudio(){ muted=!muted; $('audioToggle').textContent=muted?'🔇 靜音':'🔊 語音'; $('audioToggle').setAttribute('aria-pressed',String(muted));$('audioToggle').style.color=muted?'#888':'var(--green)'; if(muted&&synth)synth.cancel(); }
+    function toggleAudio(){ muted=!muted; $('audioToggle').textContent=muted?' 靜音':' 語音'; $('audioToggle').setAttribute('aria-pressed',String(muted));$('audioToggle').style.color=muted?'#888':'var(--green)'; if(muted&&synth)synth.cancel(); }
     function showNameModal(){ $('nameModal').classList.add('visible');$('teacherNameInput').focus(); }
     function hideNameModal(){ $('nameModal').classList.remove('visible'); }
 
-  
+    // 跳過開場動畫，直接進入已解鎖的卡片內容(讓不想等待的使用者更直覺)
     function skipIntro(){
       clearSequence();
       sound('click');
