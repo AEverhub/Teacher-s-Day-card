@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1117">
+  <title>教師節數位感念門戶與主題卡片</title>
+
+  <!-- 引入 PDF 產生元件 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
+      --text-main: #c9d1d9;
+      --text-muted: #8b949e;
+      --border-color: #30363d;
+      --red-btn: #da3633;
+      --red-btn-hover: #f85149;
+      --yellow-btn: #d29922;
+      --yellow-btn-hover: #e3b341;
+      --blue-accent: #58a6ff;
+      --green-accent: #3fb950;
+      --ease-out: cubic-bezier(.16,1,.3,1);
+      --ease-in-out: cubic-bezier(.65,0,.35,1);
+
+      /* 原卡片變數 */
+      --green:#00ffaa; --gold:#ffd86a; --pcb:#051a0e; --ink:#061500;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.6;
+      padding: 20px 15px 60px;
+      opacity: 0;
+      animation: pageFadeIn .6s var(--ease-out) .05s forwards;
+    }
+    @keyframes pageFadeIn { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:translateY(0);} }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    header.main-header {
+      text-align: center;
+      padding: 20px 0 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    header.main-header h1 {
+      font-size: 1.8rem;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    /* ===== 按鈕入口專區 ===== */
+    .portal-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      background: var(--card-bg);
+      padding: 24px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .btn-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .arrow-hint {
+      color: #ff7b72;
+      font-size: 0.9rem;
+      font-weight: bold;
+      animation: bounce 1.2s infinite;
+      margin-bottom: 4px;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .portal-btn {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out), background-color .18s ease, opacity .18s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .portal-btn:active { transform: scale(.96); }
+    .portal-btn:disabled { opacity: .6; cursor: not-allowed; transform:none; }
+    .portal-btn .btn-spinner {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.4); border-top-color:#fff;
+      animation: spin .7s linear infinite; display:inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-red {
+      background-color: var(--red-btn);
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(218, 54, 51, 0.4);
+    }
+    .btn-red:hover { background-color: var(--red-btn-hover); transform: translateY(-2px); }
+
+    .btn-pdf {
+      background-color: #238636;
+      color: #ffffff;
+    }
+    .btn-pdf:hover { background-color: #2ea043; transform: translateY(-2px); }
+
+    .btn-yellow {
+      background-color: var(--yellow-btn);
+      color: #0e1117;
+    }
+    .btn-yellow:hover { background-color: var(--yellow-btn-hover); transform: translateY(-2px); }
+
+    /* ===== 文章介紹區塊 ===== */
+    .info-section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px 24px;
+      border: 1px solid var(--border-color);
+    }
+    .info-section h2 {
+      font-size: 1.3rem;
+      color: var(--blue-accent);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    .info-section p {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      text-align: justify;
+    }
+
+    /* ===== 留言與統計區塊 ===== */
+    .comment-section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+    }
+    .comment-section h2 {
+      font-size: 1.3rem;
+      color: var(--green-accent);
+      margin-bottom: 4px;
+    }
+    .comment-section .sub-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .comment-input-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .comment-input-box input {
+      flex: 1;
+      padding: 10px 12px;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .comment-input-box input:focus { border-color: var(--blue-accent); box-shadow: 0 0 0 3px rgba(88,166,255,.15); }
+    .comment-input-box button {
+      padding: 10px 18px;
+      background: var(--blue-accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform .15s var(--ease-out), opacity .15s ease;
+    }
+    .comment-input-box button:active { transform: scale(.95); }
+    .comment-input-box button:disabled { opacity:.6; cursor:not-allowed; }
+
+    .comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 4px;
+      margin-bottom: 20px;
+      scroll-behavior: smooth;
+    }
+    .comment-card {
+      background: #0d1117;
+      border-left: 3px solid var(--blue-accent);
+      padding: 8px 12px;
+      border-radius: 4px;
+      animation: cardIn .35s var(--ease-out) both;
+    }
+    @keyframes cardIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0);} }
+    .comment-card .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .comment-card .author {
+      color: var(--blue-accent);
+      font-weight: bold;
+      font-size: 0.88rem;
+    }
+    .comment-card .ip-tag {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-left: 6px;
+      font-weight: normal;
+    }
+    .comment-card .content {
+      color: #000000;
+      background: #ffffff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      margin-top: 4px;
+      font-size: 0.92rem;
+      word-break: break-all;
+    }
+    .del-btn {
+      color: #ff7b72;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.82rem;
+      margin-left: 10px;
+    }
+
+    /* 數據統計面板 */
+    .stats-panel {
+      display: flex;
+      justify-content: space-around;
+      background: #0d1117;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-item .num {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--gold);
+      transition: transform .2s var(--ease-out);
+      display: inline-block;
+    }
+    .stat-item .num.bump { transform: scale(1.25); }
+    .stat-item .label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* 管理員面板 */
+    .admin-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      animation: cardIn .3s var(--ease-out) both;
+    }
+    .reset-btn {
+      background-color: var(--red-btn);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+      transition: transform .15s var(--ease-out);
+    }
+    .reset-btn:active { transform: scale(.97); }
+
+    /* ===== Toast 通知 (取代 alert) ===== */
+    .toast-stack {
+      position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+      z-index: 500; display: flex; flex-direction: column; gap: 8px;
+      width: min(92vw, 360px); pointer-events: none;
+    }
+    .toast {
+      padding: 11px 16px; border-radius: 9px; font-size: 0.85rem; font-weight: 600;
+      color: #fff; background: #21262d; border: 1px solid var(--border-color);
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      opacity: 0; transform: translateY(10px) scale(.96);
+      animation: toastIn .25s var(--ease-out) forwards, toastOut .25s var(--ease-in-out) forwards 2.6s;
+      text-align: center;
+    }
+    .toast.success { border-color: var(--green-accent); }
+    .toast.error { border-color: var(--red-btn); }
+    .toast.info { border-color: var(--blue-accent); }
+    @keyframes toastIn { to { opacity:1; transform: translateY(0) scale(1);} }
+    @keyframes toastOut { to { opacity:0; transform: translateY(-6px) scale(.97);} }
+
+    /* ===== Modal 彈窗樣式 ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      place-items: center;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity .2s var(--ease-out);
+    }
+    .modal-overlay.open { display: grid; }
+    .modal-overlay.show { opacity: 1; }
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      width: min(90vw, 420px);
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transform: translateY(12px) scale(.97);
+      opacity: 0;
+      transition: transform .25s var(--ease-out), opacity .25s var(--ease-out);
+    }
+    .modal-overlay.show .modal-content { transform: translateY(0) scale(1); opacity: 1; }
+    .modal-content h3 { color: #fff; margin-bottom: 12px; }
+    .modal-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+    .close-modal-btn {
+      width: 100%;
+      padding: 8px;
+      background: var(--border-color);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform .15s var(--ease-out), background-color .15s ease;
+    }
+    .close-modal-btn:hover { background: #3d444d; }
+    .close-modal-btn:active { transform: scale(.97); }
+
+    /* ===== 原卡片全螢幕容器 (Modal 覆蓋) ===== */
+    #cardContainerModal {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: #030607;
+      display: none;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity .3s var(--ease-out);
+    }
+    #cardContainerModal.active { display: block; }
+    #cardContainerModal.show { opacity: 1; }
+
+    /* 原卡片專用 CSS 隔離 */
+    #cardContainerModal * { box-sizing:border-box; margin:0; padding:0; }
+    #cardContainerModal button { font:inherit; -webkit-tap-highlight-color:transparent; }
+    #cardContainerModal button:focus-visible { outline:3px solid #fff; outline-offset:3px; }
+    #effectsCanvas { position:fixed; inset:0; z-index:-1; pointer-events:none; }
+
+    .top-comment-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 150;
+      background: rgba(5, 26, 14, 0.92); border-bottom: 1px solid var(--green);
+      backdrop-filter: blur(8px); padding: 8px 12px;
+      display: flex; gap: 8px; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,255,170,0.15);
+      transform: translateY(-100%);
+      animation: barSlideDown .5s var(--ease-out) .15s forwards;
+    }
+    @keyframes barSlideDown { to { transform: translateY(0); } }
+    .top-comment-bar input {
+      background: #020805; border: 1px solid #4a8062; color: #dfffe9;
+      padding: 6px 10px; border-radius: 6px; font-size: 0.78rem; outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .top-comment-bar input:focus { border-color: var(--green); box-shadow: 0 0 8px rgba(0,255,170,0.3); }
+    .top-comment-bar input[type="text"].name-input { width: 90px; }
+    .top-comment-bar input[type="text"].msg-input { flex: 1; max-width: 320px; }
+    .top-comment-bar button {
+      background: var(--green); color: var(--ink); border: none;
+      padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 0.78rem;
+      cursor: pointer; transition: opacity 0.2s, transform .15s var(--ease-out); white-space: nowrap;
+    }
+    .top-comment-bar button:active { transform: scale(.95); }
+    .top-comment-bar button:disabled { opacity:.6; cursor:not-allowed; }
+
+    .top-right-toggle {
+      position: fixed; top: 10px; right: 12px; z-index: 160;
+      background: rgba(6, 32, 21, 0.9); border: 1px solid var(--gold);
+      color: var(--gold); padding: 6px 12px; border-radius: 20px;
+      font-size: 0.75rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 0 10px rgba(255,216,106,0.2); transition: all 0.2s;
+      opacity: 0; animation: fadeInSimple .4s var(--ease-out) .5s forwards;
+    }
+    @keyframes fadeInSimple { to { opacity: 1; } }
+    .top-right-toggle:active { transform: scale(.95); }
+    .comments-drawer {
+      position: fixed; top: 46px; right: 12px; z-index: 160;
+      width: min(88vw, 280px); max-height: 320px; overflow-y: auto;
+      background: rgba(5, 26, 14, 0.95); border: 1px solid var(--green);
+      border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+      opacity: 0; transform: translateY(-8px) scale(.97); pointer-events: none;
+      transition: opacity .2s var(--ease-out), transform .2s var(--ease-out);
+    }
+    .comments-drawer.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .comments-header { font-size: 0.75rem; color: var(--gold); border-bottom: 1px dashed #4a8062; padding-bottom: 4px; font-weight: 700; }
+    .comment-item { background: rgba(0,0,0,0.3); border-left: 2px solid var(--green); padding: 6px 8px; border-radius: 4px; font-size: 0.72rem; animation: cardIn .3s var(--ease-out) both; }
+    .comment-item .author { color: var(--gold); font-weight: 700; margin-bottom: 2px; }
+    .comment-item .text { color: #dfffe9; word-break: break-all; }
+    .comment-item .time { color: #628b70; font-size: 0.6rem; text-align: right; margin-top: 2px; }
+
+    .door-overlay { position:fixed; inset:0; z-index:100; display:grid; grid-template-columns:1fr 1fr; pointer-events:auto; }
+    .door-overlay.is-open { pointer-events:none; visibility:hidden; transition:visibility 0s linear 1.15s; }
+    .door { position:relative; background:linear-gradient(135deg,#151a1e,#0d1114 70%); border:2px solid #2a353d; box-shadow:inset 0 0 50px #000c; transition:transform 1.15s cubic-bezier(.77,0,.175,1); }
+    .door::after { content:""; position:absolute; inset:10%; border:1px solid #31424b; opacity:.45; background:repeating-linear-gradient(0deg,transparent 0 28px,#203039 29px 30px); }
+    .door-left { border-right:3px solid var(--green); }
+    .door-right { border-left:3px solid var(--green); }
+    .is-open .door-left { transform:translateX(-100%); }
+    .is-open .door-right { transform:translateX(100%); }
+    .intro { position:absolute; z-index:2; left:50%; top:50%; width:min(86vw,340px); transform:translate(-50%,-50%); text-align:center; transition:opacity .35s ease; }
+    .intro.is-hidden { opacity:0; pointer-events:none; }
+    .end-panel { position:absolute; z-index:3; left:50%; top:50%; width:min(90vw,360px); transform:translate(-50%,-50%); display:flex; flex-direction:column; gap:11px; opacity:0; pointer-events:none; transition:opacity .35s ease; }
+    .end-panel.visible { opacity:1; pointer-events:auto; }
+    .end-title { color:var(--gold); text-align:center; font-size:.78rem; letter-spacing:2px; line-height:1.7; }
+    .end-btn { padding:14px 16px; color:var(--green); background:#062015ed; border:1px solid var(--green); border-radius:10px; cursor:pointer; box-shadow:0 0 15px #00ffaa33; font-size:.85rem; font-weight:700; transition: transform .15s var(--ease-out), box-shadow .15s ease; }
+    .end-btn:hover { box-shadow: 0 0 22px #00ffaa55; }
+    .end-btn:active { transform: scale(.97); }
+    .end-btn.gold { color:var(--gold); border-color:var(--gold); }
+    .end-btn.muted { color:#b4c0bd; border-color:#81918b; }
+    .intro-kicker { margin-bottom:18px; color:var(--gold); font-size:.75rem; letter-spacing:3px; }
+    .start-btn,.action-btn { cursor:pointer; color:var(--green); background:#062015e8; border:2px solid var(--green); border-radius:14px; box-shadow:0 0 25px #00ffaa55; text-shadow:0 0 10px var(--green); transition: transform .15s var(--ease-out), box-shadow .2s ease; }
+    .start-btn:hover,.action-btn:hover { box-shadow: 0 0 34px #00ffaa77; }
+    .start-btn:active,.action-btn:active { transform: scale(.96); }
+    .start-btn { width:100%; padding:19px 24px; font-size:1.2rem; font-weight:700; letter-spacing:2px; animation: pulseGlow 2.4s ease-in-out infinite; }
+    @keyframes pulseGlow { 0%,100% { box-shadow:0 0 25px #00ffaa44; } 50% { box-shadow:0 0 38px #00ffaa88; } }
+    .audio-warning { margin-top:16px; color:#ff6673; font-size:.82rem; animation:pulse 1.6s infinite; }
+    @keyframes pulse { 0%,100% { opacity: .65; } 50% { opacity: 1; } }
+    .skip-btn {
+      margin-top: 14px; padding: 7px 16px; font-size: .72rem; color: #7d8f88;
+      background: transparent; border: 1px solid #3a4a44; border-radius: 20px; cursor: pointer;
+      transition: color .15s ease, border-color .15s ease, transform .15s var(--ease-out);
+    }
+    .skip-btn:hover { color: var(--green); border-color: var(--green); }
+    .skip-btn:active { transform: scale(.95); }
+    .ui-modal { position:fixed; inset:0; z-index:130; display:grid; place-items:center; padding:20px; background:#0009; opacity:0; pointer-events:none; transition:opacity .25s; }
+    .ui-modal.visible { opacity:1; pointer-events:auto; }
+    .modal-card { width:min(92vw,390px); padding:22px; color:#dfffe9; background:linear-gradient(145deg,#0b2116,#06100b); border:1px solid var(--green); border-radius:14px; box-shadow:0 0 30px #00ffaa44; transform: scale(.95); transition: transform .25s var(--ease-out); }
+    .ui-modal.visible .modal-card { transform: scale(1); }
+    .modal-card h2 { margin-bottom:8px; color:var(--green); font-size:1rem; }
+    .modal-card p { margin-bottom:15px; color:#b7c9bd; font-size:.78rem; line-height:1.6; }
+    .modal-card input[type=text] { width:100%; padding:12px; margin-bottom:13px; color:#dfffe9; background:#020805; border:1px solid #4a8062; border-radius:7px; outline:none; transition: border-color .15s ease; }
+    .modal-card input[type=text]:focus { border-color: var(--green); }
+    .check-row { display:flex; gap:8px; align-items:center; margin-bottom:17px; color:#c8d7cc; font-size:.78rem; cursor:pointer; }
+    .modal-actions { display:flex; gap:8px; justify-content:flex-end; }
+    .modal-actions button { padding:9px 13px; color:#b7c9bd; background:#07140d; border:1px solid #50665a; border-radius:7px; cursor:pointer; transition: transform .15s var(--ease-out); }
+    .modal-actions button:active { transform: scale(.96); }
+    .modal-actions .confirm { color:var(--ink); background:var(--green); border-color:var(--green); font-weight:700; }
+    .modal-actions .confirm:disabled { opacity:.6; cursor:not-allowed; }
+
+    /* ===== 開場進度指示 ===== */
+    .boot-progress {
+      position: absolute; z-index: 4; left: 50%; bottom: 8%; transform: translateX(-50%);
+      width: min(70vw, 260px); opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .boot-progress.visible { opacity: 1; }
+    .boot-progress .track {
+      width: 100%; height: 4px; background: #123023; border-radius: 4px; overflow: hidden;
+    }
+    .boot-progress .fill {
+      height: 100%; width: 0%; background: var(--green); box-shadow: 0 0 8px var(--green);
+      transition: width .45s var(--ease-in-out);
+    }
+    .boot-progress .stage-label {
+      margin-top: 8px; text-align: center; font-size: .68rem; letter-spacing: 1.5px; color: #8fd8ab;
+    }
+
+    .stage { width:100%; height:100svh; display:grid; place-items:center; padding:18px; padding-top:45px; }
+    .pcb-board { position:relative; width:min(92vw,680px); height:min(88svh,820px); min-height:510px; padding:16px; overflow:hidden; display:flex; flex-direction:column; background-color:var(--pcb); background-image:radial-gradient(#0e3b20 15%,transparent 16%),radial-gradient(#0e3b20 15%,transparent 16%),linear-gradient(115deg,transparent 0 48%,#ffffff08 49%,transparent 51%); background-size:16px 16px,16px 16px,100% 100%; background-position:0 0,8px 8px,0 0; border:4px solid #104e28; border-radius:18px; box-shadow:inset 0 0 0 2px #183e27,inset 0 0 28px #000c,0 0 50px #000e; transition:transform 1s cubic-bezier(.25,1,.5,1); }
+    .pcb-board::before { content:"JX-EDU 2026  •  REV 1.0  •  ROHS"; position:absolute; right:18px; top:76px; color:#c9d5a944; font:600 .48rem Arial,sans-serif; letter-spacing:1.5px; transform:rotate(90deg); transform-origin:right top; }
+    .pcb-board::after { content:"+  GND  +  VCC  +  DATA  +"; position:absolute; left:24px; bottom:18px; color:#c9d5a944; font:600 .46rem Arial,sans-serif; letter-spacing:2px; }
+    .pcb-board.zoom-out { transform:scale(.74); }
+    .pcb-board.pan-down { transform:scale(.86) translateY(-34px); }
+    .pcb-board.zoom-lcd { transform:scale(1.03); }
+    .pcb-header { display:flex; gap:8px; align-items:center; justify-content:space-between; margin-bottom:8px; z-index:4; }
+    .sys-status { color:var(--gold); font-size:.68rem; font-weight:700; transition: color .3s ease; }
+    .sys-status.ready { color: var(--green); }
+    .controls { display:flex; align-items:center; gap:6px; }
+    .ctrl-btn,.download-btn,.lang-switch { border-radius:7px; cursor:pointer; font-size:.7rem; font-weight:700; transition: transform .15s var(--ease-out), opacity .15s ease; }
+    .ctrl-btn:active,.download-btn:active { transform: scale(.93); }
+    .ctrl-btn { padding:4px 8px; color:var(--green); background:#0008; border:1px solid var(--green); }
+    .download-btn { padding:4px 8px; color:var(--gold); background:#ffd70018; border:1px solid var(--gold); }
+    .download-btn:disabled { opacity:.55; cursor:not-allowed; }
+    .lang-switch { display:flex; padding:2px; background:#0008; border:1px solid var(--green); }
+    .lang-btn { padding:2px 6px; color:#628b70; background:none; border:0; cursor:pointer; font-weight:700; font-size:.7rem; transition: color .15s ease; }
+    .lang-btn.active { color:var(--pcb); background:var(--green); border-radius:4px; }
+    .dense-grid { position:relative; z-index:2; width:100%; height:clamp(190px,34vh,320px); padding:16px; display:grid; grid-template-columns:repeat(12,1fr); gap:9px; overflow:hidden; background:linear-gradient(90deg,#03120acc,#092416b8),repeating-linear-gradient(90deg,transparent 0 37px,#d4af3710 38px 39px); border:1px solid #41734b; border-radius:10px; box-shadow:inset 0 0 18px #000b,inset 0 0 0 1px #b2d37b18; }
+    .smd { position:relative; height:13px; background:linear-gradient(180deg,#d7e0e2,#59666a 42%,#171c1e 45%,#69777b); border-left:2px solid #b9c8ca; border-right:2px solid #b9c8ca; border-radius:2px; box-shadow:0 2px 5px #000c,0 0 1px #fff; }
+    .capacitor { height:19px; border-radius:50%; background:radial-gradient(circle at 35% 25%,#e9eef0 0 7%,#8f9a9d 9% 25%,#202426 60%); border:1px solid #c1c8c9; box-shadow:0 2px 5px #000c; }
+    .resistor { height:10px; margin-top:4px; background:linear-gradient(90deg,#c9b183 0 18%,#6d3523 18% 26%,#d4a22a 26% 35%,#4c281f 35% 44%,#c9b183 44%); border:1px solid #e1c897; box-shadow:0 2px 4px #000c; }
+    .ic { position:relative; grid-column:span 3; height:34px; display:grid; place-items:center; color:#d4af37; background:linear-gradient(110deg,#25282a,#080909 45%,#313536); border:1px solid #737b7d; border-radius:3px; font-size:.45rem; letter-spacing:.5px; box-shadow:0 3px 6px #000d,inset 0 1px #ffffff33; }
+    .pad { width:9px; height:9px; border-radius:50%; background:#d4af37; border:2px solid #f5df8b; box-shadow:0 0 4px #d4af37aa; }
+    .traces { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:3; }
+    .trace { fill:none; stroke:#bf8c2f99; stroke-width:5; stroke-linecap:round;stroke-linejoin:round; transition:stroke .4s,filter .4s; }
+    .trace.active { stroke:var(--green); filter:drop-shadow(0 0 6px var(--green)); }
+    .particle { fill:var(--green); opacity:0; transition:opacity .3s; }
+    .particle.active { opacity:1; }
+    .lcd-frame { position:absolute; z-index:5; left:5%; bottom:-410px; width:90%; height:min(380px,52%); padding:12px; display:flex; flex-direction:column; background:#0a140b; border:3px solid #000; border-radius:12px; box-shadow:inset 0 0 15px #000e; transition:bottom 1s cubic-bezier(.175,.885,.32,1.27),box-shadow .5s; }
+    .lcd-frame.rise { bottom:clamp(54px,12vh,110px); }
+    .lcd-frame.power { box-shadow:inset 0 0 15px #000e,0 0 22px #00ffaa59; }
+    .lcd-display { height:100%; padding:14px; overflow:auto; display:flex; flex-direction:column; background:#1c2605; color:#2b3b08; border-radius:6px; transition:background .6s,color .6s; }
+    .lcd-display.powered { background:#6b8e11; color:var(--ink); }
+    .lcd-title { padding-bottom:7px; margin-bottom:8px; text-align:center; border-bottom:2px dashed #0a1c0066; font-size:1rem; font-weight:700; }
+    .lcd-body { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; font-size:.9rem; line-height:1.68; font-weight:700; word-break:break-word; white-space:normal; }
+    .lcd-body .cursor { display:inline-block; width:.5em; background:currentColor; margin-left:1px; animation: blink 0.9s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .unlock-btn { padding:14px 22px; color:var(--ink); background:#8aa825; border:2px solid var(--ink); border-radius:6px; box-shadow:0 4px 0 var(--ink); cursor:pointer; animation:lcdPulse 1.2s infinite alternate; transition: transform .1s ease; }
+    .unlock-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+    @keyframes lcdPulse { from { filter:brightness(1);} to { filter:brightness(1.15);} }
+    .floating-actions { position:fixed; z-index:20; left:50%; bottom:max(18px,env(safe-area-inset-bottom)); transform:translateX(-50%); display:flex; gap:10px; opacity:0; pointer-events:none; transition:opacity .4s; }
+    .floating-actions.visible { opacity:1; pointer-events:auto; }
+
+    #pdfTemplateWrapper { position:fixed; left:-10000px; top:0; width:210mm; pointer-events:none; opacity:0; }
+    #pdfTemplate { width:210mm; min-height:297mm; padding:20mm 18mm; color:#2c3e50; background:#fffcf7; font-family:"PingFang TC","Microsoft JhengHei",sans-serif; }
+    .pdf-frame { position:relative; min-height:257mm; padding:25px; background:#fff; border:3px double #d4af37; border-radius:8px; box-shadow:inset 0 0 15px #d4af371a; }
+    .pdf-header { margin:10px 0 25px; padding-bottom:18px; text-align:center; border-bottom:2px dashed #e8d5b5; }
+    .pdf-header h1 { margin-bottom:6px; color:#2e5a44; font-size:26pt; letter-spacing:2px; }
+    .pdf-salutation { margin:0 0 22px 10px; color:#1b3629; font-size:16pt; font-weight:700; }
+    .pdf-content-zh { padding:0 10px; margin-bottom:28px; color:#2c3e50; font-size:13.5pt; line-height:2; text-indent:2em; }
+    .pdf-content-en { padding:16px 20px; margin:0 10px 35px; color:#5a6b5c; background:#f4f8f5; border-left:4px solid #2e5a44; border-radius:4px; font-size:11pt; line-height:1.7; font-style:italic; }
+    .pdf-section-title { margin:18px 10px 8px; padding-bottom:4px; color:#a17b26; border-bottom:1px solid #ead9a8; font-size:11pt; font-weight:700; letter-spacing:1px; }
+    .pdf-highlight { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:0 10px 18px; }
+    .pdf-highlight span { padding:9px 4px; color:#2e5a44; background:#fbf5e6; border:1px solid #e5ca83; border-radius:5px; text-align:center; font-size:10pt; font-weight:700; }
+    .pdf-closing { padding:12px 16px; margin:0 10px 20px; color:#765d35; background:#fffaf0; border:1px solid #ead9a8; border-radius:5px; font-size:11pt; line-height:1.8; text-align:center; }
+    .pdf-footer-sig { padding-right:15px; margin-top:30px; color:#2e5a44; text-align:right; font-size:14pt; font-weight:700; }
+    .flowers { position:absolute; inset:8px; pointer-events:none; color:#d4af37; }
+    .flower { position:absolute; width:70px; height:70px; }
+    .flower.tl { top:0;left:0; }.flower.tr { top:0;right:0;transform:scaleX(-1); }.flower.bl { bottom:0;left:0;transform:scaleY(-1); }.flower.br { bottom:0;right:0;transform:scale(-1); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+
+    /* ===== 重新安排 UI 流程：保留原始深色與綠金科技卡片語言 ===== */
+    body{background:radial-gradient(circle at 50% -10%,#1a2739 0,transparent 38%),var(--bg-color);padding:0 15px 70px}
+    .container{max-width:960px;gap:20px}
+    header.main-header{display:flex;align-items:flex-end;justify-content:space-between;text-align:left;padding:30px 4px 18px;border-bottom:1px solid var(--border-color)}
+    header.main-header h1{font-size:clamp(1.55rem,4vw,2.25rem);letter-spacing:.02em;margin:0 0 6px;color:#fff}
+    header.main-header p{margin:0!important;color:var(--text-muted)!important}
+    .header-mark{color:var(--green-accent);font-size:.72rem;letter-spacing:2px;font-weight:700;white-space:nowrap}
+    .flow-route{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 0 2px}
+    .flow-step{position:relative;display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,#161b22,#111820);border:1px solid var(--border-color);padding:12px 14px;border-radius:10px;min-height:64px}
+    .flow-step:not(:last-child)::after{content:'→';position:absolute;right:-10px;z-index:2;color:var(--green-accent);font-weight:800;background:var(--bg-color);padding:0 4px}
+    .flow-number{width:27px;height:27px;display:grid;place-items:center;border-radius:50%;color:#0d1117;background:var(--green-accent);font-size:.74rem;font-weight:800;flex:0 0 auto}
+    .flow-step:nth-child(2) .flow-number{background:var(--blue-accent)}.flow-step:nth-child(3) .flow-number{background:var(--gold)}
+    .flow-step strong{display:block;color:#fff;font-size:.85rem}.flow-step span{display:block;color:var(--text-muted);font-size:.72rem}
+    .portal-actions{display:grid;grid-template-columns:1.35fr 1fr 1fr;align-items:stretch;gap:12px;padding:14px;background:linear-gradient(135deg,#161b22,#111820);border-radius:14px;border:1px solid var(--border-color);box-shadow:0 10px 30px #0005}
+    .btn-wrapper{max-width:none;justify-content:center}.portal-btn{height:100%;min-height:54px}.btn-red{background:linear-gradient(135deg,#da3633,#a92731)}.btn-pdf{background:linear-gradient(135deg,#238636,#176b32)}.btn-yellow{background:linear-gradient(135deg,#d29922,#a66b16)}
+    .info-section,.comment-section{box-shadow:0 8px 28px #0004}.info-section h2{display:flex;align-items:center;gap:8px}
+    .info-section h2:first-child{color:var(--blue-accent)}.info-section h2:nth-of-type(2){color:var(--gold)}
+    .comment-section{border-top:2px solid var(--green-accent)}
+    #cardContainerModal .top-comment-bar,#cardContainerModal .top-right-toggle,#cardContainerModal .comments-drawer{display:none!important}
+    #cardContainerModal .stage{padding-top:18px}.pcb-board{width:min(92vw,720px);box-shadow:inset 0 0 0 2px #183e27,inset 0 0 28px #000c,0 0 60px #00ffaa18}
+    .card-flow-hint{position:fixed;left:50%;top:17px;transform:translateX(-50%);z-index:170;color:#8fd8ab;font-size:.68rem;letter-spacing:1.5px;padding:6px 12px;border:1px solid #3a6d50;border-radius:20px;background:#06120bea;opacity:.9}
+    @media(max-width:700px){header.main-header{display:block}.header-mark{margin-top:12px}.flow-route{grid-template-columns:1fr}.flow-step:not(:last-child)::after{content:'↓';right:50%;bottom:-12px;top:auto}.portal-actions{grid-template-columns:1fr}.portal-btn{min-height:50px}}
+
+    /* ===== 真實電子零件質感：IC 腳位、SMD、電阻與電容 ===== */
+    .dense-grid{background-color:#06170c;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px),radial-gradient(#19592d 14%,transparent 15%);background-size:32px 32px,32px 32px,16px 16px;box-shadow:inset 0 0 20px #000d,inset 0 0 0 1px #6da65344}
+    .smd{height:14px;background:linear-gradient(180deg,#f1f5f4 0,#aab6b7 26%,#394649 42%,#111718 58%,#899697 83%,#d7e0dd 100%);border-left:3px solid #dfe9e7;border-right:3px solid #7a8c8b;border-radius:2px;box-shadow:0 2px 5px #000e,0 0 1px #fff;filter:saturate(.8)}
+    .smd::before,.smd::after{content:"";position:absolute;top:2px;width:2px;height:9px;background:#e1b84d;box-shadow:0 0 3px #ffd86a}.smd::before{left:-5px}.smd::after{right:-5px}
+    .capacitor{height:22px;background:radial-gradient(circle at 32% 22%,#fff 0 5%,#bdc6c5 8% 20%,#4f5c60 34%,#171d20 67%,#070909 100%);border:1px solid #e9efed;border-bottom-color:#384447;border-radius:50%;box-shadow:0 3px 6px #000f,0 0 0 2px #172123;position:relative}
+    .capacitor::after{content:"";position:absolute;left:50%;top:-4px;width:2px;height:4px;background:#d4af37;box-shadow:0 0 2px #ffd86a}
+    .resistor{height:12px;margin-top:3px;background:linear-gradient(90deg,#cdb783 0 17%,#6c3829 17% 25%,#d9aa35 25% 34%,#512920 34% 43%,#d65d39 43% 52%,#cdb783 52% 100%);border:1px solid #f0d9a2;border-radius:5px;box-shadow:0 2px 5px #000e;position:relative}
+    .resistor::before,.resistor::after{content:"";position:absolute;top:4px;width:7px;height:2px;background:#d4af37}.resistor::before{left:-8px}.resistor::after{right:-8px}
+    .ic{height:38px;background:linear-gradient(100deg,#50575b 0,#181d1e 13%,#060708 48%,#303638 89%,#090b0b 100%);border:1px solid #aab5b4;border-top-color:#e2e9e7;border-radius:3px;box-shadow:0 4px 7px #000f,inset 0 1px #fff4;color:#d4af37;letter-spacing:.7px}
+    .ic::before,.ic::after{content:"";position:absolute;left:-5px;right:-5px;height:4px;background:repeating-linear-gradient(90deg,#d6b65b 0 2px,transparent 2px 7px);filter:drop-shadow(0 1px 1px #000)}.ic::before{top:5px}.ic::after{bottom:5px}
+    .ic:after{content:""}
+    .pad{fill:#d6b45c;stroke:#f8e19a;stroke-width:1.5;filter:drop-shadow(0 0 3px #d4af37)}
+    .trace{stroke:#c89b3d99;stroke-width:5;filter:drop-shadow(0 1px 1px #000)}.trace.active{stroke:#00ffaa;filter:drop-shadow(0 0 5px #00ffaa)}
+    .particle{fill:#fff}.particle.active{filter:drop-shadow(0 0 7px #00ffaa)}
+    .lcd-frame{border-color:#202a2b;box-shadow:inset 0 0 0 2px #394242,inset 0 0 15px #000e,0 8px 20px #000c}.lcd-display{border:1px solid #5e751a;box-shadow:inset 0 0 20px #152000}
+
+    /* ===== 真實電子零件質感：IC 腳位、SMD、電阻與電容 ===== */
+    .dense-grid{background-color:#06170c;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px),radial-gradient(#19592d 14%,transparent 15%);background-size:32px 32px,32px 32px,16px 16px;box-shadow:inset 0 0 20px #000d,inset 0 0 0 1px #6da65344}
+    .smd{height:14px;background:linear-gradient(180deg,#f1f5f4 0,#aab6b7 26%,#394649 42%,#111718 58%,#899697 83%,#d7e0dd 100%);border-left:3px solid #dfe9e7;border-right:3px solid #7a8c8b;border-radius:2px;box-shadow:0 2px 5px #000e,0 0 1px #fff;filter:saturate(.8)}
+    .smd::before,.smd::after{content:"";position:absolute;top:2px;width:2px;height:9px;background:#e1b84d;box-shadow:0 0 3px #ffd86a}.smd::before{left:-5px}.smd::after{right:-5px}
+    .capacitor{height:22px;background:radial-gradient(circle at 32% 22%,#fff 0 5%,#bdc6c5 8% 20%,#4f5c60 34%,#171d20 67%,#070909 100%);border:1px solid #e9efed;border-bottom-color:#384447;border-radius:50%;box-shadow:0 3px 6px #000f,0 0 0 2px #172123;position:relative}
+    .capacitor::after{content:"";position:absolute;left:50%;top:-4px;width:2px;height:4px;background:#d4af37;box-shadow:0 0 2px #ffd86a}
+    .resistor{height:12px;margin-top:3px;background:linear-gradient(90deg,#cdb783 0 17%,#6c3829 17% 25%,#d9aa35 25% 34%,#512920 34% 43%,#d65d39 43% 52%,#cdb783 52% 100%);border:1px solid #f0d9a2;border-radius:5px;box-shadow:0 2px 5px #000e;position:relative}
+    .resistor::before,.resistor::after{content:"";position:absolute;top:4px;width:7px;height:2px;background:#d4af37}.resistor::before{left:-8px}.resistor::after{right:-8px}
+    .ic{height:38px;background:linear-gradient(100deg,#50575b 0,#181d1e 13%,#060708 48%,#303638 89%,#090b0b 100%);border:1px solid #aab5b4;border-top-color:#e2e9e7;border-radius:3px;box-shadow:0 4px 7px #000f,inset 0 1px #fff4;color:#d4af37;letter-spacing:.7px}
+    .ic::before,.ic::after{content:"";position:absolute;left:-5px;right:-5px;height:4px;background:repeating-linear-gradient(90deg,#d6b65b 0 2px,transparent 2px 7px);filter:drop-shadow(0 1px 1px #000)}.ic::before{top:5px}.ic::after{bottom:5px}
+    .ic:after{content:""}
+    .pad{fill:#d6b45c;stroke:#f8e19a;stroke-width:1.5;filter:drop-shadow(0 0 3px #d4af37)}
+    .trace{stroke:#c89b3d99;stroke-width:5;filter:drop-shadow(0 1px 1px #000)}.trace.active{stroke:#00ffaa;filter:drop-shadow(0 0 5px #00ffaa)}
+    .particle{fill:#fff}.particle.active{filter:drop-shadow(0 0 7px #00ffaa)}
+    .lcd-frame{border-color:#202a2b;box-shadow:inset 0 0 0 2px #394242,inset 0 0 15px #000e,0 8px 20px #000c}.lcd-display{border:1px solid #5e751a;box-shadow:inset 0 0 20px #152000}
+
+    /* ===== 真實電子零件質感：IC 腳位、SMD、電阻與電容 ===== */
+    .dense-grid{background-color:#06170c;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px),radial-gradient(#19592d 14%,transparent 15%);background-size:32px 32px,32px 32px,16px 16px;box-shadow:inset 0 0 20px #000d,inset 0 0 0 1px #6da65344}
+    .smd{height:14px;background:linear-gradient(180deg,#f1f5f4 0,#aab6b7 26%,#394649 42%,#111718 58%,#899697 83%,#d7e0dd 100%);border-left:3px solid #dfe9e7;border-right:3px solid #7a8c8b;border-radius:2px;box-shadow:0 2px 5px #000e,0 0 1px #fff;filter:saturate(.8)}
+    .smd::before,.smd::after{content:"";position:absolute;top:2px;width:2px;height:9px;background:#e1b84d;box-shadow:0 0 3px #ffd86a}.smd::before{left:-5px}.smd::after{right:-5px}
+    .capacitor{height:22px;background:radial-gradient(circle at 32% 22%,#fff 0 5%,#bdc6c5 8% 20%,#4f5c60 34%,#171d20 67%,#070909 100%);border:1px solid #e9efed;border-bottom-color:#384447;border-radius:50%;box-shadow:0 3px 6px #000f,0 0 0 2px #172123;position:relative}
+    .capacitor::after{content:"";position:absolute;left:50%;top:-4px;width:2px;height:4px;background:#d4af37;box-shadow:0 0 2px #ffd86a}
+    .resistor{height:12px;margin-top:3px;background:linear-gradient(90deg,#cdb783 0 17%,#6c3829 17% 25%,#d9aa35 25% 34%,#512920 34% 43%,#d65d39 43% 52%,#cdb783 52% 100%);border:1px solid #f0d9a2;border-radius:5px;box-shadow:0 2px 5px #000e;position:relative}
+    .resistor::before,.resistor::after{content:"";position:absolute;top:4px;width:7px;height:2px;background:#d4af37}.resistor::before{left:-8px}.resistor::after{right:-8px}
+    .ic{height:38px;background:linear-gradient(100deg,#50575b 0,#181d1e 13%,#060708 48%,#303638 89%,#090b0b 100%);border:1px solid #aab5b4;border-top-color:#e2e9e7;border-radius:3px;box-shadow:0 4px 7px #000f,inset 0 1px #fff4;color:#d4af37;letter-spacing:.7px}
+    .ic::before,.ic::after{content:"";position:absolute;left:-5px;right:-5px;height:4px;background:repeating-linear-gradient(90deg,#d6b65b 0 2px,transparent 2px 7px);filter:drop-shadow(0 1px 1px #000)}.ic::before{top:5px}.ic::after{bottom:5px}
+    .ic:after{content:""}
+    .pad{fill:#d6b45c;stroke:#f8e19a;stroke-width:1.5;filter:drop-shadow(0 0 3px #d4af37)}
+    .trace{stroke:#c89b3d99;stroke-width:5;filter:drop-shadow(0 1px 1px #000)}.trace.active{stroke:#00ffaa;filter:drop-shadow(0 0 5px #00ffaa)}
+    .particle{fill:#fff}.particle.active{filter:drop-shadow(0 0 7px #00ffaa)}
+    .lcd-frame{border-color:#202a2b;box-shadow:inset 0 0 0 2px #394242,inset 0 0 15px #000e,0 8px 20px #000c}.lcd-display{border:1px solid #5e751a;box-shadow:inset 0 0 20px #152000}
+  </style>
+</head>
+<body>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <div class="container">
+    <header class="main-header">
+      <h1>尊師重道 ‧ 感恩有您</h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">數位版教師節賀卡互動門戶</p>
+      <div class="header-mark">TEACHER'S DAY / DIGITAL PORTAL</div>
+    </header>
+
+    <section class="flow-route" aria-label="使用流程">
+      <div class="flow-step"><div class="flow-number">1</div><div><strong>開啟互動卡片</strong><span>啟動感念訊息</span></div></div>
+      <div class="flow-step"><div class="flow-number">2</div><div><strong>閱讀老師卡片</strong><span>支援中英文與語音</span></div></div>
+      <div class="flow-step"><div class="flow-number">3</div><div><strong>保存祝福心意</strong><span>下載專屬 PDF 卡片</span></div></div>
+    </section>
+
+    <!-- 1. 按鈕專區 -->
+    <section class="portal-actions">
+      <!-- 紅色卡片入口按鈕 -->
+      <div class="btn-wrapper">
+        <div class="arrow-hint">▼ 點此處開啟互動卡片</div>
+        <button type="button" class="portal-btn btn-red" id="openCardBtn">
+          ✉ 開啟教師節互動卡片
+        </button>
+      </div>
+
+      <!-- 下載 PDF 按鈕 -->
+      <div class="btn-wrapper">
+        <button type="button" class="portal-btn btn-pdf" id="mainDownloadPdfBtn">
+          📄 下載專屬教師節卡片 (PDF)
+        </button>
+      </div>
+
+      <!-- 黃色前往其他卡片按鈕 -->
+      <div class="btn-wrapper">
+        <button type="button" class="portal-btn btn-yellow" id="openModalBtn">
+          🔗 前往其他數位版卡片
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. 教師節由來與傳統習俗 -->
+    <section class="info-section">
+      <h2>📚 教師節的由來</h2>
+      <p>
+        中華民國的教師節訂於每年的 9 月 28 日，這一天同時也是至聖先師「孔子」的誕辰紀念日。孔子創立私學、有教無類，打破了傳統上只有貴族才能受教育的限制，並提倡「因材施教」，被尊為華人教育精神的奠基者。在 1952 年，政府正式定 9 月 28 日為教師節，以感念廣大教師在教育崗位上的默付出與奉獻。
+      </p>
+
+      <h2>🎏 教師節的傳統習俗</h2>
+      <p>
+        <strong>1. 祭孔大典：</strong>每年教師節清晨，各地孔廟（如臺北孔廟、臺南孔廟等）皆會舉行極具歷史意義的「釋奠典禮」，伴隨傳統雅樂與經典的三佾舞，隆重表達對至聖先師的敬意。
+      </p>
+      <p>
+        <strong>2. 拔智慧毛：</strong>在傳統祭孔活動結束後，許多學子與家長會參加「拔智慧毛」活動（傳統取自太牢祭品牛隻身上的毛），象徵祈求學業進步、智慧大開。
+      </p>
+      <p>
+        <strong>3. 尊師敬師卡：</strong>學子們會在此特別的日子手寫或透過數位卡片，向辛苦導師表達最誠摯的感謝，感謝老師不只傳授課業知識，更引導人生正確方向。
+      </p>
+    </section>
+
+    <div id="adminPanelContainer"></div>
+
+    <!-- 3. Firebase 留言與面板統計區 -->
+    <section class="comment-section">
+      <h2>💬 教師節留言板</h2>
+      <p class="sub-hint">不論是老師或學生，都歡迎在這裡留下一句話</p>
+
+      <div class="comment-input-box">
+        <input type="text" id="mainMsgInput" placeholder="寫下你想說的話..." maxlength="100">
+        <button type="button" id="mainSendBtn">送出留言</button>
+      </div>
+
+      <div class="comment-list" id="mainCommentList">
+        <div style="color:var(--text-muted); font-size:0.85rem; text-align:center; padding:10px;">留言載入中...</div>
+      </div>
+
+      <!-- 訪客與留言數據統計面板 -->
+      <div class="stats-panel">
+        <div class="stat-item">
+          <div class="num" id="statViews">0</div>
+          <div class="label">查看此網頁人數</div>
+        </div>
+        <div class="stat-item">
+          <div class="num" id="statComments">0</div>
+          <div class="label">留言人數</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 黃色按鈕彈窗 Modal -->
+  <div class="modal-overlay" id="linkModal">
+    <div class="modal-content">
+      <h3>其他數位版卡片列表</h3>
+      <div class="modal-list-item">
+        <span>「連動」教師節卡片</span>
+        <a href="https://donggangtd-kak3fxxg.manus.space/" target="_blank" rel="noopener noreferrer">
+          <button type="button" class="portal-btn btn-yellow" style="padding:4px 10px; font-size:0.8rem;">前往</button>
+        </a>
+      </div>
+      <button type="button" class="close-modal-btn" id="closeModalBtn">關閉</button>
+    </div>
+  </div>
+
+  <!-- 原卡片完整 DOM 封裝 Modal -->
+  <div id="cardContainerModal">
+    <canvas id="effectsCanvas" aria-hidden="true"></canvas>
+
+    <div class="top-comment-bar">
+      <input type="text" id="guestName" class="name-input" placeholder="姓名(1-4字)" maxlength="4">
+      <input type="text" id="guestMsg" class="msg-input" placeholder="輸入你的留言..." maxlength="100">
+      <button type="button" id="sendMsgBtn">送出留言</button>
+    </div>
+
+    <button type="button" class="top-right-toggle" id="toggleDrawerBtn">💬 觀看留言 (<span id="msgCount">0</span>)</button>
+    <div class="comments-drawer" id="commentsDrawer">
+      <div class="comments-header">最新留言</div>
+      <div id="commentsList" style="display:flex; flex-direction:column; gap:6px;">
+        <div style="color:#628b70; font-size:0.7rem; text-align:center; padding:10px;">載入中...</div>
+      </div>
+    </div>
+
+    <div class="door-overlay" id="doorOverlay" aria-label="卡片開場">
+      <div class="door door-left" aria-hidden="true"></div><div class="door door-right" aria-hidden="true"></div>
+      <div class="intro" id="intro">
+        <div class="intro-kicker">TEACHER'S DAY // SYSTEM BOOT</div>
+        <button class="start-btn" id="startBtn" type="button">點擊開啟卡片</button>
+        <p class="audio-warning">建議開啟聲音，體驗完整效果</p>
+      </div>
+      <div class="boot-progress" id="bootProgress">
+        <div class="track"><div class="fill" id="bootFill"></div></div>
+        <div class="stage-label" id="bootStageLabel">INITIALIZING…</div>
+      </div>
+      <div class="end-panel" id="endPanel" aria-label="閱讀完成選單">
+        <div class="end-title">MESSAGE COMPLETE<br>感念訊息傳送完成</div>
+        <button class="end-btn gold" id="endDownloadBtn" type="button">1．下載專屬教師節卡片</button>
+        <button class="end-btn" id="restartBtn" type="button">2．重新開始閱讀</button>
+        <button class="end-btn muted" id="finishBtn" type="button">3．結束</button>
+      </div>
+    </div>
+
+    <main class="stage">
+      <section class="pcb-board" id="pcbBoard" aria-label="精密電路板教師節卡片">
+        <header class="pcb-header">
+          <div class="sys-status" id="sysStatus">SYS: OFFLINE</div>
+          <div class="controls">
+            <button class="download-btn" id="downloadTop" type="button">下載卡片</button>
+            <button class="ctrl-btn" id="audioToggle" type="button" aria-pressed="false">🔊 語音</button>
+            <div class="lang-switch" aria-label="選擇語言">
+              <button class="lang-btn active" id="btnZh" type="button">中</button>
+              <button class="lang-btn" id="btnEn" type="button">EN</button>
+            </div>
+          </div>
+        </header>
+        <div class="dense-grid" id="denseGrid" aria-label="PCB 元件區"></div>
+        <svg class="traces" viewBox="0 0 680 820" preserveAspectRatio="none" aria-hidden="true">
+          <path class="trace" id="trace1" d="M42 115V300H150V408H208"/><path class="trace" id="trace2" d="M280 88V270H385V438H465"/>
+          <path class="trace" id="trace3" d="M610 105V245H530V345H580"/><path class="trace" id="trace4" d="M86 270H35V510H145"/>
+          <path class="trace" id="trace5" d="M460 210V175H575"/>
+          <circle class="pad" cx="42" cy="115" r="5"/><circle class="pad" cx="208" cy="408" r="5"/><circle class="pad" cx="465" cy="438" r="5"/><circle class="pad" cx="580" cy="345" r="5"/>
+          <circle class="particle" id="particle1" cx="208" cy="408" r="5"/><circle class="particle" id="particle2" cx="465" cy="438" r="5"/>
+        </svg>
+        <section class="lcd-frame" id="lcdFrame" aria-live="polite">
+          <div class="lcd-display" id="lcdDisplay">
+            <div class="lcd-title" id="cardTitle">READY</div>
+            <div class="lcd-body" id="typewriter"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <nav class="floating-actions" id="floatingActions" aria-label="卡片功能">
+      <button class="action-btn" id="reopenBtn" type="button">查看卡片內容</button>
+      <button class="action-btn gold" id="downloadBtn" type="button">下載 PDF</button>
+    </nav>
+
+    <div class="ui-modal" id="nameModal" role="dialog" aria-modal="true" aria-labelledby="nameModalTitle">
+      <form class="modal-card" id="nameForm">
+        <h2 id="nameModalTitle">下載專屬教師節卡片</h2>
+        <p>請輸入老師姓名，系統會自動使用尊稱「敬愛的○○老師」。若不方便透露姓名，也可以選擇匿名下載。</p>
+        <input id="teacherNameInput" type="text" maxlength="30" placeholder="例如：王老師或王" autocomplete="off">
+        <label class="check-row"><input id="anonymousCheck" type="checkbox"> 不願透露姓名，使用「敬愛的老師」</label>
+        <div class="modal-actions"><button id="cancelNameBtn" type="button">取消</button><button class="confirm" id="confirmDownloadBtn" type="submit">立即下載</button></div>
+      </form>
+    </div>
+
+    <div id="pdfTemplateWrapper" aria-hidden="true">
+      <article id="pdfTemplate">
+        <div class="pdf-frame">
+          <div class="flowers">
+            <svg class="flower tl" viewBox="0 0 100 100"><path d="M10 90Q10 10 90 10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="25" cy="25" r="12" fill="#f4a6b2"/><circle cx="20" cy="40" r="8" fill="#e8c5ce"/><circle cx="40" cy="20" r="8" fill="#e8c5ce"/></svg>
+            <svg class="flower tr" viewBox="0 0 100 100"><path d="M10 90Q10 10 90 10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="25" cy="25" r="12" fill="#f4a6b2"/><circle cx="20" cy="40" r="8" fill="#e8c5ce"/><circle cx="40" cy="20" r="8" fill="#e8c5ce"/></svg>
+            <svg class="flower bl" viewBox="0 0 100 100"><path d="M10 90Q10 10 90 10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="25" cy="25" r="12" fill="#f4a6b2"/><circle cx="20" cy="40" r="8" fill="#e8c5ce"/><circle cx="40" cy="20" r="8" fill="#e8c5ce"/></svg>
+            <svg class="flower br" viewBox="0 0 100 100"><path d="M10 90Q10 10 90 10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="25" cy="25" r="12" fill="#f4a6b2"/><circle cx="20" cy="40" r="8" fill="#e8c5ce"/><circle cx="40" cy="20" r="8" fill="#e8c5ce"/></svg>
+          </div>
+          <header class="pdf-header"><h1>教師節感念卡</h1><h3>Teacher's Day Appreciation Card</h3></header>
+          <div class="pdf-salutation" id="pdfTeacherName">敬愛的老師：</div>
+          <div class="pdf-content-zh">祝您教師節快樂！在這特別的日子裡，想向您表達最誠摯的感謝。謝謝您不只教會我們課本上的知識，也教會我們如何思考、如何面對困難，以及如何成為更好的人。每一次耐心的講解、每一句溫暖的鼓勵，都像一盞燈，讓我們在迷惘時重新找到方向。</div>
+          <div class="pdf-section-title">一封來自學生的感謝訊號</div>
+          <div class="pdf-highlight"><span>耐心引導</span><span>溫暖陪伴</span><span>勇敢成長</span></div>
+          <div class="pdf-content-zh">因為有您的用心，我們開始相信自己的可能；因為有您的提醒，我們學會負責與堅持；因為有您的身教，我們懂得尊重、感恩與分享。這些珍貴的影響，也許無法在今天全部說完，卻會一直陪伴我們走向未來。</div>
+          <div class="pdf-content-en">Dear Teacher, Happy Teachers' Day! Thank you for teaching us more than lessons from a textbook. Your patience, encouragement, and guidance have helped us think bravely, face challenges, and become better people. Your influence will stay with us as we continue to grow.</div>
+          <div class="pdf-closing">願您保有教學的熱情，也擁有被理解、被珍惜的每一天。<br>祝您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！</div>
+          <div class="pdf-footer-sig">學生 張永旭 敬上</div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Firebase 12.19.0 SDK 與主要邏輯 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, set, remove, runTransaction } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5WzxOytvsxlmzNyg4LozzHnhyzzUb-Iw",
+      authDomain: "smpapp-6b8fd.firebaseapp.com",
+      databaseURL: "https://smpapp-6b8fd-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "smpapp-6b8fd",
+      storageBucket: "smpapp-6b8fd.firebasestorage.app",
+      messagingSenderId: "361533748934",
+      appId: "1:361533748934:web:a5c3f9c76fc98e0df949c7",
+      measurementId: "G-CJV69GD1BP"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const commentsRef = ref(db, "teacher_day_comments");
+    const viewsRef = ref(db, "portal_stats/unique_views");
+
+    let isAdminMode = false;
+    let cachedCommentsData = null;
+
+    // ===== Toast 通知 (取代 alert，更專業流暢) =====
+    function showToast(message, type = 'info') {
+      const stack = document.getElementById('toastStack');
+      if (!stack) { console.log(message); return; }
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.textContent = message;
+      stack.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+    window.showToast = showToast;
+
+    function bumpStat(el) {
+      if (!el) return;
+      el.classList.remove('bump');
+      void el.offsetWidth;
+      el.classList.add('bump');
+      setTimeout(() => el.classList.remove('bump'), 220);
+    }
+
+    // 取得訪客 IP
+    async function getUserIP() {
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        return data.ip;
+      } catch (e) {
+        return '未知 IP';
+      }
+    }
+
+    // 檢測管理員隱藏指令 /adminmod990420_&-
+    function checkAdminCommand(value) {
+      if (value.trim() === '/adminmod990420_&-') {
+        if (!isAdminMode) {
+          isAdminMode = true;
+          showToast('🔓 已成功解鎖管理員模式！', 'success');
+          renderAdminPanel();
+          if (cachedCommentsData) renderCommentsUI(cachedCommentsData);
+        }
+        return true;
+      }
+      return false;
+    }
+
+    // 監聽輸入框暗號觸發
+    ['mainMsgInput', 'guestMsg', 'guestName'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', (e) => {
+          if (checkAdminCommand(e.target.value)) {
+            e.target.value = '';
+          }
+        });
+      }
+    });
+
+    // 渲染管理員重置 UI
+    function renderAdminPanel() {
+      const container = document.getElementById('adminPanelContainer');
+      if (isAdminMode && container && !document.getElementById('resetStatsBtn')) {
+        const card = document.createElement('div');
+        card.className = 'admin-card';
+        card.innerHTML = `<button id="resetStatsBtn" class="reset-btn">🧹 重置數據面板 (瀏覽人數歸零)</button>`;
+        container.appendChild(card);
+        document.getElementById('resetStatsBtn').onclick = resetPortalStats;
+      }
+    }
+
+    function resetPortalStats() {
+      if (!isAdminMode) return;
+      if (confirm('確定要將瀏覽人數歸零嗎？')) {
+        set(viewsRef, 0).then(() => showToast('數據已成功重置！', 'success')).catch(err => showToast('重置失敗: ' + err.message, 'error'));
+      }
+    }
+
+    // ===== 敏感字詞與政治內容過濾模組 =====
+    const badWords = [
+      "幹", "靠", "死", "白痴", "笨蛋", "fuck", "shit", "bitch", "script", "href", "eval", "<", ">",
+      // 政治過濾字詞
+      "政治", "民進黨", "國民黨", "民眾黨", "中共", "共產黨", "總統", "選舉", "阿就很爽啊"
+    ];
+
+    function filterText(str) {
+      if (!str) return "";
+      let result = str;
+
+      if (result.includes("阿就很爽啊")) {
+        result = result.replace(/阿就很爽啊/g, "*****");
+      }
+
+      badWords.forEach(word => {
+        if(word === "阿就很爽啊") return;
+        const reg = new RegExp(word, "gi");
+        const stars = "*".repeat(word.length);
+        result = result.replace(reg, stars);
+      });
+      return result;
+    }
+
+    // ===== 訪客觀看計數 =====
+    runTransaction(viewsRef, (current) => (current || 0) + 1);
+
+    onValue(viewsRef, (snapshot) => {
+      const el = document.getElementById("statViews");
+      el.textContent = snapshot.val() || 0;
+      bumpStat(el);
+    });
+
+    // ===== 送出留言通用函式 (含 IP 紀錄，雙向留言不分身分) =====
+    async function handleSendComment(messageText, clearInputCallback, nameProvided = null, triggerBtn = null) {
+      if (!messageText) {
+        showToast("請輸入留言內容！", 'error');
+        return;
+      }
+
+      let nameInput = nameProvided;
+      if (!nameInput) {
+        nameInput = prompt("請輸入您的暱稱（1 至 15 個字，老師 / 學生皆可）：");
+        if (nameInput === null) return;
+      }
+
+      nameInput = nameInput.trim();
+      if (nameInput.length < 1 || nameInput.length > 15) {
+        showToast("名字長度必須在 1 至 15 個字之間！", 'error');
+        return;
+      }
+
+      let restoreBtn = null;
+      if (triggerBtn) {
+        restoreBtn = triggerBtn.innerHTML;
+        triggerBtn.disabled = true;
+        triggerBtn.innerHTML = '<span class="btn-spinner"></span> 送出中';
+      }
+
+      const cleanName = filterText(nameInput);
+      const cleanMsg = filterText(messageText);
+      const userIp = await getUserIP();
+
+      push(commentsRef, {
+        name: cleanName,
+        message: cleanMsg,
+        ip: userIp,
+        timestamp: Date.now()
+      }).then(() => {
+        if (clearInputCallback) clearInputCallback();
+        showToast("留言發送成功！", 'success');
+      }).catch(err => {
+        showToast("留言發送失敗：" + err.message, 'error');
+      }).finally(() => {
+        if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerHTML = restoreBtn; }
+      });
+    }
+
+    // 綁定主要頁面留言
+    document.getElementById("mainSendBtn").addEventListener("click", (e) => {
+      const inputEl = document.getElementById("mainMsgInput");
+      handleSendComment(inputEl.value.trim(), () => { inputEl.value = ""; }, null, e.currentTarget);
+    });
+    document.getElementById("mainMsgInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") document.getElementById("mainSendBtn").click();
+    });
+
+    // 綁定卡片上方留言按鈕
+    document.getElementById("sendMsgBtn").addEventListener("click", (e) => {
+      const msgEl = document.getElementById("guestMsg");
+      const nameEl = document.getElementById("guestName");
+      handleSendComment(msgEl.value.trim(), () => { msgEl.value = ""; nameEl.value = ""; }, nameEl.value.trim(), e.currentTarget);
+    });
+    document.getElementById("guestMsg").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") document.getElementById("sendMsgBtn").click();
+    });
+
+    // 刪除留言功能 (管理員權限)
+    window.deleteComment = function(key) {
+      if (!isAdminMode) return;
+      if (confirm('確定要刪除這條留言嗎？')) {
+        remove(ref(db, `teacher_day_comments/${key}`)).catch(err => showToast('刪除失敗: ' + err.message, 'error'));
+      }
+    };
+
+    // 監聽留言列表並即時更新 UI 與留言人數統計
+    onValue(commentsRef, (snapshot) => {
+      cachedCommentsData = snapshot.val();
+      renderCommentsUI(cachedCommentsData);
+    });
+
+    function renderCommentsUI(data) {
+      const mainListEl = document.getElementById("mainCommentList");
+      const cardListEl = document.getElementById("commentsList");
+      const cardMsgCountEl = document.getElementById("msgCount");
+      const statCommentsEl = document.getElementById("statComments");
+
+      mainListEl.innerHTML = "";
+      cardListEl.innerHTML = "";
+
+      if (!data) {
+        mainListEl.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; text-align:center; padding:10px;">目前尚無留言，快來成為第一個留言的人吧！</div>';
+        cardListEl.innerHTML = '<div style="color:#628b70; font-size:0.7rem; text-align:center; padding:10px;">目前尚無留言</div>';
+        cardMsgCountEl.textContent = "0";
+        statCommentsEl.textContent = "0";
+        return;
+      }
+
+      const entries = Object.entries(data).sort((a, b) => b[1].timestamp - a[1].timestamp);
+
+      statCommentsEl.textContent = entries.length;
+      bumpStat(statCommentsEl);
+      cardMsgCountEl.textContent = entries.length;
+
+      entries.forEach(([key, item], idx) => {
+        const safeName = document.createTextNode(item.name || '匿名').textContent;
+        const safeMsg = document.createTextNode(item.message || '').textContent;
+        const safeIp = document.createTextNode(item.ip || '未知 IP').textContent;
+
+        const delButtonHTML = isAdminMode
+          ? `<button class="del-btn" onclick="deleteComment('${key}')">[刪除]</button>`
+          : '';
+
+        // 主要頁面留言卡片
+        const mainCard = document.createElement("div");
+        mainCard.className = "comment-card";
+        mainCard.style.animationDelay = Math.min(idx, 8) * 30 + 'ms';
+        mainCard.innerHTML = `
+          <div class="header-row">
+            <div>
+              <span class="author">${safeName}</span>
+              <span class="ip-tag">(${safeIp})</span>
+            </div>
+            ${delButtonHTML}
+          </div>
+          <div class="content">${safeMsg}</div>
+        `;
+        mainListEl.appendChild(mainCard);
+
+        // 卡片內部小抽屜留言卡片
+        const cardItem = document.createElement("div");
+        cardItem.className = "comment-item";
+        cardItem.style.animationDelay = Math.min(idx, 8) * 30 + 'ms';
+        const dateStr = new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        cardItem.innerHTML = `
+          <div class="author">${safeName} <span style="font-size:0.6rem; color:#628b70;">(${safeIp})</span></div>
+          <div class="text">${safeMsg}</div>
+          <div class="time">${dateStr}</div>
+        `;
+        cardListEl.appendChild(cardItem);
+      });
+    }
+
+    // 右上角浮動視窗切換
+    document.getElementById("toggleDrawerBtn").addEventListener("click", () => {
+      document.getElementById("commentsDrawer").classList.toggle("open");
+    });
+  </script>
+
+  <!-- Modal 彈窗與原卡片 UI 控制腳本 -->
+  <script>
+    'use strict';
+    const $ = id => document.getElementById(id);
+
+    // ===== Modal 開關 (含淡入淡出動畫) =====
+    function openModal(el) {
+      el.classList.add('open');
+      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+    }
+    function closeModal(el) {
+      el.classList.remove('show');
+      setTimeout(() => el.classList.remove('open'), 220);
+    }
+
+    const openModalBtn = $('openModalBtn');
+    const closeModalBtn = $('closeModalBtn');
+    const linkModal = $('linkModal');
+    const openCardBtn = $('openCardBtn');
+    const cardModal = $('cardContainerModal');
+
+    openModalBtn.addEventListener('click', () => openModal(linkModal));
+    closeModalBtn.addEventListener('click', () => closeModal(linkModal));
+    linkModal.addEventListener('click', (e) => { if (e.target === linkModal) closeModal(linkModal); });
+
+    // 開啟全螢幕卡片 Modal
+    openCardBtn.addEventListener('click', () => {
+      cardModal.classList.add('active');
+      requestAnimationFrame(() => requestAnimationFrame(() => cardModal.classList.add('show')));
+      startSequence(); // 開啟時自動開場
+    });
+
+    // ===== 原卡片腳本與變數 =====
+    const doorOverlay = $('doorOverlay'), intro = $('intro'), board =$('pcbBoard');
+    const lcdFrame = $('lcdFrame'), lcdDisplay = $('lcdDisplay'), typewriter =$('typewriter');
+    const bootProgress = $('bootProgress'), bootFill = $('bootFill'), bootStageLabel = $('bootStageLabel');
+    const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
+    let audioCtx = null, muted = false, currentLang = 'zh', unlocked = false, typingTimer = 0, sequenceTimers = [];
+
+    const messages = {
+      zh: { title: "> TEACHER'S DAY CARD <", text: '敬愛的老師：\n\n祝您教師節快樂！\n\n謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。每一次耐心的講解、每一句溫暖的鼓勵，都像一盞燈，讓我們在迷惘時重新找到方向。\n\n感謝關鍵字：耐心引導・溫暖陪伴・勇敢成長\n\n因為有您的用心，我們開始相信自己的可能；因為有您的提醒，我們學會負責與堅持；因為有您的身教，我們懂得尊重、感恩與分享。這些珍貴的影響，會一直陪伴我們走向未來。\n\n願您保有教學的熱情，也擁有被理解、被珍惜的每一天。祝您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！', signature:'學生 張永旭 敬上 💻' },
+      en: { title: "> TEACHER'S DAY CARD <", text: "Dear Teacher,\n\nHappy Teachers' Day!\n\nThank you for teaching us more than lessons from a textbook. Your patience, encouragement, and guidance have helped us think bravely, face challenges, and become better people.\n\nThree words of gratitude: Patience • Care • Courage\n\nBecause of you, we believe in our possibilities, learn to take responsibility, and understand the value of respect, gratitude, and sharing. Your influence will stay with us as we continue to grow.\n\nMay every day bring you appreciation, good health, peace, and many reasons to smile!", signature:'Student Yong-Xu Zhang 💻' }
+    };
+
+    // 生成 PCB 元件
+    for (let i=0; i<72; i++) {
+      const el=document.createElement('div');
+      if(i%13===0){el.className='ic';el.textContent='U'+(i/13+1).toFixed(0)+'  MCU';}
+      else if(i%9===0){el.className='capacitor';}
+      else if(i%5===0){el.className='resistor';}
+      else {el.className='smd';}
+      $('denseGrid').appendChild(el);
+    }
+
+    function initAudio(){
+      if(audioCtx) return;
+      const AudioContext=window.AudioContext||window.webkitAudioContext;
+      if(!AudioContext) return;
+      audioCtx=new AudioContext();
+      if(audioCtx.state==='suspended') audioCtx.resume().catch(()=>{});
+    }
+    function sound(type){
+      if(!audioCtx||muted) return;
+      const now=audioCtx.currentTime, osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+      const data={door:['sine',80,30,.3,.8],power:['sawtooth',150,600,.2,.5],click:['triangle',500,120,.25,.1]}[type];
+      if(!data)return; const [wave,start,end,volume,duration]=data;
+      osc.type=wave; osc.frequency.setValueAtTime(start,now); osc.frequency.exponentialRampToValueAtTime(end,now+duration);
+      gain.gain.setValueAtTime(volume,now); gain.gain.exponentialRampToValueAtTime(.01,now+duration);
+      osc.connect(gain).connect(audioCtx.destination); osc.start(now); osc.stop(now+duration+.02);
+    }
+    function clearSequence(){ sequenceTimers.forEach(clearTimeout); sequenceTimers=[]; }
+    function openDoors(){ doorOverlay.classList.add('is-open'); intro.classList.add('is-hidden'); $('endPanel').classList.remove('visible');$('floatingActions').classList.add('visible'); }
+    function closeDoors(){ doorOverlay.classList.remove('is-open'); intro.classList.add('is-hidden'); $('floatingActions').classList.remove('visible'); }
+    function setStatus(text, ready){ $('sysStatus').textContent=text; $('sysStatus').classList.toggle('ready', !!ready); }
+
+    // 開場進度步驟：讓整個流程更直覺可預期
+    const bootStages = [
+      { pct: 20, label: 'ENERGIZING BOARD…' },
+      { pct: 55, label: 'ROUTING SIGNAL…' },
+      { pct: 80, label: 'BOOTING DISPLAY…' },
+      { pct: 100, label: 'READY — TAP TO UNLOCK' }
+    ];
+    function setBootStage(idx){
+      const s = bootStages[idx]; if(!s) return;
+      bootFill.style.width = s.pct + '%';
+      bootStageLabel.textContent = s.label;
+    }
+
+    function startSequence(){
+      document.body.classList.remove('is-blank'); $('endPanel').classList.remove('visible'); unlocked=false; currentLang='zh';$('btnZh').classList.add('active');$('btnEn').classList.remove('active'); typewriter.replaceChildren();$('cardTitle').textContent='READY';
+      lcdFrame.classList.remove('rise','power'); lcdDisplay.classList.remove('powered'); board.classList.remove('zoom-out','pan-down','zoom-lcd'); ['trace1','trace2','trace3','trace4','trace5','particle1','particle2'].forEach(id=>$(id).classList.remove('active'));
+      bootFill.style.width='0%'; bootStageLabel.textContent='INITIALIZING…'; bootProgress.classList.remove('visible');
+      initAudio(); sound('door'); openDoors(); clearSequence();
+      sequenceTimers.push(setTimeout(()=>{ bootProgress.classList.add('visible'); },350));
+      sequenceTimers.push(setTimeout(()=>{ board.classList.add('zoom-out'); setStatus('SYS: ENERGIZING'); setBootStage(0); },550));
+      sequenceTimers.push(setTimeout(()=>{ sound('power'); ['trace1','trace2','trace3','trace4','trace5'].forEach(id=>$(id).classList.add('active')); $('particle1').classList.add('active');$('particle2').classList.add('active'); board.classList.remove('zoom-out');board.classList.add('pan-down'); setBootStage(1); },1350));
+      sequenceTimers.push(setTimeout(()=>{ lcdFrame.classList.add('rise'); setBootStage(2); },2050));
+      sequenceTimers.push(setTimeout(()=>{ lcdFrame.classList.add('power');lcdDisplay.classList.add('powered');typewriter.innerHTML='<button class="unlock-btn" id="unlockBtn" type="button">[  點擊啟動解鎖 ]</button>'; $('unlockBtn').addEventListener('click',unlock); setBootStage(3); },2750));
+      sequenceTimers.push(setTimeout(()=>{ board.classList.remove('pan-down');board.classList.add('zoom-lcd');setStatus('SYS: READY', true); bootProgress.classList.remove('visible'); },3350));
+    }
+    function renderMessage(lang=currentLang, speed=22){
+      clearTimeout(typingTimer); const item=messages[lang]; $('cardTitle').textContent=item.title; typewriter.replaceChildren();
+      const lines=(item.text+'\n\n'+item.signature).split('\n'); let li=0, ci=0; const wrap=document.createDocumentFragment();
+      const cursor=document.createElement('span'); cursor.className='cursor'; cursor.textContent='\u00A0';
+      function type(){
+        if(li>=lines.length){ typewriter.replaceChildren(wrap.cloneNode(true)); const c=typewriter.appendChild(document.createElement('span')); c.className='cursor'; c.textContent='\u00A0'; return; }
+        const line=lines[li];
+        if(ci<line.length){ let target=wrap.lastChild; if(!target||target.nodeType!==Node.TEXT_NODE) {target=document.createTextNode('');wrap.appendChild(target);} target.textContent+=line[ci++]; typingTimer=setTimeout(type,speed); }
+        else { wrap.appendChild(document.createElement('br')); li++;ci=0;typingTimer=setTimeout(type,speed); }
+        const preview=wrap.cloneNode(true); preview.appendChild(cursor.cloneNode(true)); typewriter.replaceChildren(preview);
+      }
+      type();
+    }
+    function unlock(){ if(unlocked)return; unlocked=true; sound('click'); setTimeout(()=>{renderMessage(); speakSequence();},180); }
+    function speakSequence(){
+      if(!synth||muted){ setTimeout(finishReading,6500); return; } synth.cancel();
+      const zh=new SpeechSynthesisUtterance('親愛的老師，祝您教師節快樂！謝謝您不只教會我們課本上的知識，也教會我們如何思考、面對困難，以及成為更好的人。感謝您的耐心引導、溫暖陪伴，讓我們更勇敢地成長。願您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！學生張永旭敬上。'); zh.lang='zh-TW';zh.rate=.95;
+      const en=new SpeechSynthesisUtterance("Dear Teacher, Happy Teachers' Day! Thank you for teaching us more than lessons from a textbook. Your patience, care, and guidance help us face challenges and grow with courage. May every day bring you appreciation, good health, peace, and many reasons to smile! Student Yong-Xu Zhang."); en.lang='en-US';en.rate=.95;
+      zh.onend=()=>{if(!muted){switchLanguage('en');synth.speak(en);}}; en.onend=()=>setTimeout(finishReading,1800); synth.speak(zh);
+    }
+
+    function finishReading(){
+      if(synth)synth.cancel(); clearTimeout(typingTimer); clearSequence(); closeDoors(); setStatus('SYS: COMPLETE', true); $('endPanel').classList.add('visible');
+    }
+    function switchLanguage(lang){ if(!messages[lang])return; currentLang=lang; $('btnZh').classList.toggle('active',lang==='zh');$('btnEn').classList.toggle('active',lang==='en'); if(unlocked)renderMessage(lang); else$('cardTitle').textContent=messages[lang].title; }
+    function toggleAudio(){ muted=!muted; $('audioToggle').textContent=muted?'🔇 靜音':'🔊 語音'; $('audioToggle').setAttribute('aria-pressed',String(muted));$('audioToggle').style.color=muted?'#888':'var(--green)'; if(muted&&synth)synth.cancel(); }
+    function showNameModal(){ $('nameModal').classList.add('visible');$('teacherNameInput').focus(); }
+    function hideNameModal(){ $('nameModal').classList.remove('visible'); }
+
+    // 跳過開場動畫，直接進入已解鎖的卡片內容(讓不想等待的使用者更直覺)
+    function skipIntro(){
+      clearSequence();
+      sound('click');
+      board.classList.remove('zoom-out','pan-down'); board.classList.add('zoom-lcd');
+      ['trace1','trace2','trace3','trace4','trace5','particle1','particle2'].forEach(id=>$(id).classList.add('active'));
+      lcdFrame.classList.add('rise','power'); lcdDisplay.classList.add('powered');
+      bootProgress.classList.remove('visible');
+      setStatus('SYS: READY', true);
+      openDoors();
+      unlocked = false;
+      unlock();
+    }
+
+    async function downloadPDF(nameOverride=null){
+      const btns = [$('downloadTop'), $('downloadBtn'), $('endDownloadBtn'), $('mainDownloadPdfBtn')];
+      if(!window.html2pdf){ showToast('PDF 元件尚未載入，請確認網路後再試一次。', 'error'); return; }
+      if(nameOverride===null){ showNameModal(); return; }
+      const confirmBtn = $('confirmDownloadBtn');
+      const originalConfirmHTML = confirmBtn ? confirmBtn.innerHTML : null;
+      if(confirmBtn){ confirmBtn.disabled = true; confirmBtn.innerHTML = '<span class="btn-spinner"></span> 產生中'; }
+      btns.forEach(b=>{ if(b) b.disabled = true; });
+      const cleanName=(nameOverride||'').trim().replace(/老師$/,''); const honorific=cleanName ? cleanName+'老師' : '老師';
+      $('pdfTeacherName').textContent='敬愛的 '+honorific+'：'; const wrapper=$('pdfTemplateWrapper'); wrapper.style.opacity='1';
+      try {
+        await html2pdf().set({margin:0,filename:'教師節感念卡_張永旭敬上.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#fffcf7'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from($('pdfTemplate')).save();
+        showToast('卡片 PDF 已產生完成！', 'success');
+      } catch(err) {
+        showToast('PDF 產生失敗，請再試一次。', 'error');
+      } finally {
+        wrapper.style.opacity='0';
+        if(confirmBtn){ confirmBtn.disabled = false; confirmBtn.innerHTML = originalConfirmHTML; }
+        btns.forEach(b=>{ if(b) b.disabled = false; });
+      }
+    }
+
+    $('startBtn').addEventListener('click',startSequence);$('reopenBtn').addEventListener('click',()=>{sound('door');openDoors();});
+    $('downloadBtn').addEventListener('click',showNameModal);$('downloadTop').addEventListener('click',showNameModal);
+    $('endDownloadBtn').addEventListener('click',showNameModal);$('mainDownloadPdfBtn').addEventListener('click', showNameModal);
+
+    $('restartBtn').addEventListener('click',startSequence);$('finishBtn').addEventListener('click',()=>{
+      if(synth)synth.cancel();
+      clearSequence();
+      cardModal.classList.remove('show');
+      setTimeout(()=>cardModal.classList.remove('active'),260);
+    });
+
+    $('cancelNameBtn').addEventListener('click',hideNameModal);
+    $('anonymousCheck').addEventListener('change',e=>{$('teacherNameInput').disabled=e.target.checked; if(e.target.checked)$('teacherNameInput').value=''; });$('nameForm').addEventListener('submit',e=>{e.preventDefault(); const anonymous=$('anonymousCheck').checked; const name=anonymous?'':$('teacherNameInput').value; if(!anonymous&&!name.trim()){ $('teacherNameInput').focus(); return; } hideNameModal(); downloadPDF(name); });$('audioToggle').addEventListener('click',toggleAudio);
+    $('btnZh').addEventListener('click',()=>{if(synth)synth.cancel();switchLanguage('zh');});$('btnEn').addEventListener('click',()=>{if(synth)synth.cancel();switchLanguage('en');});
+
+    // 加入「跳過動畫」按鈕，讓流程更直覺、尊重使用者時間
+    (function addSkipButton(){
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'skip-btn'; btn.textContent = '跳過開場動畫 →';
+      btn.addEventListener('click', skipIntro);
+      intro.appendChild(btn);
+    })();
+
+    // 背景粒子特效動畫
+    const canvas=$('effectsCanvas'), ctx=canvas.getContext('2d');
+    function resizeCanvas(){const dpr=Math.min(devicePixelRatio||1,2);canvas.width=innerWidth*dpr;canvas.height=innerHeight*dpr;canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(dpr,0,0,dpr,0,0);}
+    function drawBackground(){ctx.clearRect(0,0,innerWidth,innerHeight);ctx.strokeStyle='rgba(0,255,170,.035)';ctx.lineWidth=1;for(let x=0;x<innerWidth;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,innerHeight);ctx.stroke();}for(let y=0;y<innerHeight;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(innerWidth,y);ctx.stroke();}requestAnimationFrame(drawBackground);}
+    addEventListener('resize',resizeCanvas,{passive:true}); resizeCanvas(); drawBackground();
+  </script>
+</body>
+</html>
