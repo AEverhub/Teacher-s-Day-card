@@ -772,6 +772,40 @@
     #pdfTemplate .cert-footer{position:absolute;left:16mm;right:16mm;bottom:15mm;display:flex;justify-content:space-between;align-items:end;border-top:1px solid #ead9a8;padding-top:5mm;color:#2e5a44;font-size:11pt}
     #pdfTemplate .cert-sign{font-size:15pt;font-weight:700}
     #pdfTemplate .cert-date{color:#765d35;font-size:10pt}
+
+    /* ===== 嚴格單頁 A4 感謝狀：所有圖形與文字均預先寫在程式內 ===== */
+    #pdfTemplateWrapper{position:fixed!important;left:-10000px!important;top:0!important;width:210mm!important;height:297mm!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important}
+    #pdfTemplate{display:block!important;width:210mm!important;height:297mm!important;min-height:297mm!important;margin:0!important;padding:7mm!important;overflow:hidden!important;background:#f7f0df!important;color:#263b42!important;font-family:"PingFang TC","Microsoft JhengHei",Arial,sans-serif!important}
+    #pdfTemplate .certificate{position:relative!important;width:196mm!important;height:283mm!important;min-height:0!important;margin:0!important;padding:16mm 15mm!important;overflow:hidden!important;page-break-before:avoid!important;page-break-after:avoid!important;page-break-inside:avoid!important;break-inside:avoid!important;background:#fffdf8!important;border:5px double #b58b32!important;box-shadow:inset 0 0 0 1px #ead9a8!important;text-align:center!important}
+    #pdfTemplate .cert-kicker{margin:2mm 0 5mm!important;color:#a17b26!important;font-size:9pt!important;letter-spacing:2px!important;font-weight:700!important}
+    #pdfTemplate .cert-title{margin:0!important;color:#2e5a44!important;font-size:25pt!important;line-height:1.25!important;letter-spacing:5px!important}
+    #pdfTemplate .cert-en{margin:2mm 0 7mm!important;color:#66747a!important;font-size:9.5pt!important;letter-spacing:1px!important}
+    #pdfTemplate .cert-line{width:70%!important;margin:0 auto 7mm!important;border-top:2px solid #d4af37!important}
+    #pdfTemplate .cert-recipient{margin:0 0 7mm!important;color:#213f38!important;font-size:15pt!important;font-weight:700!important;letter-spacing:2px!important}
+    #pdfTemplate .cert-body{margin:0!important;color:#40545c!important;font-size:10.5pt!important;line-height:1.75!important;text-align:left!important;text-indent:2em!important}
+    #pdfTemplate .cert-body p{margin:0 0 4mm!important}
+    #pdfTemplate .cert-values{display:flex!important;gap:4mm!important;margin:5mm 0 6mm!important}
+    #pdfTemplate .cert-value{flex:1!important;padding:3mm 1mm!important;color:#805f20!important;background:#fbf4df!important;border:1px solid #e4c97b!important;border-radius:3px!important;font-size:9.5pt!important;font-weight:700!important}
+    #pdfTemplate .cert-closing{margin:5mm 0 0!important;padding:4mm 5mm!important;color:#765d35!important;background:#fffaf0!important;border:1px solid #ead9a8!important;font-size:9.5pt!important;line-height:1.7!important}
+    #pdfTemplate .cert-footer{position:absolute!important;left:15mm!important;right:15mm!important;bottom:12mm!important;display:flex!important;justify-content:space-between!important;align-items:end!important;border-top:1px solid #ead9a8!important;padding-top:4mm!important;color:#2e5a44!important;font-size:9pt!important}
+    #pdfTemplate .cert-sign{font-size:12pt!important;font-weight:700!important}.cert-date{color:#765d35!important;font-size:9pt!important}
+
+    /* ===== 嚴格單頁 A4 感謝狀：所有圖形與文字均預先寫在程式內 ===== */
+    #pdfTemplateWrapper{position:fixed!important;left:-10000px!important;top:0!important;width:210mm!important;height:297mm!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important}
+    #pdfTemplate{display:block!important;width:210mm!important;height:297mm!important;min-height:297mm!important;margin:0!important;padding:7mm!important;overflow:hidden!important;background:#f7f0df!important;color:#263b42!important;font-family:"PingFang TC","Microsoft JhengHei",Arial,sans-serif!important}
+    #pdfTemplate .certificate{position:relative!important;width:196mm!important;height:283mm!important;min-height:0!important;margin:0!important;padding:16mm 15mm!important;overflow:hidden!important;page-break-before:avoid!important;page-break-after:avoid!important;page-break-inside:avoid!important;break-inside:avoid!important;background:#fffdf8!important;border:5px double #b58b32!important;box-shadow:inset 0 0 0 1px #ead9a8!important;text-align:center!important}
+    #pdfTemplate .cert-kicker{margin:2mm 0 5mm!important;color:#a17b26!important;font-size:9pt!important;letter-spacing:2px!important;font-weight:700!important}
+    #pdfTemplate .cert-title{margin:0!important;color:#2e5a44!important;font-size:25pt!important;line-height:1.25!important;letter-spacing:5px!important}
+    #pdfTemplate .cert-en{margin:2mm 0 7mm!important;color:#66747a!important;font-size:9.5pt!important;letter-spacing:1px!important}
+    #pdfTemplate .cert-line{width:70%!important;margin:0 auto 7mm!important;border-top:2px solid #d4af37!important}
+    #pdfTemplate .cert-recipient{margin:0 0 7mm!important;color:#213f38!important;font-size:15pt!important;font-weight:700!important;letter-spacing:2px!important}
+    #pdfTemplate .cert-body{margin:0!important;color:#40545c!important;font-size:10.5pt!important;line-height:1.75!important;text-align:left!important;text-indent:2em!important}
+    #pdfTemplate .cert-body p{margin:0 0 4mm!important}
+    #pdfTemplate .cert-values{display:flex!important;gap:4mm!important;margin:5mm 0 6mm!important}
+    #pdfTemplate .cert-value{flex:1!important;padding:3mm 1mm!important;color:#805f20!important;background:#fbf4df!important;border:1px solid #e4c97b!important;border-radius:3px!important;font-size:9.5pt!important;font-weight:700!important}
+    #pdfTemplate .cert-closing{margin:5mm 0 0!important;padding:4mm 5mm!important;color:#765d35!important;background:#fffaf0!important;border:1px solid #ead9a8!important;font-size:9.5pt!important;line-height:1.7!important}
+    #pdfTemplate .cert-footer{position:absolute!important;left:15mm!important;right:15mm!important;bottom:12mm!important;display:flex!important;justify-content:space-between!important;align-items:end!important;border-top:1px solid #ead9a8!important;padding-top:4mm!important;color:#2e5a44!important;font-size:9pt!important}
+    #pdfTemplate .cert-sign{font-size:12pt!important;font-weight:700!important}.cert-date{color:#765d35!important;font-size:9pt!important}
   </style>
 </head>
 <body>
@@ -964,18 +998,15 @@
 
     <div id="pdfTemplateWrapper" aria-hidden="true">
       <article id="pdfTemplate"><div class="certificate">
-  <div class="cert-kicker">TEACHER'S DAY / APPRECIATION CERTIFICATE</div>
-  <h1 class="cert-title">教師節感謝狀</h1>
-  <div class="cert-en">Teacher's Day Appreciation Certificate</div>
-  <div class="cert-line"></div>
-  <div class="cert-recipient" id="pdfTeacherName">敬愛的老師：</div>
-  <div class="cert-body">
-    <p>感謝您在學習的路上耐心引導，將課本上的知識變成可以理解、可以實踐的力量。每一次講解、每一句鼓勵，都讓我們在迷惘時重新找到方向。</p>
-    <p>您教會我們的不只是答案，更是思考的方法、面對困難的勇氣，以及尊重、負責與持續努力的態度。這些影響會陪伴我們走向更遠的未來。</p>
-  </div>
-  <div class="cert-values"><div class="cert-value">耐心引導</div><div class="cert-value">溫暖陪伴</div><div class="cert-value">勇敢成長</div></div>
-  <div class="cert-closing">願您保有教學的熱情，也擁有被理解、被珍惜的每一天。<br>祝您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！</div>
-  <div class="cert-footer"><div class="cert-date">2026 年 9 月 28 日</div><div class="cert-sign">學生 張永旭 敬上</div></div>
+<div class="cert-kicker">TEACHER'S DAY / APPRECIATION CERTIFICATE</div>
+<h1 class="cert-title">教師節感謝狀</h1>
+<div class="cert-en">Teacher's Day Appreciation Certificate</div>
+<div class="cert-line"></div>
+<div class="cert-recipient" id="pdfTeacherName">敬愛的老師：</div>
+<div class="cert-body"><p>感謝您在學習的路上耐心引導，將課本上的知識變成可以理解、可以實踐的力量。每一次講解、每一句鼓勵，都讓我們在迷惘時重新找到方向。</p><p>您教會我們的不只是答案，更是思考的方法、面對困難的勇氣，以及尊重、負責與持續努力的態度。這些影響會陪伴我們走向更遠的未來。</p></div>
+<div class="cert-values"><div class="cert-value">耐心引導</div><div class="cert-value">溫暖陪伴</div><div class="cert-value">勇敢成長</div></div>
+<div class="cert-closing">願您保有教學的熱情，也擁有被理解、被珍惜的每一天。<br>祝您工作順心、身體健康、平安喜樂，天天都有值得微笑的時刻！</div>
+<div class="cert-footer"><div class="cert-date">2026 年 9 月 28 日</div><div class="cert-sign">學生 張永旭 敬上</div></div>
 </div></article>
     </div>
   </div>
@@ -1425,6 +1456,8 @@
     function switchLanguage(lang){ if(!messages[lang])return; currentLang=lang; $('btnZh').classList.toggle('active',lang==='zh');$('btnEn').classList.toggle('active',lang==='en'); if(unlocked)renderMessage(lang); else$('cardTitle').textContent=messages[lang].title; }
     function toggleAudio(){ muted=!muted; $('audioToggle').textContent=muted?' 靜音':' 語音'; $('audioToggle').setAttribute('aria-pressed',String(muted));$('audioToggle').style.color=muted?'#888':'var(--green)'; if(muted&&synth)synth.cancel(); }
     function showNameModal(){ $('nameModal').classList.add('visible');$('teacherNameInput').focus(); }
+    function openDownloadFlow(){ showNameModal(); }
+    function openDownloadFlow(){ showNameModal(); }
     function hideNameModal(){ $('nameModal').classList.remove('visible'); }
 
     // 跳過開場動畫，直接進入已解鎖的卡片內容(讓不想等待的使用者更直覺)
@@ -1454,7 +1487,7 @@
       const oldWrapperStyle={position:wrapper.style.position,left:wrapper.style.left,top:wrapper.style.top,opacity:wrapper.style.opacity,zIndex:wrapper.style.zIndex};
       wrapper.style.position='absolute'; wrapper.style.left='0'; wrapper.style.top='0'; wrapper.style.zIndex='-1'; wrapper.style.opacity='1';
       try {
-        await html2pdf().set({margin:0,filename:'教師節感念卡_張永旭敬上.pdf',pagebreak:{mode:['avoid-all']},image:{type:'jpeg',quality:1},html2canvas:{scale:2,useCORS:true,backgroundColor:'#fffcf7',scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from($('pdfTemplate')).save();
+        await html2pdf().set({margin:0,filename:'教師節感念卡_張永旭敬上.pdf',pagebreak:{mode:['avoid-all'],avoid:['#pdfTemplate','.certificate']},image:{type:'jpeg',quality:1},html2canvas:{scale:2,useCORS:true,backgroundColor:'#fffcf7',scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from($('pdfTemplate')).save();
         showToast('卡片 PDF 已產生完成！', 'success');
       } catch(err) {
         showToast('PDF 產生失敗，請再試一次。', 'error');
@@ -1466,8 +1499,8 @@
     }
 
     $('startBtn').addEventListener('click',startSequence);$('reopenBtn').addEventListener('click',()=>{sound('door');openDoors();});
-    $('downloadBtn').addEventListener('click',showNameModal);$('downloadTop').addEventListener('click',showNameModal);
-    $('endDownloadBtn').addEventListener('click',showNameModal);$('mainDownloadPdfBtn').addEventListener('click', showNameModal);
+    $('downloadBtn').addEventListener('click',openDownloadFlow);$('downloadTop').addEventListener('click',openDownloadFlow);
+    $('endDownloadBtn').addEventListener('click',openDownloadFlow);$('mainDownloadPdfBtn').addEventListener('click', openDownloadFlow);
 
     $('restartBtn').addEventListener('click',startSequence);$('finishBtn').addEventListener('click',returnToPortal);$('returnWebBtn').addEventListener('click',returnToPortal);$('lcdExitBtn').addEventListener('click',returnToPortal);$('lcdExitBtn').addEventListener('click',returnToPortal);
 
