@@ -198,10 +198,21 @@
       padding: 8px 12px;
       border-radius: 4px;
     }
+    .comment-card .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
     .comment-card .author {
       color: var(--blue-accent);
       font-weight: bold;
       font-size: 0.88rem;
+    }
+    .comment-card .ip-tag {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-left: 6px;
+      font-weight: normal;
     }
     .comment-card .content {
       color: #000000;
@@ -211,6 +222,14 @@
       margin-top: 4px;
       font-size: 0.92rem;
       word-break: break-all;
+    }
+    .del-btn {
+      color: #ff7b72;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.82rem;
+      margin-left: 10px;
     }
 
     /* 數據統計面板 */
@@ -231,6 +250,25 @@
     .stat-item .label {
       font-size: 0.75rem;
       color: var(--text-muted);
+    }
+
+    /* 管理員面板 */
+    .admin-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+    .reset-btn {
+      background-color: var(--red-btn);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
     }
 
     /* ===== Modal 彈窗樣式 ===== */
@@ -435,7 +473,7 @@
         </button>
       </div>
 
-      <!-- 下載 PDF 按鈕 (直接抄原邏輯) -->
+      <!-- 下載 PDF 按鈕 -->
       <div class="btn-wrapper">
         <button type="button" class="portal-btn btn-pdf" id="mainDownloadPdfBtn">
           📄 下載專屬教師節卡片 (PDF)
@@ -468,6 +506,8 @@
         <strong>3. 尊師敬師卡：</strong>學子們會在此特別的日子手寫或透過數位卡片，向辛苦導師表達最誠摯的感謝，感謝老師不只傳授課業知識，更引導人生正確方向。
       </p>
     </section>
+
+    <div id="adminPanelContainer"></div>
 
     <!-- 3. Firebase 留言與面板統計區 -->
     <section class="comment-section">
@@ -614,7 +654,7 @@
   <!-- Firebase 12.19.0 SDK 與主要邏輯 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, set, remove, runTransaction } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA5WzxOytvsxlmzNyg4LozzHnhyzzUb-Iw",
@@ -632,6 +672,65 @@
     const commentsRef = ref(db, "teacher_day_comments");
     const viewsRef = ref(db, "portal_stats/unique_views");
 
+    let isAdminMode = false;
+    let cachedCommentsData = null;
+
+    // 取得訪客 IP
+    async function getUserIP() {
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        return data.ip;
+      } catch (e) {
+        return '未知 IP';
+      }
+    }
+
+    // 檢測管理員隱藏指令 /adminmod990420_&-
+    function checkAdminCommand(value) {
+      if (value.trim() === '/adminmod990420_&-') {
+        if (!isAdminMode) {
+          isAdminMode = true;
+          alert('🔓 已成功解鎖管理員模式！');
+          renderAdminPanel();
+          if (cachedCommentsData) renderCommentsUI(cachedCommentsData);
+        }
+        return true;
+      }
+      return false;
+    }
+
+    // 監聽輸入框暗號觸發
+    ['mainMsgInput', 'guestMsg', 'guestName'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', (e) => {
+          if (checkAdminCommand(e.target.value)) {
+            e.target.value = '';
+          }
+        });
+      }
+    });
+
+    // 渲染管理員重置 UI
+    function renderAdminPanel() {
+      const container = document.getElementById('adminPanelContainer');
+      if (isAdminMode && container && !document.getElementById('resetStatsBtn')) {
+        const card = document.createElement('div');
+        card.className = 'admin-card';
+        card.innerHTML = `<button id="resetStatsBtn" class="reset-btn">🧹 重置數據面板 (瀏覽人數歸零)</button>`;
+        container.appendChild(card);
+        document.getElementById('resetStatsBtn').onclick = resetPortalStats;
+      }
+    }
+
+    function resetPortalStats() {
+      if (!isAdminMode) return;
+      if (confirm('確定要將瀏覽人數歸零嗎？')) {
+        set(viewsRef, 0).then(() => alert('數據已成功重置！')).catch(err => alert('重置失敗: ' + err.message));
+      }
+    }
+
     // ===== 敏感字詞與政治內容過濾模組 =====
     const badWords = [
       "幹", "靠", "死", "白痴", "笨蛋", "fuck", "shit", "bitch", "script", "href", "eval", "<", ">",
@@ -643,7 +742,6 @@
       if (!str) return "";
       let result = str;
       
-      // 特殊要求處理：「阿就很爽啊」精準轉為五個 *
       if (result.includes("阿就很爽啊")) {
         result = result.replace(/阿就很爽啊/g, "*****");
       }
@@ -657,30 +755,27 @@
       return result;
     }
 
-    // ===== 訪客觀看計數 (基於 LocalStorage 模擬單一用戶/IP) =====
-    if (!localStorage.getItem("has_visited_teacher_portal")) {
-      runTransaction(viewsRef, (current) => {
-        return (current || 0) + 1;
-      }).then(() => {
-        localStorage.setItem("has_visited_teacher_portal", "true");
-      });
-    }
+    // ===== 訪客觀看計數 =====
+    runTransaction(viewsRef, (current) => (current || 0) + 1);
 
     onValue(viewsRef, (snapshot) => {
-      document.getElementById("statViews").textContent = snapshot.val() || 1;
+      document.getElementById("statViews").textContent = snapshot.val() || 0;
     });
 
-    // ===== 送出留言通用函式 (詢問名字 1-15字) =====
-    function handleSendComment(messageText, clearInputCallback) {
+    // ===== 送出留言通用函式 (含 IP 紀錄) =====
+    async function handleSendComment(messageText, clearInputCallback, nameProvided = null) {
       if (!messageText) {
         alert("請輸入留言內容！");
         return;
       }
 
-      let nameInput = prompt("請輸入您的名字（1 至 15 個字）：");
-      if (nameInput === null) return; // 使用者取消
-      nameInput = nameInput.trim();
+      let nameInput = nameProvided;
+      if (!nameInput) {
+        nameInput = prompt("請輸入您的名字（1 至 15 個字）：");
+        if (nameInput === null) return;
+      }
 
+      nameInput = nameInput.trim();
       if (nameInput.length < 1 || nameInput.length > 15) {
         alert("名字長度必須在 1 至 15 個字之間！");
         return;
@@ -688,10 +783,12 @@
 
       const cleanName = filterText(nameInput);
       const cleanMsg = filterText(messageText);
+      const userIp = await getUserIP();
 
       push(commentsRef, {
         name: cleanName,
         message: cleanMsg,
+        ip: userIp,
         timestamp: Date.now()
       }).then(() => {
         if (clearInputCallback) clearInputCallback();
@@ -707,14 +804,28 @@
       handleSendComment(inputEl.value.trim(), () => { inputEl.value = ""; });
     });
 
-    // 綁定卡片上方舊有留言按鈕
+    // 綁定卡片上方留言按鈕
     document.getElementById("sendMsgBtn").addEventListener("click", () => {
-      const inputEl = document.getElementById("guestMsg");
-      handleSendComment(inputEl.value.trim(), () => { inputEl.value = ""; });
+      const msgEl = document.getElementById("guestMsg");
+      const nameEl = document.getElementById("guestName");
+      handleSendComment(msgEl.value.trim(), () => { msgEl.value = ""; nameEl.value = ""; }, nameEl.value.trim());
     });
+
+    // 刪除留言功能 (管理員權限)
+    window.deleteComment = function(key) {
+      if (!isAdminMode) return;
+      if (confirm('確定要刪除這條留言嗎？')) {
+        remove(ref(db, `teacher_day_comments/${key}`)).catch(err => alert('刪除失敗: ' + err.message));
+      }
+    };
 
     // 監聽留言列表並即時更新 UI 與留言人數統計
     onValue(commentsRef, (snapshot) => {
+      cachedCommentsData = snapshot.val();
+      renderCommentsUI(cachedCommentsData);
+    });
+
+    function renderCommentsUI(data) {
       const mainListEl = document.getElementById("mainCommentList");
       const cardListEl = document.getElementById("commentsList");
       const cardMsgCountEl = document.getElementById("msgCount");
@@ -723,7 +834,6 @@
       mainListEl.innerHTML = "";
       cardListEl.innerHTML = "";
 
-      const data = snapshot.val();
       if (!data) {
         mainListEl.innerHTML = '<div style="color:var(--text-muted); font-size:0.85rem; text-align:center; padding:10px;">目前尚無留言，快來成為第一個留言的人吧！</div>';
         cardListEl.innerHTML = '<div style="color:#628b70; font-size:0.7rem; text-align:center; padding:10px;">目前尚無留言</div>';
@@ -732,22 +842,31 @@
         return;
       }
 
-      const items = Object.values(data).sort((a, b) => b.timestamp - a.timestamp);
+      const entries = Object.entries(data).sort((a, b) => b[1].timestamp - a[1].timestamp);
       
-      // 更新統計人數 (以不重複名字作為統計基礎，亦可為總留言數)
-      const uniqueNames = new Set(items.map(i => i.name));
-      statCommentsEl.textContent = uniqueNames.size;
-      cardMsgCountEl.textContent = items.length;
+      statCommentsEl.textContent = entries.length;
+      cardMsgCountEl.textContent = entries.length;
 
-      items.forEach(item => {
-        const safeName = document.createTextNode(item.name).textContent;
-        const safeMsg = document.createTextNode(item.message).textContent;
+      entries.forEach(([key, item]) => {
+        const safeName = document.createTextNode(item.name || '無名氏').textContent;
+        const safeMsg = document.createTextNode(item.message || '').textContent;
+        const safeIp = document.createTextNode(item.ip || '未知 IP').textContent;
 
-        // 主要頁面留言卡片（藍色名字 + 黑色內容）
+        const delButtonHTML = isAdminMode 
+          ? `<button class="del-btn" onclick="deleteComment('${key}')">[刪除]</button>` 
+          : '';
+
+        // 主要頁面留言卡片
         const mainCard = document.createElement("div");
         mainCard.className = "comment-card";
         mainCard.innerHTML = `
-          <div class="author">${safeName}</div>
+          <div class="header-row">
+            <div>
+              <span class="author">${safeName}</span>
+              <span class="ip-tag">(${safeIp})</span>
+            </div>
+            ${delButtonHTML}
+          </div>
           <div class="content">${safeMsg}</div>
         `;
         mainListEl.appendChild(mainCard);
@@ -757,13 +876,13 @@
         cardItem.className = "comment-item";
         const dateStr = new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         cardItem.innerHTML = `
-          <div class="author">${safeName}</div>
+          <div class="author">${safeName} <span style="font-size:0.6rem; color:#628b70;">(${safeIp})</span></div>
           <div class="text">${safeMsg}</div>
           <div class="time">${dateStr}</div>
         `;
         cardListEl.appendChild(cardItem);
       });
-    });
+    }
 
     // 右上角浮動視窗切換
     document.getElementById("toggleDrawerBtn").addEventListener("click", () => {
@@ -792,7 +911,7 @@
       startSequence(); // 開啟時自動開場
     });
 
-    // ===== 原卡片腳本與變數原封不動照抄 =====
+    // ===== 原卡片腳本與變數 =====
     const doorOverlay = $('doorOverlay'), intro = $('intro'), board =$('pcbBoard');
     const lcdFrame = $('lcdFrame'), lcdDisplay = $('lcdDisplay'), typewriter =$('typewriter');
     const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
@@ -883,12 +1002,9 @@
 
     $('startBtn').addEventListener('click',startSequence);$('reopenBtn').addEventListener('click',()=>{sound('door');openDoors();});
     $('downloadBtn').addEventListener('click',showNameModal);$('downloadTop').addEventListener('click',showNameModal);
-    $('endDownloadBtn').addEventListener('click',showNameModal);$('mainDownloadPdfBtn').addEventListener('click', showNameModal); // 主頁 PDF 按鈕關聯
+    $('endDownloadBtn').addEventListener('click',showNameModal);$('mainDownloadPdfBtn').addEventListener('click', showNameModal);
 
-    $('restartBtn').addEventListener('click',startSequence);
-    
-    // 點擊「結束」時，關閉全螢幕 Modal 並回到主要頁面
-    $('finishBtn').addEventListener('click',()=>{
+    $('restartBtn').addEventListener('click',startSequence);$('finishBtn').addEventListener('click',()=>{
       if(synth)synth.cancel();
       clearSequence();
       cardModal.classList.remove('active');
